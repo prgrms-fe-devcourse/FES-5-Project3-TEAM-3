@@ -1,14 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap');
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
 @layer theme, base, components, utilities;
 
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);
 
 :root {
-  font-family: 'Noto Serif', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  font-family:
+    'Noto Serif',
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    'Helvetica Neue',
+    'Segoe UI',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Malgun Gothic',
+    sans-serif;
   line-height: 1.5;
   font-weight: 500;
   background-color: var(--color-background-base);
@@ -16,72 +28,72 @@
 
 @theme {
   /* Primary */
-  --color-primary-50:  #FDEDEF;
-  --color-primary-100: #F8D4D9;
-  --color-primary-200: #F0AEB9;
-  --color-primary-300: #A8324A;
-  --color-primary-400: #91283F;
-  --color-primary-500: #6E0E2E;
-  --color-primary-600: #620C29;
+  --color-primary-50: #fdedef;
+  --color-primary-100: #f8d4d9;
+  --color-primary-200: #f0aeb9;
+  --color-primary-300: #a8324a;
+  --color-primary-400: #91283f;
+  --color-primary-500: #6e0e2e;
+  --color-primary-600: #620c29;
   --color-primary-700: #571026;
-  --color-primary-800: #4A0B1B;
+  --color-primary-800: #4a0b1b;
   --color-primary-900: #350913;
-  --color-primary-950: #1E0409;
+  --color-primary-950: #1e0409;
 
   /* Secondary */
-  --color-secondary-50:  #FCF8F3;
-  --color-secondary-100: #FAF3E9;
-  --color-secondary-200: #F5E6D3;
-  --color-secondary-300: #EFD6B2;
-  --color-secondary-400: #E5C67F;
-  --color-secondary-500: #D4AF37;
-  --color-secondary-600: #B9972F;
-  --color-secondary-700: #8A7226;
-  --color-secondary-800: #5E5222;
-  --color-secondary-900: #3F3B2F;
-  --color-secondary-950: #26241F;
+  --color-secondary-50: #fcf8f3;
+  --color-secondary-100: #faf3e9;
+  --color-secondary-200: #f5e6d3;
+  --color-secondary-300: #efd6b2;
+  --color-secondary-400: #e5c67f;
+  --color-secondary-500: #d4af37;
+  --color-secondary-600: #b9972f;
+  --color-secondary-700: #8a7226;
+  --color-secondary-800: #5e5222;
+  --color-secondary-900: #3f3b2f;
+  --color-secondary-950: #26241f;
 
   /* Background */
-  --color-background-base: #F3F0EB;
+  --color-background-base: #f3f0eb;
 
   /* Text */
-  --color-text-primary:   #1C1B1A;
-  --color-text-secondary: #6E645F;
+  --color-text-primary: #1c1b1a;
+  --color-text-secondary: #6e645f;
 
   /* Success */
-  --color-success-50:  #F0FAF4;
-  --color-success-100: #DCF3E4;
-  --color-success-200: #B3E5C8;
-  --color-success-300: #81D4AE;
-  --color-success-400: #4DBE8D;
-  --color-success-500: #2E9B6C;
-  --color-success-600: #257C57;
-  --color-success-700: #1C6245;
+  --color-success-50: #f0faf4;
+  --color-success-100: #dcf3e4;
+  --color-success-200: #b3e5c8;
+  --color-success-300: #81d4ae;
+  --color-success-400: #4dbe8d;
+  --color-success-500: #2e9b6c;
+  --color-success-600: #257c57;
+  --color-success-700: #1c6245;
   --color-success-800: #134933;
-  --color-success-900: #0B2E21;
+  --color-success-900: #0b2e21;
 
   /* Error */
-  --color-error-50:  #FDEDED;
-  --color-error-100: #FBD4D4;
-  --color-error-200: #F5A9A9;
-  --color-error-300: #EC7777;
-  --color-error-400: #E05252;
-  --color-error-500: #C92D2D;
-  --color-error-600: #A52323;
-  --color-error-700: #7F1B1B;
-  --color-error-800: #5A1212;
-  --color-error-900: #370A0A;
+  --color-error-50: #fdeded;
+  --color-error-100: #fbd4d4;
+  --color-error-200: #f5a9a9;
+  --color-error-300: #ec7777;
+  --color-error-400: #e05252;
+  --color-error-500: #c92d2d;
+  --color-error-600: #a52323;
+  --color-error-700: #7f1b1b;
+  --color-error-800: #5a1212;
+  --color-error-900: #370a0a;
 
   /* Warning */
-  --color-warning-50:  #FFFAF0;
-  --color-warning-100: #FFF3D6;
-  --color-warning-200: #FFE3A6;
-  --color-warning-300: #FFD372;
-  --color-warning-400: #FBC447;
-  --color-warning-500: #E6A812;
-  --color-warning-600: #BA860E;
-  --color-warning-700: #8C660B;
-  --color-warning-800: #5E4507;
+  --color-warning-50: #fffaf0;
+  --color-warning-100: #fff3d6;
+  --color-warning-200: #ffe3a6;
+  --color-warning-300: #ffd372;
+  --color-warning-400: #fbc447;
+  --color-warning-500: #e6a812;
+  --color-warning-600: #ba860e;
+  --color-warning-700: #8c660b;
+  --color-warning-800: #5e4507;
   --color-warning-900: #302404;
 }
 
