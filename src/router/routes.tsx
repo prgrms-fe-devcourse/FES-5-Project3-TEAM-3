@@ -11,7 +11,6 @@ export const routes = createBrowserRouter([
     Component: Root,
     children: [
 
-      // MyPage route
       {
         path: 'my-page',
         Component: MyPageLayout,
