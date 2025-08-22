@@ -1,8 +1,8 @@
-import { NavLink } from "react-router";
+import { NavLink } from 'react-router';
 
 function Header() {
   return (
-    <div className="bg-prime-500 h-17.5 w-full flex items-center justify-center">
+    <div className="bg-primary-500 h-17.5 w-full flex items-center justify-center">
       <div className="w-360 flex justify-between items-center px-10 py-2">
         <h1 className="w-41.5 h-11.75 flex items-center pt-1">
           <NavLink to="/">
@@ -24,13 +24,13 @@ function Header() {
               />
             </svg>
           </button>
-          <NavLink to="" className="font-semibold text-text-">
+          <NavLink to="" className="font-semibold text-secondary-50">
             Wine
           </NavLink>
-          <NavLink to="" className="font-semibold text-[#fcf8f3]">
+          <NavLink to="" className="font-semibold text-secondary-50">
             Community
           </NavLink>
-          <NavLink to="" className="flex font-semibold text-[#fcf8f3]">
+          <NavLink to="" className="flex font-semibold text-secondary-50">
             <img src="icon/fi-rr-glass-cheers.png" alt="로그인아이콘" />
             Login
           </NavLink>
@@ -39,4 +39,4 @@ function Header() {
     </div>
   );
 }
-export default Header
+export default Header;
