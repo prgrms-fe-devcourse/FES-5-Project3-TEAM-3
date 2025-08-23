@@ -69,11 +69,11 @@ function RealFooter() {
 
  function Footer() {
    const [isLoading, setIsLoading] = useState(false);
-  //  useEffect(() => {
-  //    setTimeout(() => {
-  //      setIsLoading(true);
-  //    }, 2000);
-  //  }, []);
+   useEffect(() => {
+     setTimeout(() => {
+       setIsLoading(true);
+     }, 2000);
+   }, []);
    return <>{isLoading ? <SkeletonFooter /> : <RealFooter />}</>;
  }
 
