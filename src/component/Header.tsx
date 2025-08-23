@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
 
-function Header() {
+function RealHeader() {
   return (
     <div className="bg-primary-500 h-17.5 w-full flex items-center justify-center">
       <div className="w-360 flex justify-between items-center px-10 py-2">
@@ -38,5 +39,41 @@ function Header() {
       </div>
     </div>
   );
+}
+
+function SkeletonHeader() {
+  return (
+    <div
+      className="bg-secondary-100 h-17.5 w-full flex items-center justify-center"
+      aria-busy="true"
+    >
+      <div className="w-360 flex justify-between items-center px-10 py-2 animate-pulse">
+        {/* 로고 자리 */}
+        <div className="w-41.5 h-11.75 flex items-center pt-1">
+          <div className="h-10 w-32 rounded-md bg-primary-900/10" />
+        </div>
+
+        {/* 네비 자리 */}
+        <nav className="flex items-center gap-4">
+          <div className="h-6 w-6 rounded-full bg-primary-900/10" />
+          <div className="h-5 w-12 rounded bg-primary-900/10" />
+          <div className="h-5 w-24 rounded bg-primary-900/10" />
+          <div className="h-5 w-20 rounded bg-primary-900/10" />
+        </nav>
+      </div>
+    </div>
+  );
+}
+
+function Header() {
+
+const [isLoading,setIsLoading] = useState(false)
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(true)
+    },2000)
+  }, [])
+  
+  return <>{isLoading ? <SkeletonHeader /> : <RealHeader />}</>;
 }
 export default Header;
