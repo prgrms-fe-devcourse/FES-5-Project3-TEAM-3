@@ -28,7 +28,7 @@ function RealHeader() {
           <NavLink to="" className="font-semibold text-secondary-50">
             Wine
           </NavLink>
-          <NavLink to="" className="font-semibold text-secondary-50">
+          <NavLink to="community/write" className="font-semibold text-secondary-50">
             Community
           </NavLink>
           <NavLink to="" className="flex font-semibold text-secondary-50">
@@ -73,7 +73,7 @@ const [isLoading,setIsLoading] = useState(false)
   //     setIsLoading(true)
   //   },2000)
   // }, [])
-  
+
   return <>{isLoading ? <SkeletonHeader /> : <RealHeader />}</>;
 }
 export default Header;
