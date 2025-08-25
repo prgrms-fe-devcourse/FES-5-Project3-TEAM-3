@@ -12,14 +12,14 @@ export const routes = createBrowserRouter([
     Component: Root,
     children: [
       {
-        path: 'my-page',
-        Component: MyPageLayout,
-
-      },
-      {
         path: 'community/write',
         element: <CommunityWrite />,
       },
-    ]
-  }
+      // MyPage route
+      {
+        path: 'my-page',
+        Component: MyPageLayout,
+      },
+    ],
+  },
 ]);
