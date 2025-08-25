@@ -4,6 +4,7 @@ import CommunityWrite from "@/pages/community/write/CommunityWrite";
 
 /* Code Splitting */
 const Root = lazy(() => import('@/pages'));
+const MyPageLayout = lazy(() => import('@/pages/MyPage/MyPageLayout'));
 
 export const routes = createBrowserRouter([
   {
@@ -14,6 +15,12 @@ export const routes = createBrowserRouter([
         path: 'community/write',
         element: <CommunityWrite />,
       },
+      // MyPage route
+      {
+        path: 'my-page',
+        Component: MyPageLayout,
+      },
     ],
   },
 ]);
+

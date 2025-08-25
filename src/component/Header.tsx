@@ -32,7 +32,7 @@ function RealHeader() {
             Community
           </NavLink>
           <NavLink to="" className="flex font-semibold text-secondary-50">
-            <img src="icon/fi-rr-glass-cheers.png" alt="로그인아이콘" />
+            <img src="/icon/fi-rr-glass-cheers.svg" alt="로그인아이콘" />
             Login
           </NavLink>
         </nav>
