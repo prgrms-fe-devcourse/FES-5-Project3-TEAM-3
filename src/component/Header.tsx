@@ -11,7 +11,7 @@ function RealHeader() {
           </NavLink>
         </h1>
         <nav className="flex items-center gap-4">
-          <button className='cursor-pointer' type="button">
+          <button className="cursor-pointer" type="button">
             <svg
               width="25"
               height="25"
@@ -66,8 +66,7 @@ function SkeletonHeader() {
 }
 
 function Header() {
-
-const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   // useEffect(() => {
   //   setTimeout(() => {
   //     setIsLoading(true)

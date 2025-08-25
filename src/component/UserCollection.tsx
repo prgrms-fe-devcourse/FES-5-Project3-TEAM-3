@@ -5,10 +5,10 @@ interface Props {
   title: string;
   content: string;
   price: string;
-};
+}
 
-function UserCollection(item:Props) {
-  const {id,src,title,content,icon,price} = item
+function UserCollection(item: Props) {
+  const { id, src, title, content, icon, price } = item;
   return (
     <div className="h-full flex items-center justify-center p-4">
       <div className="bg-primary-50 backdrop-blur rounded-2xl w-121 px-5 py-7 h-158 flex items-center justify-center shadow-xl">

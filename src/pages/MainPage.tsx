@@ -1,11 +1,9 @@
-import WineGrid from "@/component/WineGrid";
-import { useState } from "react";
-import Collection from "@/component/Collection";
-import ShowMoreBtn from "@/component/ShowMoreBtn";
-
+import WineGrid from '@/component/WineGrid';
+import { useState } from 'react';
+import Collection from '@/component/Collection';
+import ShowMoreBtn from '@/component/ShowMoreBtn';
 
 function MainPage() {
-  
   const winesArr = [
     {
       id: 0,
@@ -73,7 +71,7 @@ function MainPage() {
     },
   ];
 
-  const [wines] = useState(winesArr)
+  const [wines] = useState(winesArr);
 
   const collection = [
     {
@@ -131,17 +129,17 @@ function MainPage() {
       </section>
 
       <section>
-        <Collection collection={collection}/>
+        <Collection collection={collection} />
       </section>
 
       <section className="h-200 mt-35 flex flex-col items-center">
         <h3 className="text-[108px]">Trending Posts</h3>
         <div className="mt-13 flex items-center">
           <div className="rounded-2xl w-70 h-90 bg-gray-600"></div>
-            <ShowMoreBtn/>
+          <ShowMoreBtn />
         </div>
       </section>
     </main>
   );
 }
-export default MainPage
+export default MainPage;

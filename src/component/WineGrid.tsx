@@ -1,13 +1,12 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 interface Props {
-  src: string,
-  alt: string,
-  title: string,
-  text: string
+  src: string;
+  alt: string;
+  title: string;
+  text: string;
 }
-function WineGrid({src,alt,title,text}:Props) {
-
+function WineGrid({ src, alt, title, text }: Props) {
   const [hover, setHover] = useState(false);
 
   const handleMouseEnter = () => {
@@ -20,12 +19,11 @@ function WineGrid({src,alt,title,text}:Props) {
   return (
     <>
       {hover ? (
-        <div className="relative  flex justify-center items-center group" onMouseLeave={handleMouseLeave}>
-          <img
-            className="rounded-0.5 blur-sm transition-all duration-300 "
-            src={src}
-            alt={alt}
-          />
+        <div
+          className="relative  flex justify-center items-center group"
+          onMouseLeave={handleMouseLeave}
+        >
+          <img className="rounded-0.5 blur-sm transition-all duration-300 " src={src} alt={alt} />
           <div aria-hidden className="bg-black/40 blur-sm rounded-lg inset-0 absolute"></div>
           <div className="flex flex-col items-center justify-center gap-6 absolute">
             <h4 className="text-2xl font-semibold text-background-base">{title}</h4>
@@ -46,4 +44,4 @@ function WineGrid({src,alt,title,text}:Props) {
     </>
   );
 }
-export default WineGrid
+export default WineGrid;

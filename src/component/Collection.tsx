@@ -15,8 +15,8 @@ type Item = {
 };
 
 export default function Collection({ collection }: { collection: Item[] }) {
-  const wrapperRef = useRef<HTMLDivElement>(null); 
-  const swiperRef = useRef<SwiperType | null>(null); 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const swiperRef = useRef<SwiperType | null>(null);
 
   const [activeIdx, setActiveIdx] = useState(0);
   const activeIdxRef = useRef(0);
@@ -31,12 +31,12 @@ export default function Collection({ collection }: { collection: Item[] }) {
     const rect = wrap.getBoundingClientRect();
     const vh = window.innerHeight;
     const total = wrap.offsetHeight - vh;
-    const passed = Math.min(Math.max(-rect.top, 0), total); 
-    return total > 0 ? passed / total : 0; 
+    const passed = Math.min(Math.max(-rect.top, 0), total);
+    return total > 0 ? passed / total : 0;
   };
 
   useEffect(() => {
-    const EASE = 0.14; 
+    const EASE = 0.14;
 
     const render = () => {
       const s = swiperRef.current;
@@ -59,7 +59,7 @@ export default function Collection({ collection }: { collection: Item[] }) {
           setActiveIdx(idx);
         }
       }
-      
+
       rafId.current = requestAnimationFrame(render);
     };
 
@@ -67,7 +67,7 @@ export default function Collection({ collection }: { collection: Item[] }) {
     const onResize = () => {
       const p = computeProgress();
       target.current = p;
-      current.current = p; 
+      current.current = p;
     };
 
     onResize();
@@ -80,10 +80,9 @@ export default function Collection({ collection }: { collection: Item[] }) {
       window.removeEventListener('resize', onResize);
     };
   }, []);
-  
-  const total = collection.length
-  const stickyDurationVH = total * 100;
 
+  const total = collection.length;
+  const stickyDurationVH = total * 100;
 
   return (
     <section>
@@ -96,17 +95,16 @@ export default function Collection({ collection }: { collection: Item[] }) {
               onSelect={(i) => {
                 target.current = total > 1 ? i / (total - 1) : 0;
               }}
-              side="right" 
+              side="right"
               barWidth={40}
               barHeight={4}
               barActiveWidth={80}
               barActiveHeight={4}
               gapClassName="gap-12"
-              className="mr-20" 
+              className="mr-20"
               dotClassName="bg-white/40 hover:bg-white/60 "
               activeDotClassName="bg-white"
               getLabel={(i) => `${i + 1} / ${total}`}
-            
             />
             <img
               src="/image/subHeroImg.png"
