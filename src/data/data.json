@@ -1,0 +1,441 @@
+[
+  {
+    "url": "https://www.vivino.com/chateau-petrus-pomerol/w/1166837?year=1963&price_id=9906482",
+    "extracted_at": "2025-08-25T17:39:25+0900",
+    "title": "1963 Château Pétrus Pomerol | Vivino",
+    "category": "Red wine",
+    "price": {
+      "amount": 7454371.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/RPhc1fBwT0uLKoE6_mteFQ_pb_x960.png",
+      "https://images.vivino.com/thumbs/RPhc1fBwT0uLKoE6_mteFQ_pb_x300.png"
+    ],
+    "winery": "Château Pétrus",
+    "grapes": [
+      "Cabernet Franc",
+      "Merlot"
+    ],
+    "region": [
+      "France",
+      "Pomerol"
+    ],
+    "country": "France",
+    "alcohol_content": null,
+    "wine_description": "Château Pétrus Pomerol is a Red wine. Made from Cabernet Franc, Merlot. This wine has 856 mentions of oaky notes (chocolate, tobacco, mocha).",
+    "taste": {
+      "body": 70.622115,
+      "tannic": 53.672610000000006,
+      "sweetness": 16.777272500000002,
+      "acidic": 51.88329
+    },
+    "scent": [
+      "Chocolate",
+      "Leather",
+      "Plum",
+      "Cherry",
+      "Pepper"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-margaux-chateau-margaux-premier-grand-cru-classe/w/1127795?year=1995&price_id=5221342",
+    "extracted_at": "2025-08-25T17:39:29+0900",
+    "title": "1995 Château Margaux Château Margaux (Premier Grand Cru Classé)",
+    "category": "Red wine",
+    "price": {
+      "amount": 1053335.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/DygMHm5zSi2qXX6I0Hk90A_pb_x960.png",
+      "https://images.vivino.com/thumbs/DygMHm5zSi2qXX6I0Hk90A_pb_x300.png"
+    ],
+    "winery": "Château Margaux",
+    "grapes": [
+      "Merlot",
+      "Cabernet Sauvignon"
+    ],
+    "region": [
+      "France",
+      "Margaux"
+    ],
+    "country": "France",
+    "alcohol_content": "12.5%",
+    "wine_description": "",
+    "taste": {
+      "body": 59.19950999999999,
+      "tannic": 62.8178575,
+      "sweetness": 8.020012500000002,
+      "acidic": 71.1518925
+    },
+    "scent": [
+      "Leather",
+      "Tobacco",
+      "Cassis",
+      "Cherry",
+      "Pepper"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/weingut-jakob-schneider-niederhauser-felsensteyer-riesling-trocken/w/3756275?year=2022&price_id=35951479",
+    "extracted_at": "2025-08-25T17:39:34+0900",
+    "title": "2022 Jakob Schneider Niederhäuser Felsensteyer Riesling Trocken",
+    "category": "White wine",
+    "price": {
+      "amount": 30053.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/iE_y2NRLSWKWw--znVRE3Q_pb_x960.png",
+      "https://images.vivino.com/thumbs/iE_y2NRLSWKWw--znVRE3Q_pb_x300.png"
+    ],
+    "winery": "Jakob Schneider",
+    "grapes": [
+      "Riesling"
+    ],
+    "region": [
+      "Germany",
+      "Nahe"
+    ],
+    "country": "Germany",
+    "alcohol_content": "12.5%",
+    "wine_description": "",
+    "taste": {
+      "body": 39.61514,
+      "tannic": 7.224164999999999,
+      "sweetness": 84.03422499999999,
+      "acidic": null
+    },
+    "scent": [
+      "Flint",
+      "Peach",
+      "Citrus",
+      "Mango",
+      "Gooseberry"
+    ],
+    "food": [
+      "Pork",
+      "Shellfish",
+      "Poultry",
+      "Spicy food",
+      "Cured Meat"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-mouton-rothschild-pauillac-premier-grand-cru-classe/w/1684223?year=1982&price_id=6903314",
+    "extracted_at": "2025-08-25T17:39:38+0900",
+    "title": "1982 Château Mouton Rothschild Pauillac (Premier Grand Cru Classé)",
+    "category": "Red wine",
+    "price": {
+      "amount": null,
+      "currency": null
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/cISEZc1-SIulyIwcV6Uktw_pb_x960.png",
+      "https://images.vivino.com/thumbs/cISEZc1-SIulyIwcV6Uktw_pb_x300.png"
+    ],
+    "winery": "Château Mouton Rothschild",
+    "grapes": [
+      "Cabernet Sauvignon"
+    ],
+    "region": [
+      "France",
+      "Pauillac"
+    ],
+    "country": "France",
+    "alcohol_content": "12.5%",
+    "wine_description": "The supremely elegant nose displays red fruit aromas with touches of spice. On the palate, a smooth, creamy attack yields powerful, velvet tannins. The roundness is remarkable, giving the wine very attractive length. The finish reveals vanilla and chocolate aromas, with pleasant floral notes.",
+    "taste": {
+      "body": 68.6038,
+      "tannic": 69.86613750000001,
+      "sweetness": 10.5754725,
+      "acidic": 69.37744
+    },
+    "scent": [
+      "Tobacco",
+      "Leather",
+      "Cassis",
+      "Licorice",
+      "Cherry"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-margaux-chateau-margaux-premier-grand-cru-classe/w/1127795?year=1982&price_id=836669",
+    "extracted_at": "2025-08-25T17:39:42+0900",
+    "title": "1982 Château Margaux Château Margaux (Premier Grand Cru Classé)",
+    "category": "Red wine",
+    "price": {
+      "amount": 1053335.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/DygMHm5zSi2qXX6I0Hk90A_pb_x960.png",
+      "https://images.vivino.com/thumbs/DygMHm5zSi2qXX6I0Hk90A_pb_x300.png"
+    ],
+    "winery": "Château Margaux",
+    "grapes": [
+      "Cabernet Sauvignon",
+      "Cabernet Franc",
+      "Merlot",
+      "Petit Verdot"
+    ],
+    "region": [
+      "France",
+      "Margaux"
+    ],
+    "country": "France",
+    "alcohol_content": "13.5%",
+    "wine_description": "",
+    "taste": {
+      "body": 59.19950999999999,
+      "tannic": 62.8178575,
+      "sweetness": 8.020012500000002,
+      "acidic": 71.1518925
+    },
+    "scent": [
+      "Leather",
+      "Tobacco",
+      "Cassis",
+      "Cherry",
+      "Pepper"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-margaux-chateau-margaux-premier-grand-cru-classe/w/1127795?year=1996&price_id=836982",
+    "extracted_at": "2025-08-25T17:39:46+0900",
+    "title": "1996 Château Margaux Château Margaux (Premier Grand Cru Classé)",
+    "category": "Red wine",
+    "price": {
+      "amount": 1053335.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/DygMHm5zSi2qXX6I0Hk90A_pb_x960.png",
+      "https://images.vivino.com/thumbs/DygMHm5zSi2qXX6I0Hk90A_pb_x300.png"
+    ],
+    "winery": "Château Margaux",
+    "grapes": [
+      "Merlot"
+    ],
+    "region": [
+      "France",
+      "Margaux"
+    ],
+    "country": "France",
+    "alcohol_content": "12.5%",
+    "wine_description": "",
+    "taste": {
+      "body": 59.19950999999999,
+      "tannic": 62.8178575,
+      "sweetness": 8.020012500000002,
+      "acidic": 71.1518925
+    },
+    "scent": [
+      "Leather",
+      "Tobacco",
+      "Cassis",
+      "Cherry",
+      "Pepper"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-d-yquem-sauternes-sauternes-dessert-wine/w/1153863?year=1926&price_id=25687539",
+    "extracted_at": "2025-08-25T17:39:51+0900",
+    "title": "1926 Château d'Yquem Sauternes | Vivino",
+    "category": "Dessert wine",
+    "price": {
+      "amount": 5259917.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x960.png",
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x300.png"
+    ],
+    "winery": "Château d'Yquem",
+    "grapes": [
+      "Sauvignon Blanc",
+      "Sémillon"
+    ],
+    "region": [
+      "France",
+      "Sauternes"
+    ],
+    "country": "France",
+    "alcohol_content": null,
+    "wine_description": "Château d&#39;Yquem Sauternes is a Dessert wine. Made from Sauvignon Blanc, Sémillon. This wine has 2765 mentions of earthy notes (honey, minerals, stone).",
+    "taste": {
+      "body": 84.1309125,
+      "tannic": 85.0,
+      "sweetness": 75.4803575,
+      "acidic": null
+    },
+    "scent": [
+      "Honey",
+      "Apricot",
+      "Caramel",
+      "Marmalade",
+      "Pineapple"
+    ],
+    "food": [
+      "Fruity desserts",
+      "Blue cheese"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-d-yquem-sauternes-sauternes-dessert-wine/w/1153863?year=1913&price_id=30768075",
+    "extracted_at": "2025-08-25T17:39:55+0900",
+    "title": "1913 Château d'Yquem Sauternes | Vivino",
+    "category": "Dessert wine",
+    "price": {
+      "amount": 8035050.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x960.png",
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x300.png"
+    ],
+    "winery": "Château d'Yquem",
+    "grapes": [
+      "Sauvignon Blanc",
+      "Sémillon"
+    ],
+    "region": [
+      "France",
+      "Sauternes"
+    ],
+    "country": "France",
+    "alcohol_content": null,
+    "wine_description": "Château d&#39;Yquem Sauternes is a Dessert wine. Made from Sauvignon Blanc, Sémillon. This wine has 2765 mentions of earthy notes (honey, minerals, stone).",
+    "taste": {
+      "body": 84.1309125,
+      "tannic": 85.0,
+      "sweetness": 75.4803575,
+      "acidic": null
+    },
+    "scent": [
+      "Honey",
+      "Apricot",
+      "Caramel",
+      "Marmalade",
+      "Pineapple"
+    ],
+    "food": [
+      "Fruity desserts",
+      "Blue cheese"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-d-yquem-sauternes-sauternes-dessert-wine/w/1153863?year=1920&price_id=25352322",
+    "extracted_at": "2025-08-25T17:40:00+0900",
+    "title": "1920 Château d'Yquem Sauternes | Vivino",
+    "category": "Dessert wine",
+    "price": {
+      "amount": 14382074.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x960.png",
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x300.png"
+    ],
+    "winery": "Château d'Yquem",
+    "grapes": [
+      "Sauvignon Blanc",
+      "Sémillon"
+    ],
+    "region": [
+      "France",
+      "Sauternes"
+    ],
+    "country": "France",
+    "alcohol_content": "14.0%",
+    "wine_description": "Château d&#39;Yquem Sauternes is a Dessert wine. Made from Sauvignon Blanc, Sémillon. This wine has 2765 mentions of earthy notes (honey, minerals, stone).",
+    "taste": {
+      "body": 84.1309125,
+      "tannic": 85.0,
+      "sweetness": 75.4803575,
+      "acidic": null
+    },
+    "scent": [
+      "Honey",
+      "Apricot",
+      "Caramel",
+      "Marmalade",
+      "Pineapple"
+    ],
+    "food": [
+      "Fruity desserts",
+      "Blue cheese"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/royal-tokaji-essencia/w/1140747?year=2000&price_id=14539409",
+    "extracted_at": "2025-08-25T17:40:04+0900",
+    "title": "2000 Royal Tokaji Essencia",
+    "category": "Dessert wine",
+    "price": {
+      "amount": 1014899.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/1v-6QFBrRdqpfhCqaUUbLQ_pb_x960.png"
+    ],
+    "winery": "Royal Tokaji",
+    "grapes": [
+      "Yellow Muscat",
+      "Hárslevelű",
+      "Furmint"
+    ],
+    "region": [
+      "Hungary",
+      "Tokaj"
+    ],
+    "country": "Hungary",
+    "alcohol_content": null,
+    "wine_description": "So concentrated that you can almost bite into it this wine has the distilled essence of ripe plums, apricot jam and honey wrapped in a cloak of botrytis character. The flavours remain with you for hours.",
+    "taste": {
+      "body": null,
+      "tannic": null,
+      "sweetness": null,
+      "acidic": null
+    },
+    "scent": [
+      "Honey",
+      "Peach",
+      "Raisin",
+      "Caramel",
+      "Citrus"
+    ],
+    "food": []
+  }
+]
