@@ -3,7 +3,7 @@ import { NavLink } from 'react-router';
 
 function RealHeader() {
   return (
-    <div className="bg-primary-500 h-17.5 w-full flex items-center justify-center">
+    <div className="bg-primary-500 h-17.5 w-full flex items-center justify-center fixed z-99">
       <div className="w-360 flex justify-between items-center px-10 py-2">
         <h1 className="w-41.5 h-11.75 flex items-center pt-1">
           <NavLink to="/">
@@ -11,7 +11,7 @@ function RealHeader() {
           </NavLink>
         </h1>
         <nav className="flex items-center gap-4">
-          <button type="button">
+          <button className="cursor-pointer" type="button">
             <svg
               width="25"
               height="25"
@@ -66,8 +66,7 @@ function SkeletonHeader() {
 }
 
 function Header() {
-
-const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   // useEffect(() => {
   //   setTimeout(() => {
   //     setIsLoading(true)

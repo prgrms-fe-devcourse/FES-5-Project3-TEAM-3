@@ -21,4 +21,4 @@ function CommunityWrite() {
     </div>
   );
 }
-export default CommunityWrite
+export default CommunityWrite;
