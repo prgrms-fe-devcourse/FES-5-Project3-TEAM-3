@@ -1,6 +1,7 @@
 import WineGrid from "@/component/WineGrid";
 import { useState } from "react";
 import Collection from "@/component/Collection";
+import ShowMoreBtn from "@/component/ShowMoreBtn";
 
 
 function MainPage() {
@@ -137,9 +138,7 @@ function MainPage() {
         <h3 className="text-[108px]">Trending Posts</h3>
         <div className="mt-13 flex items-center">
           <div className="rounded-2xl w-70 h-90 bg-gray-600"></div>
-          <button className="rounded-full border-1 w-20 h-20 ml-17 cursor-pointer   " type="button">
-            전체보기
-          </button>
+            <ShowMoreBtn/>
         </div>
       </section>
     </main>

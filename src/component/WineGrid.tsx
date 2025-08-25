@@ -27,7 +27,7 @@ function WineGrid({src,alt,title,text}:Props) {
             alt={alt}
           />
           <div aria-hidden className="bg-black/40 blur-sm rounded-lg inset-0 absolute"></div>
-          <div className="flex flex-col items-center justify-center gap-6 absolute ">
+          <div className="flex flex-col items-center justify-center gap-6 absolute">
             <h4 className="text-2xl font-semibold text-background-base">{title}</h4>
             <p className="text-background-base">{text}</p>
             <button
