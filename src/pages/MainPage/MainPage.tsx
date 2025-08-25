@@ -1,7 +1,7 @@
-import WineGrid from '@/component/WineGrid';
+import WineGrid from '@/pages/MainPage/WineGrid';
 import { useState } from 'react';
-import Collection from '@/component/Collection';
-import ShowMoreBtn from '@/component/ShowMoreBtn';
+import Collection from '@/pages/MainPage/Collection';
+import ShowMoreBtn from '@/pages/MainPage/ShowMoreBtn';
 
 function MainPage() {
   const winesArr = [
@@ -10,21 +10,21 @@ function MainPage() {
       src: '/image/CS.png',
       alt: '카베르네소비뇽',
       title: 'Cabernet Sauvignon',
-      text: `진한 바디와 강렬한 탄닌, 스테이크와 완벽한 조화`,
+      text: `진한 바디와 강렬한 탄닌,스테이크와 완벽한 조화`,
     },
     {
       id: 1,
       src: '/image/FranceWine.png',
       alt: '프랑스와인',
       title: 'France',
-      text: `고전 와인의 본 고장  지역별로 다른 매력을 발견하세요`,
+      text: `고전 와인의 본 고장 지역별로 다른 매력을 발견하세요`,
     },
     {
       id: 2,
       src: '/image/melot.png',
       alt: '멜롯',
       title: 'Melot',
-      text: `부드럽고 과일향 가득,누구나 즐기기 좋은 와인`,
+      text: `부드럽고 과일향 가득, 누구나 즐기기 좋은 와인`,
     },
     {
       id: 3,
@@ -60,14 +60,14 @@ function MainPage() {
       src: '/image/usaWine.png',
       alt: '미국와인',
       title: 'USA',
-      text: `혁신과 전통이 공존하는,세계가 주목하는 와인 산지`,
+      text: `혁신과 전통이 공존하는, 세계가 주목하는 와인 산지`,
     },
     {
       id: 8,
       src: '/image/shauvignonBlanc.png',
       alt: '소비뇽 블랑',
       title: 'Sauvignon Blanc',
-      text: `상쾌한 산미와 허브향,여름에 딱 맞는 화이트 와인`,
+      text: `상쾌한 산미와 허브향, 여름에 딱 맞는 화이트 와인`,
     },
   ];
 
