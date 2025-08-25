@@ -113,9 +113,7 @@ function MainPage() {
       <section className="relative">
         <img className="block" src="/image/HeroImg.png" alt="메인이미지" />
         <h2 className="absolute left-85.5 bottom-38 text-primary-100 text-[108px]">
-          WinePedia
-          <br />
-          Explore, Taste, Enjoy
+          <img src="image/HeroText.png" alt="" />
         </h2>
       </section>
 
@@ -133,7 +131,9 @@ function MainPage() {
       </section>
 
       <section className="h-200 mt-35 flex flex-col items-center">
-        <h3 className="text-[108px]">Trending Posts</h3>
+        <h3 className="text-[108px]">
+          <img src="image/Trending posts.png" alt="" />
+        </h3>
         <div className="mt-13 flex items-center">
           <div className="rounded-2xl w-70 h-90 bg-gray-600"></div>
           <ShowMoreBtn />

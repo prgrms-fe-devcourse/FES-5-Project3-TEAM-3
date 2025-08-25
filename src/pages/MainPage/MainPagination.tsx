@@ -81,12 +81,8 @@ export default function VerticalPagination({
       onKeyDown={onKey}
     >
       {Array.from({ length: total }).map((_, i) => {
-        const isActive = i === active;
-
-        // 버튼(바깥)은 활성 크기로 고정 → 레이아웃 흔들림 방지
+        const isActive = i === active
         const outerStyle: React.CSSProperties = { width: aw, height: ah };
-
-        // 내부 막대는 비활성 크기에서 활성일 때 scale로 확대
         const scaleX = iw ? aw / iw : 1;
         const scaleY = ih ? ah / ih : 1;
 

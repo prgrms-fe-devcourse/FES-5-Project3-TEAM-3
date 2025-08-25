@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Pagination } from 'swiper/modules';
@@ -34,10 +34,21 @@ export default function Collection({ collection }: { collection: Item[] }) {
     const passed = Math.min(Math.max(-rect.top, 0), total);
     return total > 0 ? passed / total : 0;
   };
+  
+  const scrollToProgress = useCallback((p: number) => {
+    const wrap = wrapperRef.current;
+    if (!wrap) return;
+
+    const rect = wrap.getBoundingClientRect();
+    const startY = window.scrollY + rect.top;
+    const total = wrap.offsetHeight - window.innerHeight;
+    const y = Math.round(startY + total * p);
+
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }, []);
 
   useEffect(() => {
     const EASE = 0.14;
-
     const render = () => {
       const s = swiperRef.current;
       if (s) {
@@ -59,7 +70,6 @@ export default function Collection({ collection }: { collection: Item[] }) {
           setActiveIdx(idx);
         }
       }
-
       rafId.current = requestAnimationFrame(render);
     };
 
@@ -93,7 +103,8 @@ export default function Collection({ collection }: { collection: Item[] }) {
               total={total}
               active={activeIdx}
               onSelect={(i) => {
-                target.current = total > 1 ? i / (total - 1) : 0;
+                const p = total > 1 ? i / (total - 1) : 0;
+                scrollToProgress(p);
               }}
               side="right"
               barWidth={40}
@@ -113,8 +124,10 @@ export default function Collection({ collection }: { collection: Item[] }) {
             />
 
             <div className="absolute inset-0 z-10 grid grid-cols-2 gap-94 max-w-6xl mx-auto px-6 py-8">
-              <div className="text-white flex flex-col mt-30 ">
-                <h3 className="text-[108px] leading-none">User Collection</h3>
+              <div className="text-white flex flex-col mt-30">
+                <h3 className="text-[108px] leading-none">
+                  <img src="image/User Collection.png" alt="유저컬렉션" />
+                </h3>
                 <p className="mt-4">
                   Winepedia의 멤버들이 엄선한 와인들을 구경해보세요 <br /> 당신의 와인생활이 더
                   풍성해 질 수 있습니다
