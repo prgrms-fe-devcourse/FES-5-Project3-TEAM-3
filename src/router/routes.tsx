@@ -1,5 +1,6 @@
-import { lazy } from 'react';
-import { createBrowserRouter } from 'react-router';
+import { lazy } from "react";
+import { createBrowserRouter } from "react-router";
+import CommunityWrite from "@/pages/community/CommunityWrite";
 
 /* Code Splitting */
 const Root = lazy(() => import('@/pages'));
@@ -10,12 +11,15 @@ export const routes = createBrowserRouter([
     path: '/',
     Component: Root,
     children: [
-
       {
         path: 'my-page',
         Component: MyPageLayout,
 
-      }
+      },
+      {
+        path: 'community/write',
+        element: <CommunityWrite />,
+      },
     ]
   }
-])
+]);
