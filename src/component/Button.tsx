@@ -55,11 +55,10 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
 }
 
 function Button( { 
-  children, 
-  type = "button" as const, 
-  size,
-  borderType, 
-  color, 
+  children,
+  size = "lg",
+  borderType = "solid", 
+  color = "primary", 
   className,
   hasIcon = false,
   fullWidth = false,
@@ -67,7 +66,6 @@ function Button( {
  }:ButtonProps ) {
   return (
     <button
-      type={type}
       className={tw(
         buttonVariants({ size, borderType, color }),
         hasIcon && "gap-2",
