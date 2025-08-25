@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router";
 import CommunityWrite from "@/pages/community/CommunityWrite";
 
 /* Code Splitting */
-const Root = lazy(() => import('@/pages'))
+const Root = lazy(() => import('@/pages'));
 
 export const routes = createBrowserRouter([
   {
