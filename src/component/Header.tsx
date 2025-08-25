@@ -3,7 +3,7 @@ import { NavLink } from 'react-router';
 
 function RealHeader() {
   return (
-    <div className="bg-primary-500 h-17.5 w-full flex items-center justify-center">
+    <div className="bg-primary-500 h-17.5 w-full flex items-center justify-center fixed z-99">
       <div className="w-360 flex justify-between items-center px-10 py-2">
         <h1 className="w-41.5 h-11.75 flex items-center pt-1">
           <NavLink to="/">
@@ -11,7 +11,7 @@ function RealHeader() {
           </NavLink>
         </h1>
         <nav className="flex items-center gap-4">
-          <button type="button">
+          <button className='cursor-pointer' type="button">
             <svg
               width="25"
               height="25"
@@ -31,8 +31,8 @@ function RealHeader() {
           <NavLink to="" className="font-semibold text-secondary-50">
             Community
           </NavLink>
-          <NavLink to="" className="flex font-semibold text-secondary-50">
-            <img src="icon/fi-rr-glass-cheers.png" alt="로그인아이콘" />
+          <NavLink to="" className="flex gap-1 items-center font-semibold text-secondary-50">
+            <img className='h-7.5 w-7.5' src="icon/fi-rr-glass-cheers.png" alt="로그인아이콘" />
             Login
           </NavLink>
         </nav>
