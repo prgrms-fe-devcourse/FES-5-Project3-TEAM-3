@@ -1,0 +1,435 @@
+[
+  {
+    "url": "https://www.vivino.com/chateau-lafite-rothschild-pauillac-premier-grand-cru-classe-pauillac/w/3908?year=1990&price_id=37844096",
+    "extracted_at": "2025-08-25T16:53:52+0900",
+    "title": "1990 Château Lafite Rothschild Pauillac (Premier Grand Cru Classé)",
+    "price": {
+      "amount": 1107347.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/uDMfPG10R1efm5H1do--Ow_pb_x960.png",
+      "https://images.vivino.com/thumbs/uDMfPG10R1efm5H1do--Ow_pb_x300.png"
+    ],
+    "winery": "Château Lafite Rothschild",
+    "grapes": [
+      "Cabernet Sauvignon"
+    ],
+    "region": [
+      "France",
+      "Pauillac"
+    ],
+    "country": "France",
+    "alcohol_content": "13.5%",
+    "wine_description": "",
+    "taste": {
+      "body": 66.762745,
+      "tannic": 69.702,
+      "sweetness": 9.679499999999997,
+      "acidic": 69.80001250000001
+    },
+    "scent": [
+      "Tobacco",
+      "Leather",
+      "Cassis",
+      "Cherry",
+      "Pepper"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-d-yquem-sauternes-sauternes-dessert-wine/w/1153863?year=1927&price_id=92744",
+    "extracted_at": "2025-08-25T16:53:57+0900",
+    "title": "1927 Château d'Yquem Sauternes | Vivino",
+    "price": {
+      "amount": 6076932.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x960.png",
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x300.png"
+    ],
+    "winery": "Château d'Yquem",
+    "grapes": [
+      "Sauvignon Blanc",
+      "Sémillon"
+    ],
+    "region": [
+      "France",
+      "Sauternes"
+    ],
+    "country": "France",
+    "alcohol_content": "14.0%",
+    "wine_description": "Château d&#39;Yquem Sauternes is a Dessert wine. Made from Sauvignon Blanc, Sémillon. This wine has 2765 mentions of earthy notes (honey, minerals, stone).",
+    "taste": {
+      "body": 84.1309125,
+      "tannic": 85.0,
+      "sweetness": 75.4803575,
+      "acidic": null
+    },
+    "scent": [
+      "Honey",
+      "Apricot",
+      "Caramel",
+      "Marmalade",
+      "Pineapple"
+    ],
+    "food": [
+      "Fruity desserts",
+      "Blue cheese"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/haut-brion-pessac-leognan-premier-grand-cru-classe/w/1152755?year=1989&price_id=1784840",
+    "extracted_at": "2025-08-25T16:54:01+0900",
+    "title": "1989 Château Haut-Brion Pessac-Léognan (Premier Grand Cru Classé)",
+    "price": {
+      "amount": 958810.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/zYnEA1HDTbem61srl6q0Tw_pb_x960.png",
+      "https://images.vivino.com/thumbs/zYnEA1HDTbem61srl6q0Tw_pb_x300.png"
+    ],
+    "winery": "Château Haut-Brion",
+    "grapes": [
+      "Merlot",
+      "Cabernet Sauvignon",
+      "Cabernet Franc"
+    ],
+    "region": [
+      "France",
+      "Pessac-Léognan"
+    ],
+    "country": "France",
+    "alcohol_content": "13.5%",
+    "wine_description": "",
+    "taste": {
+      "body": 69.307965,
+      "tannic": 73.037325,
+      "sweetness": 9.430840000000003,
+      "acidic": 72.726935
+    },
+    "scent": [
+      "Leather",
+      "Tobacco",
+      "Black fruit",
+      "Cherry",
+      "Licorice"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-d-yquem-sauternes-sauternes-dessert-wine/w/1153863?year=2005&price_id=5480117",
+    "extracted_at": "2025-08-25T16:54:07+0900",
+    "title": "2005 Château d'Yquem Sauternes",
+    "price": {
+      "amount": 607693.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x960.png",
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x300.png"
+    ],
+    "winery": "Château d'Yquem",
+    "grapes": [
+      "Sémillon"
+    ],
+    "region": [
+      "France",
+      "Sauternes"
+    ],
+    "country": "France",
+    "alcohol_content": "13.5%",
+    "wine_description": "",
+    "taste": {
+      "body": 84.1309125,
+      "tannic": 85.0,
+      "sweetness": 75.4803575,
+      "acidic": null
+    },
+    "scent": [
+      "Honey",
+      "Apricot",
+      "Caramel",
+      "Marmalade",
+      "Pineapple"
+    ],
+    "food": [
+      "Fruity desserts",
+      "Blue cheese"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/e-guigal-cote-rotie-la-landonne/w/36404?year=1990&price_id=3592871",
+    "extracted_at": "2025-08-25T16:54:11+0900",
+    "title": "1990 E. Guigal Côte-Rôtie La Landonne",
+    "price": {
+      "amount": null,
+      "currency": null
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/u4ylBcQmSGCaaEBN_doYsQ_pb_x960.png",
+      "https://images.vivino.com/thumbs/u4ylBcQmSGCaaEBN_doYsQ_pb_x300.png"
+    ],
+    "winery": "E. Guigal",
+    "grapes": [
+      "Shiraz/Syrah"
+    ],
+    "region": [
+      "France",
+      "Côte-Rôtie"
+    ],
+    "country": "France",
+    "alcohol_content": "13.5%",
+    "wine_description": "Eye: Red black with deep dark tints. Nose: Small black fruits, liquorice and roasted notes and oriental spices. Powerful and intense aromas. Palate: Powerful attack with important tannic structure.",
+    "taste": {
+      "body": 74.3679575,
+      "tannic": 70.66872500000001,
+      "sweetness": 10.121035000000003,
+      "acidic": 64.857005
+    },
+    "scent": [
+      "Leather",
+      "Black fruit",
+      "Oak",
+      "Pepper",
+      "Cherry"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-d-yquem-sauternes-sauternes-dessert-wine/w/1153863?year=1926&price_id=25687539",
+    "extracted_at": "2025-08-25T16:54:15+0900",
+    "title": "1926 Château d'Yquem Sauternes | Vivino",
+    "price": {
+      "amount": 5259917.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x960.png",
+      "https://images.vivino.com/thumbs/Jt7xLGXcSA22gVYMyBJjGg_pb_x300.png"
+    ],
+    "winery": "Château d'Yquem",
+    "grapes": [
+      "Sauvignon Blanc",
+      "Sémillon"
+    ],
+    "region": [
+      "France",
+      "Sauternes"
+    ],
+    "country": "France",
+    "alcohol_content": null,
+    "wine_description": "Château d&#39;Yquem Sauternes is a Dessert wine. Made from Sauvignon Blanc, Sémillon. This wine has 2765 mentions of earthy notes (honey, minerals, stone).",
+    "taste": {
+      "body": 84.1309125,
+      "tannic": 85.0,
+      "sweetness": 75.4803575,
+      "acidic": null
+    },
+    "scent": [
+      "Honey",
+      "Apricot",
+      "Caramel",
+      "Marmalade",
+      "Pineapple"
+    ],
+    "food": [
+      "Fruity desserts",
+      "Blue cheese"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-petrus-pomerol/w/1166837?year=1958&price_id=39520668",
+    "extracted_at": "2025-08-25T16:54:20+0900",
+    "title": "1958 Château Pétrus Pomerol | Vivino",
+    "price": {
+      "amount": 7454371.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/RPhc1fBwT0uLKoE6_mteFQ_pb_x960.png",
+      "https://images.vivino.com/thumbs/RPhc1fBwT0uLKoE6_mteFQ_pb_x300.png"
+    ],
+    "winery": "Château Pétrus",
+    "grapes": [
+      "Cabernet Franc",
+      "Merlot"
+    ],
+    "region": [
+      "France",
+      "Pomerol"
+    ],
+    "country": "France",
+    "alcohol_content": null,
+    "wine_description": "Château Pétrus Pomerol is a Red wine. Made from Cabernet Franc, Merlot. This wine has 856 mentions of oaky notes (chocolate, tobacco, mocha).",
+    "taste": {
+      "body": 70.622115,
+      "tannic": 53.672610000000006,
+      "sweetness": 16.777272500000002,
+      "acidic": 51.88329
+    },
+    "scent": [
+      "Chocolate",
+      "Leather",
+      "Plum",
+      "Cherry",
+      "Pepper"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-petrus-pomerol/w/1166837?year=1968&price_id=9609069",
+    "extracted_at": "2025-08-25T16:54:24+0900",
+    "title": "1968 Château Pétrus Pomerol | Vivino",
+    "price": {
+      "amount": 7123510.0,
+      "currency": "KRW"
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/RPhc1fBwT0uLKoE6_mteFQ_pb_x960.png",
+      "https://images.vivino.com/thumbs/RPhc1fBwT0uLKoE6_mteFQ_pb_x300.png"
+    ],
+    "winery": "Château Pétrus",
+    "grapes": [
+      "Cabernet Franc",
+      "Merlot"
+    ],
+    "region": [
+      "France",
+      "Pomerol"
+    ],
+    "country": "France",
+    "alcohol_content": null,
+    "wine_description": "Château Pétrus Pomerol is a Red wine. Made from Cabernet Franc, Merlot. This wine has 856 mentions of oaky notes (chocolate, tobacco, mocha).",
+    "taste": {
+      "body": 70.622115,
+      "tannic": 53.672610000000006,
+      "sweetness": 16.777272500000002,
+      "acidic": 51.88329
+    },
+    "scent": [
+      "Chocolate",
+      "Leather",
+      "Plum",
+      "Cherry",
+      "Pepper"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-mouton-rothschild-pauillac-premier-grand-cru-classe/w/1684223?year=1986&price_id=837589",
+    "extracted_at": "2025-08-25T16:54:29+0900",
+    "title": "1986 Château Mouton Rothschild Pauillac (Premier Grand Cru Classé)",
+    "price": {
+      "amount": null,
+      "currency": null
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/2IQ2yluISw2JkjYh81D8-w_pb_x960.png",
+      "https://images.vivino.com/thumbs/2IQ2yluISw2JkjYh81D8-w_pb_x300.png"
+    ],
+    "winery": "Château Mouton Rothschild",
+    "grapes": [
+      "Cabernet Sauvignon",
+      "Merlot",
+      "Cabernet Franc",
+      "Petit Verdot"
+    ],
+    "region": [
+      "France",
+      "Pauillac"
+    ],
+    "country": "France",
+    "alcohol_content": "12.5%",
+    "wine_description": "The supremely elegant nose displays red fruit aromas with touches of spice. On the palate, a smooth, creamy attack yields powerful, velvet tannins. The roundness is remarkable, giving the wine very attractive length. The finish reveals vanilla and chocolate aromas, with pleasant floral notes.",
+    "taste": {
+      "body": 68.6038,
+      "tannic": 69.86613750000001,
+      "sweetness": 10.5754725,
+      "acidic": 69.37744
+    },
+    "scent": [
+      "Tobacco",
+      "Leather",
+      "Cassis",
+      "Licorice",
+      "Cherry"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  },
+  {
+    "url": "https://www.vivino.com/chateau-mouton-rothschild-pauillac-premier-grand-cru-classe/w/1684223?year=1982&price_id=6903314",
+    "extracted_at": "2025-08-25T16:54:33+0900",
+    "title": "1982 Château Mouton Rothschild Pauillac (Premier Grand Cru Classé)",
+    "price": {
+      "amount": null,
+      "currency": null
+    },
+    "images": [
+      "https://images.vivino.com/thumbs/cISEZc1-SIulyIwcV6Uktw_pb_x960.png",
+      "https://images.vivino.com/thumbs/cISEZc1-SIulyIwcV6Uktw_pb_x300.png"
+    ],
+    "winery": "Château Mouton Rothschild",
+    "grapes": [
+      "Cabernet Sauvignon"
+    ],
+    "region": [
+      "France",
+      "Pauillac"
+    ],
+    "country": "France",
+    "alcohol_content": "12.5%",
+    "wine_description": "The supremely elegant nose displays red fruit aromas with touches of spice. On the palate, a smooth, creamy attack yields powerful, velvet tannins. The roundness is remarkable, giving the wine very attractive length. The finish reveals vanilla and chocolate aromas, with pleasant floral notes.",
+    "taste": {
+      "body": 68.6038,
+      "tannic": 69.86613750000001,
+      "sweetness": 10.5754725,
+      "acidic": 69.37744
+    },
+    "scent": [
+      "Tobacco",
+      "Leather",
+      "Cassis",
+      "Licorice",
+      "Cherry"
+    ],
+    "food": [
+      "Beef",
+      "Lamb",
+      "Poultry",
+      "Game (deer, venison)"
+    ]
+  }
+]
