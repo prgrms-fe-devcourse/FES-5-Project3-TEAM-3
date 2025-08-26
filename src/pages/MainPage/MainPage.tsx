@@ -111,9 +111,13 @@ function MainPage() {
   return (
     <main>
       <section className="relative">
-        <img className="block" src="/image/HeroImg.png" alt="메인이미지" />
+        <img
+          className="block w-screen h-screen"
+          src="/image/HeroImg.png"
+          alt=",와인과 석류 이미지"
+        />
         <h2 className="absolute left-85.5 bottom-38 text-primary-100 text-[108px]">
-          <img src="image/HeroText.png" alt="" />
+          <img src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
         </h2>
       </section>
 
@@ -132,7 +136,7 @@ function MainPage() {
 
       <section className="h-200 mt-35 flex flex-col items-center">
         <h3 className="text-[108px]">
-          <img src="image/Trending posts.png" alt="" />
+          <img src="image/Trending posts.png" alt="trending posts" />
         </h3>
         <div className="mt-13 flex items-center">
           <div className="rounded-2xl w-70 h-90 bg-gray-600"></div>

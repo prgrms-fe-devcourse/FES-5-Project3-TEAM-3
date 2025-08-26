@@ -81,7 +81,7 @@ export default function VerticalPagination({
       onKeyDown={onKey}
     >
       {Array.from({ length: total }).map((_, i) => {
-        const isActive = i === active
+        const isActive = i === active;
         const outerStyle: React.CSSProperties = { width: aw, height: ah };
         const scaleX = iw ? aw / iw : 1;
         const scaleY = ih ? ah / ih : 1;
