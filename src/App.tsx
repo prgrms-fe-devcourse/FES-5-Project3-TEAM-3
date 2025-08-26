@@ -4,13 +4,12 @@ import { useEffect } from 'react';
 import { useAuth } from './store/@store';
 
 function App() {
-
   useEffect(() => {
     const unsub = useAuth.getState().subscribe();
-    useAuth.getState().fetch()
-    return unsub
-  }, [])
-  
+    useAuth.getState().fetch();
+    return unsub;
+  }, []);
+
   return (
     <div>
       <RouterProvider router={routes} />

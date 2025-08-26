@@ -4,12 +4,12 @@ import { NavLink } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 
 function RealHeader() {
-  const { userId,signOut } = useAuth(
+  const { userId, signOut } = useAuth(
     useShallow((s) => ({
       userId: s.userId,
-      signOut: s.signOut
+      signOut: s.signOut,
     }))
-  ) 
+  );
   return (
     <div className="h-17.5">
       <div className="bg-primary-500 h-17.5 w-full flex items-center  justify-center fixed z-99 ">
@@ -42,15 +42,15 @@ function RealHeader() {
             </NavLink>
 
             {userId ? (
-              <div className='flex gap-4 items-center'>
+              <div className="flex gap-4 items-center">
                 <button
                   type="button"
                   onClick={signOut}
-                  className="cursor-pointer text-secondary-50 font-semibold" 
+                  className="cursor-pointer text-secondary-50 font-semibold"
                 >
                   Logout
                 </button>
-                <div className='rounded-full w-10 h-10 flex'>
+                <div className="rounded-full w-10 h-10 flex">
                   <img src="/image/github.png" alt="프로필이미지" />
                 </div>
               </div>
