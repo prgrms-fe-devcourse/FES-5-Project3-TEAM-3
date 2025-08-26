@@ -111,7 +111,11 @@ function MainPage() {
   return (
     <main>
       <section className="relative">
-        <img className="block w-screen h-screen" src="/image/HeroImg.png" alt=",와인과 석류 이미지" />
+        <img
+          className="block w-screen h-screen"
+          src="/image/HeroImg.png"
+          alt=",와인과 석류 이미지"
+        />
         <h2 className="absolute left-85.5 bottom-38 text-primary-100 text-[108px]">
           <img src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
         </h2>

@@ -34,7 +34,7 @@ export default function Collection({ collection }: { collection: Item[] }) {
     const passed = Math.min(Math.max(-rect.top, 0), total);
     return total > 0 ? passed / total : 0;
   };
-  
+
   const scrollToProgress = useCallback((p: number) => {
     const wrap = wrapperRef.current;
     if (!wrap) return;

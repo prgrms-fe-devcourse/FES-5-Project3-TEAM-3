@@ -1,5 +1,5 @@
-import Button from "@/component/Button";
-import { Link } from "react-router";
+import Button from '@/component/Button';
+import { Link } from 'react-router';
 
 function Register() {
   return (
@@ -45,9 +45,12 @@ function Register() {
           </div>
         </div>
         <div className="flex flex-col gap-4 items-center">
-          <Button color='primary'>Create an Account</Button>
+          <Button color="primary">Create an Account</Button>
           <p className="text-sm text-text-secondary font-light">
-            이미 winepedia회원이신가요? <Link to="../login" className="text-sm text-primary-500 font-semibold">로그인 하러 가기</Link>
+            이미 winepedia회원이신가요?{' '}
+            <Link to="../login" className="text-sm text-primary-500 font-semibold">
+              로그인 하러 가기
+            </Link>
           </p>
         </div>
       </section>
@@ -57,4 +60,4 @@ function Register() {
     </div>
   );
 }
-export default Register
+export default Register;

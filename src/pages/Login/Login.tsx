@@ -1,5 +1,5 @@
-import Button from "@/component/Button"
-import { Link } from "react-router"
+import Button from '@/component/Button';
+import { Link } from 'react-router';
 
 function Login() {
   return (
@@ -52,4 +52,4 @@ function Login() {
     </>
   );
 }
-export default Login
+export default Login;
