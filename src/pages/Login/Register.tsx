@@ -1,58 +1,45 @@
 import Button from '@/component/Button';
 import VisibleBtn from '@/component/VisibleBtn';
-import Visible from '@/component/VisibleBtn';
 import supabase from '@/supabase/supabase';
-import { useId, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
-
 function Register() {
+  const [nickname, setNickName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const nicknameId = useId()
-  const emailId = useId()
-  const pwId= useId()
-  const pwConfirmId = useId()
+  const navigate = useNavigate();
+  const pwRef = useRef<HTMLInputElement | null>(null);
+  const pwConfirmRef = useRef<HTMLInputElement | null>(null);
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-
-  const [nickname,setNickName] = useState('')
-  const [email,setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword,setConfirmPassword] = useState('')
-  const navigate = useNavigate()
-
-
-  const handleSignUp = async(e:React.FormEvent) => {
-    e.preventDefault()
-
-  
-    if (!nickname.trim()) alert('닉네임을 입력해주세요')
-    if (!email.trim()) alert('이메일을 입력해주세요')
-    if (!password.trim()) alert('비밀번호를 입력해주세요')
+    if (!nickname.trim()) alert('닉네임을 입력해주세요');
+    if (!email.trim()) alert('이메일을 입력해주세요');
+    if (!password.trim()) alert('비밀번호를 입력해주세요');
     if (password !== confirmPassword) {
-        alert('비밀번호를 다시 확인해주세요');
-        return;
-    }
-
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data:{ nickname }
-        }
-      })
-    if (error) { 
-      console.error(error);
-      alert('회원가입 실패')
+      alert('비밀번호를 다시 확인해주세요');
       return;
     }
 
-    else {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { nickname },
+      },
+    });
+    if (error) {
+      console.error(error);
+      alert('회원가입 실패');
+      return;
+    } else {
       alert('회원가입성공');
       navigate('../login');
     }
-
-  }
-
+  };
 
   return (
     <div className="flex m-98 mt-10 items-center justify-between">
@@ -66,12 +53,12 @@ function Register() {
         </div>
         <form onSubmit={handleSignUp} className="flex flex-col gap-4">
           <div className="flex items-center gap-4 bg-secondary-50 border-1 border-[#8e95a9] rounded-2xl px-6 py-4">
-            <label htmlFor={nicknameId}>
+            <label htmlFor="nickname">
               <img src="/icon/profileIcon.svg" alt="닉네임아이콘" />
             </label>
             <input
               className="outline-none"
-              id={nicknameId}
+              id="nickname"
               type="text"
               value={nickname}
               onChange={(e) => setNickName(e.target.value)}
@@ -79,11 +66,11 @@ function Register() {
             />
           </div>
           <div className="flex items-center gap-4 bg-secondary-50 border-1 border-[#8e95a9] rounded-2xl px-6 py-4">
-            <label htmlFor={emailId}>
+            <label htmlFor="email">
               <img src="/icon/email.svg" alt="이메일아이콘" />
             </label>
             <input
-              id={emailId}
+              id="email"
               className="outline-none"
               type="email"
               value={email}
@@ -92,12 +79,13 @@ function Register() {
             />
           </div>
           <div className="flex items-center justify-between bg-secondary-50 border-1 border-[#8e95a9] rounded-2xl px-6 py-4">
-            <div className='flex items-center gap-4'>
-              <label htmlFor={pwId}>
+            <div className="flex items-center gap-4">
+              <label htmlFor="password">
                 <img src="/icon/password.svg" alt="비밀번호 아이콘" />
               </label>
               <input
-                id={pwId}
+                id="password"
+                ref={pwRef}
                 className="outline-none"
                 type="password"
                 value={password}
@@ -105,15 +93,16 @@ function Register() {
                 placeholder="비밀번호를 입력하세요"
               />
             </div>
-            <VisibleBtn/>
+            <VisibleBtn ref={pwRef} />
           </div>
           <div className="flex items-center justify-between   bg-secondary-50 border-1 border-[#8e95a9] rounded-2xl px-6 py-4">
             <div className="flex gap-4 items-center">
-              <label htmlFor={pwConfirmId}>
+              <label htmlFor="passwordConfirm">
                 <img src="/icon/password.svg" alt="비밀번호아이콘" />
               </label>
               <input
-                id={pwConfirmId}
+                id="passwordConfirm"
+                ref={pwConfirmRef}
                 className="outline-none"
                 value={confirmPassword}
                 type="password"
@@ -121,7 +110,7 @@ function Register() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
-            <VisibleBtn/>
+            <VisibleBtn ref={pwConfirmRef} />
           </div>
           <div className="flex flex-col gap-4 items-center">
             <Button type="submit" color="primary">
