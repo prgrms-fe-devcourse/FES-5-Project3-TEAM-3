@@ -29,8 +29,8 @@ function LeftContent() {
     !imageNames || imageNames.length === 0
       ? '선택된 이미지가 없습니다.'
       : imageNames.length <= 3
-      ? imageNames.join(', ')
-      : `${imageNames.slice(0, 3).join(', ')} 외 ${imageNames.length - 3}개`;
+        ? imageNames.join(', ')
+        : `${imageNames.slice(0, 3).join(', ')} 외 ${imageNames.length - 3}개`;
 
   const preventFormSubmit = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') e.preventDefault();
