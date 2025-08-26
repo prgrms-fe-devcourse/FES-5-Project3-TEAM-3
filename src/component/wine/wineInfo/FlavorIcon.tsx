@@ -24,7 +24,7 @@ function FlavorIcon({ flavor }: { flavor: string }) {
       />
       <p
         ref={textRef}
-        className={`text-sm whitespace-nowrap transform transition-transform duration-1000 ${
+        className={`text-sm text-text-secondary font-normal  whitespace-nowrap transform transition-transform duration-1000 ${
           isOverflow
             ? '-translate-x-0 group-hover:translate-x-[calc(48px_-_100%)] self-baseline'
             : 'text-center'

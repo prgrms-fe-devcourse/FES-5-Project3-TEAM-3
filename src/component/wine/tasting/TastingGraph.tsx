@@ -6,7 +6,8 @@ interface TastingGraphProps {
 }
 
 function TastingGraph({ rating, style }: TastingGraphProps) {
-  if (rating === null) return <p className="text-sm text-gray-600">정보가 존재하지 않습니다</p>;
+  if (rating === null)
+    return <p className="text-sm text-text-secondary">정보가 존재하지 않습니다</p>;
   const colors =
     style === 'info'
       ? ['bg-primary-100', 'bg-primary-200', 'bg-primary-300', 'bg-primary-500', 'bg-primary-800']

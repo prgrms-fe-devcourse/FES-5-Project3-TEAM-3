@@ -12,7 +12,7 @@ interface TastingInfoProps {
 
 function TastingInfo({ tasting: { sweetness, acidic, tannic, body }, style }: TastingInfoProps) {
   return (
-    <ul className="flex flex-col gap-1 mb-4 font-normal">
+    <ul className="flex flex-col gap-1 mb-4 font-normal text-text-secondary">
       <li className="flex gap-4 items-center" key="sweetness">
         <span className="align-bottom text-nowrap">당도</span>
         <TastingGraph rating={sweetness} style={style} />
