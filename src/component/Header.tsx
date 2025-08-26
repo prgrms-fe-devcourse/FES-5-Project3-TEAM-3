@@ -3,7 +3,7 @@ import { NavLink } from 'react-router';
 
 function RealHeader() {
   return (
-    <div className='h-17.5'>
+    <div className="h-17.5">
       <div className="bg-primary-500 h-17.5 w-full flex items-center  justify-center fixed z-99 ">
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
@@ -32,7 +32,10 @@ function RealHeader() {
             <NavLink to="community/write" className="font-semibold text-secondary-50">
               Community
             </NavLink>
-            <NavLink to="account/login" className="flex font-semibold text-secondary-50 items-center gap-2">
+            <NavLink
+              to="account/login"
+              className="flex font-semibold text-secondary-50 items-center gap-2"
+            >
               <img src="/icon/fi-rr-glass-cheers.svg" alt="로그인아이콘" />
               Login
             </NavLink>
