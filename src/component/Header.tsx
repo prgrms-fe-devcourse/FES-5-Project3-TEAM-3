@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
+import HeaderSearchSection from './HeaderSearchSection';
 
 function RealHeader() {
+  const [searchBar,setSearchBar]=useState(false) 
   return (
     <div className="h-17.5">
       <div className="bg-primary-500 h-17.5 w-full flex items-center  justify-center fixed z-99 ">
@@ -12,7 +14,7 @@ function RealHeader() {
             </NavLink>
           </h1>
           <nav className="flex items-center gap-4">
-            <button className="cursor-pointer" type="button">
+            <button className="cursor-pointer" type="button" onClick={()=> setSearchBar(!searchBar)}>
               <svg
                 width="25"
                 height="25"
@@ -40,6 +42,7 @@ function RealHeader() {
               Login
             </NavLink>
           </nav>
+          <HeaderSearchSection searchBar={searchBar}/>
         </div>
       </div>
     </div>
