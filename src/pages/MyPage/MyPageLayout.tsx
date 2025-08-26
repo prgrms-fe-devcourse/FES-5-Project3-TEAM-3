@@ -13,7 +13,7 @@ function MyPageLayout() {
       <aside className="myPageSideBar">
         <MyPageNav routes={myPageChildren} basePath="/my-page" />
       </aside>
-      <section className="myPageContent flex-1">
+      <section className="myPageContent flex-1 p-12">
         <Outlet />
       </section>
     </div>
