@@ -17,7 +17,7 @@ function WineInfo({ wineInfo }: { wineInfo: WineInfoType }) {
       <div className="h-full flex justify-between items-center gap-8">
         {/*와인정보 >  이미지 + 정보*/}
         <img
-          src={images[1] ?? 'image/wineImage.svg'}
+          src={images[1] ?? images[0]}
           alt={name}
           className="w-15"
           draggable="false"
