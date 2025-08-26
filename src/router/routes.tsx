@@ -15,6 +15,8 @@ const MyActivities = lazy(() => import('@/pages/MyPage/MyActivities'));
 const MyAchievement = lazy(() => import('@/pages/MyPage/MyAchievement'));
 const Settings = lazy(() => import('@/pages/MyPage/Settings'));
 
+const Login = lazy(() => import('@/pages/Login/Login'));
+const Register = lazy(() => import('@/pages/Login/Register'));
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -23,6 +25,19 @@ export const routes = createBrowserRouter([
       {
         index: true,
         Component: MainPage,
+      },
+      {
+        path: 'account',
+        children: [
+          {
+            path: 'login',
+            Component: Login,
+          },
+          {
+            path: 'register',
+            Component: Register,
+          },
+        ],
       },
       {
         path: 'community/write',
