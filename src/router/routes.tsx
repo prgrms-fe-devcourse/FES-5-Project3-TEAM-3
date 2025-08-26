@@ -17,6 +17,15 @@ const Settings = lazy(() => import('@/pages/MyPage/Settings'));
 
 const Login = lazy(() => import('@/pages/Login/Login'));
 const Register = lazy(() => import('@/pages/Login/Register'));
+
+// MyPage 하위 페이지
+const MyHome = lazy(() => import('@/pages/MyPage/MyHome'));
+const WineSeller = lazy(() => import('@/pages/MyPage/WineSeller'));
+const WishList = lazy(() => import('@/pages/MyPage/WishList'));
+const MyActivities = lazy(() => import('@/pages/MyPage/MyActivities'));
+const MyAchievement = lazy(() => import('@/pages/MyPage/MyAchievement'));
+const Settings = lazy(() => import('@/pages/MyPage/Settings'));
+
 export const routes = createBrowserRouter([
   {
     path: '/',
