@@ -1,7 +1,15 @@
+import { useAuth } from '@/store/@store';
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
+import { useShallow } from 'zustand/shallow';
 
 function RealHeader() {
+  const { userId,signOut } = useAuth(
+    useShallow((s) => ({
+      userId: s.userId,
+      signOut: s.signOut
+    }))
+  ) 
   return (
     <div className="h-17.5">
       <div className="bg-primary-500 h-17.5 w-full flex items-center  justify-center fixed z-99 ">
@@ -32,13 +40,29 @@ function RealHeader() {
             <NavLink to="community/write" className="font-semibold text-secondary-50">
               Community
             </NavLink>
-            <NavLink
-              to="account/login"
-              className="flex font-semibold text-secondary-50 items-center gap-2"
-            >
-              <img src="/icon/fi-rr-glass-cheers.svg" alt="로그인아이콘" />
-              Login
-            </NavLink>
+
+            {userId ? (
+              <div className='flex gap-4 items-center'>
+                <button
+                  type="button"
+                  onClick={signOut}
+                  className="cursor-pointer text-secondary-50 font-semibold" 
+                >
+                  Logout
+                </button>
+                <div className='rounded-full w-10 h-10 flex'>
+                  <img src="/image/github.png" alt="프로필이미지" />
+                </div>
+              </div>
+            ) : (
+              <NavLink
+                to="account/login"
+                className="flex font-semibold text-secondary-50 items-center gap-2"
+              >
+                <img src="/icon/fi-rr-glass-cheers.svg" alt="로그인아이콘" />
+                Login
+              </NavLink>
+            )}
           </nav>
         </div>
       </div>
