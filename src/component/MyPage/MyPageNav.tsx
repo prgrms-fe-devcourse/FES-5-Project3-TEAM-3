@@ -14,8 +14,8 @@ interface MyPageNavProps {
 function MyPageNav({ routes, basePath = '/my-page', className }: MyPageNavProps) {
   const navList = useMemo(() => extractNavItems(routes, basePath), [routes, basePath]);
 
-  const activeNav = 'bg-rose-200 rounded text-text-primary';
-  const defaultNav = 'bg-transparent text-gray-100';
+  const activeNav = 'bg-primary-100 text-text-primary';
+  const defaultNav = 'bg-transparent text-gray-100 hover:bg-primary-200/40';
 
   return (
     <nav
@@ -24,13 +24,17 @@ function MyPageNav({ routes, basePath = '/my-page', className }: MyPageNavProps)
         className
       )}
     >
-      <NavLink
-        to="/my-page/settings"
-        className="self-stretch flex justify-start items-center gap-4"
-      >
-        <div className="size-12 bg-zinc-300 rounded-full"></div>
-        <span className="justify-start text-secondary-50 text-base font-normal ">userName 님</span>
-      </NavLink>
+      <div className="self-stretch flex justify-start items-center gap-4">
+        <div className="size-16 bg-zinc-300 rounded-full"></div>
+        <div className="inline-flex flex-col gap-1">
+          <span className="justify-start text-secondary-50 text-base font-normal ">
+            userName 님
+          </span>
+          <NavLink to="/my-page/settings" className="text-sm text-secondary-400 underline">
+            프로필 수정하기
+          </NavLink>
+        </div>
+      </div>
       <ul className="flex flex-col gap-4 w-full">
         {navList.map(({ path, label }) => (
           <li key={path}>
@@ -39,7 +43,10 @@ function MyPageNav({ routes, basePath = '/my-page', className }: MyPageNavProps)
               end
               className={({ isActive }) =>
                 tw(
-                  'w-full px-3 py-2 inline-flex justify-start items-center gap-2 text-normal ',
+                  'w-full px-3 py-2 inline-flex justify-start items-center gap-2 text-normal rounded',
+                  'transition-colors duration-200 ease-out',
+                  'focus-visible:outline-0 focus-visible:ring-2 focus-visible:ring-primary-300',
+                  'will-change-[background-color]',
                   isActive ? activeNav : defaultNav
                 )
               }

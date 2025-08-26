@@ -20,8 +20,6 @@ const Register = lazy(() => import('@/pages/Login/Register'));
 
 const Wines = lazy(() => import('@/pages/wine/Wines'));
 
-const Login = lazy(() => import('@/pages/Login/Login'));
-const Register = lazy(() => import('@/pages/Login/Register'));
 export const routes = createBrowserRouter([
   {
     path: '/',
