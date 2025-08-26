@@ -3,10 +3,9 @@ import tw from '@/utils/tw';
 interface TastingGraphProps {
   rating: number | null;
   style: 'review' | 'info';
-  className?: string;
 }
 
-function TastingGraph({ rating, style, className }: TastingGraphProps) {
+function TastingGraph({ rating, style }: TastingGraphProps) {
   if (rating === null) return <p className="text-sm text-gray-600">정보가 존재하지 않습니다</p>;
   const colors =
     style === 'info'
@@ -24,7 +23,7 @@ function TastingGraph({ rating, style, className }: TastingGraphProps) {
       {colors.map((color, index) => (
         <div
           key={index}
-          className={tw(shape, index + 1 <= rating ? color : 'border-1 border-gray-300', className)}
+          className={tw(shape, index + 1 <= rating ? color : 'border-1 border-gray-300')}
         ></div>
       ))}
     </div>
