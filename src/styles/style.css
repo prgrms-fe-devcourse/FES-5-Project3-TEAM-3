@@ -131,6 +131,14 @@
   *::-webkit-scrollbar-thumb:hover {
     background-color: var(--scroll-thumb-hover);
   }
+
+    input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px  transparent inset     !important; 
+    box-shadow: 0 0 0px 1000px transparent inset !important;
+    -webkit-text-fill-color: #1c1b1a !important; 
+    transition: background-color 5000s ease-in-out 0s; 
+}
+
 }
 
 @layer utilities {
