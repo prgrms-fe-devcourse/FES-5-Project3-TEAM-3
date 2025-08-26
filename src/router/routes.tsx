@@ -8,6 +8,8 @@ const MainPage = lazy(() => import('@/pages/MainPage/MainPage'));
 const MyPageLayout = lazy(() => import('@/pages/MyPage/MyPageLayout'));
 const Login = lazy(() => import('@/pages/Login/Login'));
 const Register = lazy(() => import('@/pages/Login/Register'));
+const Wines = lazy(() => import('@/pages/wine/Wines'));
+
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -39,6 +41,7 @@ export const routes = createBrowserRouter([
         path: 'my-page',
         Component: MyPageLayout,
       },
+      { path: '/wines', Component: Wines },
     ],
   },
 ]);
