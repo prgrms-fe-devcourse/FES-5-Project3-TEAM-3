@@ -3,7 +3,10 @@ import { NavLink } from 'react-router';
 
 function SkeletonFooter() {
   return (
-    <div className="bg-secondary-100 h-31 w-full flex items-center justify-center" aria-busy="true">
+    <div
+      className="bg-secondary-100 h-31 w-full flex items-center justify-center"
+      aria-busy="true"
+    >
       <div className="w-360 px-25 py-8 flex justify-between items-center animate-pulse">
         {/* 로고 자리 */}
         <div className="w-41.5 h-11.75 flex items-center pt-1">
