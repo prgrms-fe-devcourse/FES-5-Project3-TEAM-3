@@ -11,7 +11,15 @@ const viteConfig = defineConfig({
     port: 3000,
     open: false,
   },
-  plugins: [tailwindcss(), react(), svgr()],
+  plugins: [
+    tailwindcss(),
+    svgr({
+      svgrOptions: {
+        icon: true,
+      },
+    }),
+    react(),
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

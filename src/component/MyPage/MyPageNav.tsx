@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { NavLink } from 'react-router';
 import { extractNavItems } from '@/utils/extractNavItems';
 import tw from '@/utils/tw';
+import { ReactComponent as HomeIcon } from '@/assets/MyPageIcon/home.svg';
 
 interface MyPageNavProps {
   routes: RouteWithHandle[];
