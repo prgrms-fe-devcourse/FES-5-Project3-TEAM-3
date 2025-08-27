@@ -43,7 +43,7 @@ function RealHeader() {
     }
   }
   
-  const base = ' h-17.5 w-full flex items-center justify-center fixed z-99';
+  const base = ' h-17.5 w-full flex items-center justify-center fixed z-99 duration-400';
 
   const headerBgClass = clsx(
     base, 

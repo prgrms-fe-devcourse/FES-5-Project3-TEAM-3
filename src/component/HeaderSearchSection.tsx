@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Categories from './MainPage/Categories';
-import clsx from 'clsx';
+import gsap from 'gsap'
 
 type Props = {
   searchBar: boolean;
@@ -35,13 +35,28 @@ const wineCategories = [
 ];
 
 function HeaderSearchSection({ searchBar }: Props) {
-  const base =
-    'fixed top-17.5 left-0 w-full flex bg-background-base overflow-hidden transition-[max-height] duration-300';
 
-  const searchBarClassName = clsx(base, {
-    'justify-center max-h-0': !searchBar,
-    'max-h-124': searchBar,
-  });
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+      if (!sectionRef.current) return;
+      if (searchBar) {
+        // 열릴 때
+        gsap.to(sectionRef.current, {
+          height: sectionRef.current.scrollHeight,
+          duration: 0.5,
+          ease: 'power2.out',
+        });
+      } else {
+        // 닫힐 때
+        gsap.to(sectionRef.current, {
+          height: 0,
+          duration: 0.5,
+          ease: 'power2.in',
+        });
+      }
+    }, [searchBar]);
+
 
   const parseArray = (s: string | null): string[] => {
     if (!s) return [];
@@ -88,7 +103,10 @@ function HeaderSearchSection({ searchBar }: Props) {
   };
 
   return (
-    <div className={searchBarClassName}>
+    <div
+      className="fixed top-17.5 flex justify-center left-0 w-full bg-background-base overflow-hidden"
+      ref={sectionRef}
+    >
       <div className="h-124 flex flex-col mx-auto mt-8 gap-7">
         <form
           className="flex items-center justify-center border-1 border-[#8e95a9] w-249 px-6 py-2 rounded-full gap-89.5 cursor-tex"
@@ -115,7 +133,7 @@ function HeaderSearchSection({ searchBar }: Props) {
           <div className="flex flex-col flex-wrap gap-4">
             <h2>#최근 검색어</h2>
             <div className="flex gap-4">
-              {recentSearch.map((keyword: string,i) => (
+              {recentSearch.map((keyword: string, i) => (
                 <div className="bg-secondary-400 rounded-md px-2 py-1" key={i}>
                   <p className="text-secondary-700">{keyword}</p>
                 </div>
