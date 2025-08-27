@@ -1,12 +1,19 @@
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 import HeaderSearchSection from './HeaderSearchSection';
 
 function RealHeader() {
-  const [searchBar,setSearchBar]=useState(false) 
+  const [searchBar, setSearchBar] = useState(false)
+  const { pathname } = useLocation()
+
   return (
-    <div className="h-17.5">
-      <div className="bg-primary-500 h-17.5 w-full flex items-center  justify-center fixed z-99 ">
+    <div className={pathname == '/' ? '' : 'h-17.5'}>
+      <div
+        className={
+          pathname == '/' ? 'bg-transparent h-17.5 w-full flex items-center  justify-center fixed z-99'
+            : 'bg-primary-500 h-17.5 fixed w-full flex items-center  justify-center z-99'
+        }
+      >
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
             <NavLink to="/">
@@ -14,7 +21,11 @@ function RealHeader() {
             </NavLink>
           </h1>
           <nav className="flex items-center gap-4">
-            <button className="cursor-pointer" type="button" onClick={()=> setSearchBar(!searchBar)}>
+            <button
+              className="cursor-pointer"
+              type="button"
+              onClick={() => setSearchBar(!searchBar)}
+            >
               <svg
                 width="25"
                 height="25"
@@ -42,7 +53,7 @@ function RealHeader() {
               Login
             </NavLink>
           </nav>
-          <HeaderSearchSection searchBar={searchBar}/>
+          <HeaderSearchSection searchBar={searchBar} />
         </div>
       </div>
     </div>

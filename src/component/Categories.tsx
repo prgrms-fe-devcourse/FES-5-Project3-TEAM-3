@@ -1,3 +1,4 @@
+
 import { Link } from "react-router"
 
 interface Props{
@@ -6,12 +7,13 @@ interface Props{
   category:string
 }
 
-function Categories({src,alt,category}:Props) {
+function Categories({ src, alt, category }: Props) {
+  
   return (
-    <Link to="" >
+    <Link to="">
       <div className="flex flex-col justify-center text-center">
         <img className="w-25 h-25" src={src} alt={alt} />
-        <p className="font-light text-secondary-700 leading-1">{category}</p>
+        <p className="font-light text-secondary-700 ">{category}</p>
       </div>
     </Link>
   );
