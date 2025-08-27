@@ -34,7 +34,7 @@ function RealHeader() {
                 />
               </svg>
             </button>
-            <NavLink to="wines" className="font-semibold text-secondary-50">
+            <NavLink to="" className="font-semibold text-secondary-50">
               Wine
             </NavLink>
             <NavLink to="community/write" className="font-semibold text-secondary-50">
