@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import Categories from './Categories';
+import Categories from './MainPage/Categories';
 import clsx from 'clsx';
 
 type Props = {

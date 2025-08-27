@@ -1,7 +1,8 @@
-import WineGrid from '@/pages/MainPage/WineGrid';
+import WineGrid from '@/component/MainPage/WineGrid';
 import { useState } from 'react';
-import Collection from '@/pages/MainPage/Collection';
-import ShowMoreBtn from '@/pages/MainPage/ShowMoreBtn';
+;
+import ShowMoreBtn from '@/component/MainPage/ShowMoreBtn';
+import Collection from '@/component/MainPage/Collection';
 
 function MainPage() {
   const winesArr = [
