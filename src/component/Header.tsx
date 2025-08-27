@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 import HeaderSearchSection from './HeaderSearchSection';
+import clsx from 'clsx';
 
 function RealHeader() {
   const { userId, signOut } = useAuth(
@@ -11,12 +12,27 @@ function RealHeader() {
       signOut: s.signOut,
     }))
   );
+
+  const { pathname } = useLocation();
+  const [searchBar, setSearchBar] = useState(false);
+  useEffect(() => {
+    setSearchBar(false)
+  },[pathname])
+
+  const base = ' h-17.5 w-full flex items-center  justify-center fixed z-99'
+
+  const headerBgClass = clsx(
+    base,
+    {
+    'bg-transparent': pathname === '/',
+    'bg-primary-500': pathname !== '/'
+  })
+
   return (
     <div className={pathname == '/' ? '' : 'h-17.5'}>
       <div
         className={
-          pathname == '/' ? 'bg-transparent h-17.5 w-full flex items-center  justify-center fixed z-99'
-            : 'bg-primary-500 h-17.5 fixed w-full flex items-center  justify-center z-99'
+          headerBgClass
         }
       >
         <div className="w-360 flex justify-between items-center px-10 py-2">
