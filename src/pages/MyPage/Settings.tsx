@@ -1,3 +1,4 @@
+import SettingBio from '@/component/MyPage/SettingBio';
 import SettingImage from '@/component/MyPage/SettingImage';
 
 function Settings() {
@@ -7,6 +8,7 @@ function Settings() {
         Settings
       </h2>
       <SettingImage />
+      <SettingBio />
     </div>
   );
 }
