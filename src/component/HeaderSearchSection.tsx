@@ -4,6 +4,7 @@ import clsx from 'clsx';
 
 type Props = {
   searchBar: boolean;
+  onClick : (e:React.MouseEvent<HTMLDivElement>,ref:React.RefObject<HTMLDivElement|null>) => void
 };
 
 const wineCategories = [
@@ -34,7 +35,7 @@ const wineCategories = [
   },
 ];
 
-function HeaderSearchSection({ searchBar }: Props) {
+function HeaderSearchSection({ searchBar,onClick }: Props) {
   const base =
     'fixed top-17.5 left-0 w-full flex bg-background-base overflow-hidden transition-[max-height] duration-300';
 
@@ -43,7 +44,8 @@ function HeaderSearchSection({ searchBar }: Props) {
     'max-h-124': searchBar,
   });
 
-  
+  const searchSection = useRef<HTMLDivElement|null>(null)
+
   const parseArray = (s: string | null): string[] => {
     if (!s) return [];
     try {
@@ -90,7 +92,7 @@ function HeaderSearchSection({ searchBar }: Props) {
   };
 
   return (
-    <div className={searchBarClassName}>
+    <div className={searchBarClassName} onClick={ (e)=> onClick(e,searchSection)} ref={searchSection}>
       <div className="h-124 flex flex-col mx-auto mt-8 gap-7">
         <form
           className="flex items-center justify-center border-1 border-[#8e95a9] w-249 px-6 py-2 rounded-full gap-89.5 cursor-tex"
@@ -117,8 +119,8 @@ function HeaderSearchSection({ searchBar }: Props) {
           <div className="flex flex-col flex-wrap gap-4">
             <h2>#최근 검색어</h2>
             <div className="flex gap-4">
-              {recentSearch.map((keyword: string) => (
-                <div className="bg-secondary-400 rounded-md px-2 py-1">
+              {recentSearch.map((keyword: string,i) => (
+                <div className="bg-secondary-400 rounded-md px-2 py-1" key={i}>
                   <p className="text-secondary-700">{keyword}</p>
                 </div>
               ))}

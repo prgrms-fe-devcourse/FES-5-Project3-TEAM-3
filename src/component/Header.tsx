@@ -12,22 +12,54 @@ function RealHeader() {
       signOut: s.signOut,
     }))
   );
-
+ 
+  const hadleSearchToggle = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    ref: React.RefObject<HTMLDivElement | null>
+  ) => {
+    if (ref.current) {
+      if (!ref.current.contains(e.target as Node)) {
+         console.log('click')
+        setSearchBar(false);
+      }
+    }
+  };
+  
   const { pathname } = useLocation();
+  const [scrolled,setScrolled] = useState(false)
   const [searchBar, setSearchBar] = useState(false);
+
   useEffect(() => {
     setSearchBar(false);
   }, [pathname]);
 
-  const base = ' h-17.5 w-full flex items-center  justify-center fixed z-99';
+  useEffect(() => {
+    if (pathname !== '/') return
+    const handleScroll = () => {
+          if (window.scrollY > 0) {
+            setScrolled(true);
+          } else {
+            setScrolled(false);
+          }
+    }
 
-  const headerBgClass = clsx(base, {
-    'bg-transparent': pathname === '/',
-    'bg-primary-500': pathname !== '/',
-  });
+    window.addEventListener('scroll',handleScroll)
+    
+    return () => {
+      window.removeEventListener('scroll',handleScroll)
+    }
+   },[pathname])
+
+  const base = ' h-17.5 w-full flex items-center justify-center fixed z-99';
+
+  const headerBgClass = clsx(
+    base, 
+    pathname == '/' ?
+      (scrolled ? 'bg-primary-500' : 'bg-tranprent'): 'bg-primary-500'
+  );
 
   return (
-    <div className={pathname == '/' ? '' : 'h-17.5'}>
+    <div className={pathname == '/' ? '' : 'h-17.5'} >
       <div className={headerBgClass}>
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
@@ -84,7 +116,7 @@ function RealHeader() {
               </NavLink>
             )}
           </nav>
-          <HeaderSearchSection searchBar={searchBar} />
+          <HeaderSearchSection searchBar={searchBar} onClick={hadleSearchToggle} />
         </div>
       </div>
     </div>
