@@ -1,5 +1,7 @@
+import SettingAccount from '@/component/MyPage/SettingAccount';
 import SettingBio from '@/component/MyPage/SettingBio';
 import SettingImage from '@/component/MyPage/SettingImage';
+import SettingPersonalInfo from '@/component/MyPage/SettingPersonalInfo';
 
 function Settings() {
   return (
@@ -8,7 +10,9 @@ function Settings() {
         Settings
       </h2>
       <SettingImage />
+      <SettingPersonalInfo />
       <SettingBio />
+      <SettingAccount />
     </div>
   );
 }

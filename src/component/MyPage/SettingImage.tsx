@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ErrorCode } from './settingErrorCodes';
+import { ErrorCode } from './profileErrorCodes';
 import { useProfileSettingError } from '@/hook/useProfileSettingError';
 import { uploadImage } from '@/utils/supabase/uploadImage';
 import Button from '../Button';
@@ -111,7 +111,7 @@ function SettingImage() {
   };
 
   return (
-    <div className="w-full p-8 rounded-lg bg-secondary-100 border border-gray-300 flex flex-col gap-6">
+    <section className="w-full p-8 rounded-lg bg-secondary-100 border border-gray-300 flex flex-col gap-6">
       <div className="flex justify-between">
         <h3 className="font-bold text-2xl">Profile Image</h3>
         <div className="buttonGroup flex items-center justify-end gap-2">
@@ -177,7 +177,7 @@ function SettingImage() {
           {getMessage('avatar')}
         </p>
       )}
-    </div>
+    </section>
   );
 }
 export default SettingImage;
