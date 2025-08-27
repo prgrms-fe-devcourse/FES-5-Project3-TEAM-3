@@ -4,7 +4,6 @@ import clsx from 'clsx';
 
 type Props = {
   searchBar: boolean;
-  onClick : (e:React.MouseEvent<HTMLDivElement>,ref:React.RefObject<HTMLDivElement|null>) => void
 };
 
 const wineCategories = [
@@ -35,7 +34,7 @@ const wineCategories = [
   },
 ];
 
-function HeaderSearchSection({ searchBar,onClick }: Props) {
+function HeaderSearchSection({ searchBar }: Props) {
   const base =
     'fixed top-17.5 left-0 w-full flex bg-background-base overflow-hidden transition-[max-height] duration-300';
 
@@ -43,8 +42,6 @@ function HeaderSearchSection({ searchBar,onClick }: Props) {
     'justify-center max-h-0': !searchBar,
     'max-h-124': searchBar,
   });
-
-  const searchSection = useRef<HTMLDivElement|null>(null)
 
   const parseArray = (s: string | null): string[] => {
     if (!s) return [];
@@ -65,7 +62,6 @@ function HeaderSearchSection({ searchBar,onClick }: Props) {
     if ((e.target as Element).closest('label')) return;
     searchBarRef.current?.focus();
   };
-
 
   useEffect(() => {
     setRecentSearch(parseArray(localStorage.getItem('recently-search')));
@@ -92,7 +88,7 @@ function HeaderSearchSection({ searchBar,onClick }: Props) {
   };
 
   return (
-    <div className={searchBarClassName} onClick={ (e)=> onClick(e,searchSection)} ref={searchSection}>
+    <div className={searchBarClassName}>
       <div className="h-124 flex flex-col mx-auto mt-8 gap-7">
         <form
           className="flex items-center justify-center border-1 border-[#8e95a9] w-249 px-6 py-2 rounded-full gap-89.5 cursor-tex"

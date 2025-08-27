@@ -13,18 +13,6 @@ function RealHeader() {
     }))
   );
  
-  const hadleSearchToggle = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    ref: React.RefObject<HTMLDivElement | null>
-  ) => {
-    if (ref.current) {
-      if (!ref.current.contains(e.target as Node)) {
-         console.log('click')
-        setSearchBar(false);
-      }
-    }
-  };
-  
   const { pathname } = useLocation();
   const [scrolled,setScrolled] = useState(false)
   const [searchBar, setSearchBar] = useState(false);
@@ -42,14 +30,19 @@ function RealHeader() {
             setScrolled(false);
           }
     }
-
     window.addEventListener('scroll',handleScroll)
-    
     return () => {
       window.removeEventListener('scroll',handleScroll)
     }
    },[pathname])
 
+  const handleSearch = () => {
+    setSearchBar(!searchBar);
+    if (window.scrollY <= 0) {
+      setScrolled(!scrolled)
+    }
+  }
+  
   const base = ' h-17.5 w-full flex items-center justify-center fixed z-99';
 
   const headerBgClass = clsx(
@@ -60,6 +53,12 @@ function RealHeader() {
 
   return (
     <div className={pathname == '/' ? '' : 'h-17.5'} >
+    {
+      searchBar && 
+      (
+        <div className='fixed inset-0 bg-black/40 z-90' onClick={()=>setSearchBar(false)}></div>
+      )
+    }
       <div className={headerBgClass}>
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
@@ -71,7 +70,7 @@ function RealHeader() {
             <button
               className="cursor-pointer"
               type="button"
-              onClick={() => setSearchBar(!searchBar)}
+              onClick={handleSearch}
             >
               <svg
                 width="25"
@@ -116,7 +115,7 @@ function RealHeader() {
               </NavLink>
             )}
           </nav>
-          <HeaderSearchSection searchBar={searchBar} onClick={hadleSearchToggle} />
+          <HeaderSearchSection searchBar={searchBar} />
         </div>
       </div>
     </div>
