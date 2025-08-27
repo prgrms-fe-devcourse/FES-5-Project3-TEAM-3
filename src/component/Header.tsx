@@ -1,9 +1,10 @@
-import { useAuth } from '@/store/@store';
+import { useAuth} from '@/store/@store';
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 
 function RealHeader() {
+
   const { userId, signOut } = useAuth(
     useShallow((s) => ({
       userId: s.userId,
@@ -12,6 +13,7 @@ function RealHeader() {
   );
   return (
     <div className="h-17.5">
+    
       <div className="bg-primary-500 h-17.5 w-full flex items-center  justify-center fixed z-99 ">
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
