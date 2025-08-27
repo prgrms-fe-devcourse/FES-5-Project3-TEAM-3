@@ -43,10 +43,20 @@ function HeaderSearchSection({ searchBar }: Props) {
     'max-h-124': searchBar,
   });
 
+  
+  const parseArray = (s: string | null): string[] => {
+    if (!s) return [];
+    try {
+      const value = JSON.parse(s);
+      return Array.isArray(value) ? value : [];
+    } catch {
+      return [];
+    }
+  };
+
   const searchBarRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyword] = useState('');
-  const [recentSearch, setRecentSearch] = useState<string[]>(() =>
-    typeof window !== 'object' ? parseArray(localStorage.getItem('recntly-search')) : []
+  const [recentSearch, setRecentSearch] = useState<string[]>(()=> parseArray(localStorage.getItem('recntly-search'))
   );
 
   const handleFocus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -54,15 +64,6 @@ function HeaderSearchSection({ searchBar }: Props) {
     searchBarRef.current?.focus();
   };
 
-  const parseArray = (s: string | null): string[] => {
-    if (!s) return [];
-    try {
-      const v = JSON.parse(s);
-      return Array.isArray(v) ? v : [];
-    } catch {
-      return [];
-    }
-  };
 
   useEffect(() => {
     setRecentSearch(parseArray(localStorage.getItem('recently-search')));
