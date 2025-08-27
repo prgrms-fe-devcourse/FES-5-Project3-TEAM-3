@@ -1,7 +1,7 @@
 import { useProfileSettingError } from '@/hook/useProfileSettingError';
 import Button from '../Button';
 import React, { useEffect, useState } from 'react';
-import { ErrorCode } from './settingErrorCodes';
+import { ErrorCode } from './profileErrorCodes';
 
 interface BioProps {
   initialBio?: string | null;
@@ -12,17 +12,17 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
   const fieldKey = 'bio' as const;
   const { busy, setBusy, setError, clearError, getMessage } = useProfileSettingError();
 
-  const [isEditting, setIsEditting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [bio, setBio] = useState(initialBio ?? '');
 
   useEffect(() => {
-    if (!isEditting) setBio(initialBio ?? '');
-  }, [initialBio, isEditting]);
+    if (!isEditing) setBio(initialBio ?? '');
+  }, [initialBio, isEditing]);
 
   const hasChanged = initialBio !== bio;
 
   const startEditBio = () => {
-    setIsEditting(true);
+    setIsEditing(true);
     clearError(fieldKey);
   };
 
@@ -56,7 +56,7 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
     clearError(fieldKey);
 
     if (!hasChanged) {
-      setIsEditting(false);
+      setIsEditing(false);
       return;
     }
 
@@ -68,7 +68,7 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
 
       // res.success
       clearError(fieldKey);
-      setIsEditting(false);
+      setIsEditing(false);
     } catch (err) {
       console.error('error');
     } finally {
@@ -84,7 +84,7 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
 
     setBio(initialBio ?? '');
     clearError(fieldKey);
-    setIsEditting(false);
+    setIsEditing(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -102,11 +102,11 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
   };
 
   return (
-    <div className="w-full p-8 rounded-lg bg-secondary-100 border border-gray-300 flex flex-col gap-6">
+    <section className="w-full p-8 rounded-lg bg-secondary-100 border border-gray-300 flex flex-col gap-6">
       <div className="flex justify-between">
         <h3 className="font-bold text-2xl">Bio</h3>
         <div className="buttonGroup flex items-center justify-end gap-2">
-          {isEditting ? (
+          {isEditing ? (
             <>
               <Button
                 type="button"
@@ -146,7 +146,7 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
         </div>
       </div>
       <hr />
-      {isEditting ? (
+      {isEditing ? (
         <div>
           <textarea
             value={bio}
@@ -184,7 +184,7 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
           )}
         </p>
       )}
-    </div>
+    </section>
   );
 }
 export default SettingBio;
