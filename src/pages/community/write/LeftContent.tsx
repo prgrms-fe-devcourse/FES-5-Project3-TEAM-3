@@ -1,4 +1,6 @@
+import TextEditor from '@/component/community/TextEditor';
 import { useCommunityForm } from '@/hook/community/useCommunityForm';
+import { useCommunityStore } from '@/pages/community/store/useCommunityStore';
 import React from 'react';
 
 function LeftContent() {
@@ -15,22 +17,25 @@ function LeftContent() {
     tags,
     removeTag,
     addImages,
-    imageNames,
+    // imageNames,
   } = useCommunityForm();
 
-  const onImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
+  // 1) 스토어 addImages로 썸네일/대표선택 데이터 업데이트
+  // 2) 추가된 URL들을 에디터에 삽입(중복 createObjectURL 방지 위해 스토어에서 가져옴)
+  const handleInsertImages = async (files: File[]) => {
+    const before = useCommunityStore.getState().imageUrls.length;
     addImages(files, 5);
-    e.currentTarget.value = '';
+    const all = useCommunityStore.getState().imageUrls;
+    const added = all.slice(before); // 방금 추가된 항목들
+    return added; // 에디터에 삽입할 URL 배열
   };
 
-  const displayText =
-    !imageNames || imageNames.length === 0
-      ? '선택된 이미지가 없습니다.'
-      : imageNames.length <= 3
-        ? imageNames.join(', ')
-        : `${imageNames.slice(0, 3).join(', ')} 외 ${imageNames.length - 3}개`;
+  // const displayText =
+  //   !imageNames || imageNames.length === 0
+  //     ? '선택된 이미지가 없습니다.'
+  //     : imageNames.length <= 3
+  //       ? imageNames.join(', ')
+  //       : `${imageNames.slice(0, 3).join(', ')} 외 ${imageNames.length - 3}개`;
 
   const preventFormSubmit = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') e.preventDefault();
@@ -73,7 +78,7 @@ function LeftContent() {
       </label>
 
       {/* 내용 */}
-      <label className="block mb-4">
+      {/*       <label className="block mb-4">
         <textarea
           placeholder="내용을 입력하세요"
           className="mt-2 block w-full rounded-xl border border-gray-200 bg-white/70 resize-none px-3 py-2"
@@ -81,10 +86,17 @@ function LeftContent() {
           onChange={(e) => setBody(e.target.value)}
           rows={14}
         />
-      </label>
+      </label> */}
+
+      {/* textarea → TextEditor */}
+      <TextEditor
+        value={body}
+        onChange={(html) => setBody(html)} // 본문을 HTML로 저장
+        onInsertImages={handleInsertImages} // 업로드 시 본문 커서 위치에 이미지 삽입
+      />
 
       {/* 숨겨진 실제 input (라벨 밖) */}
-      <input
+      {/* <input
         id="images"
         type="file"
         name="images"
@@ -92,10 +104,10 @@ function LeftContent() {
         multiple
         accept="image/*"
         onChange={onImagesChange}
-      />
+      /> */}
 
       {/* 커스텀 박스 (htmlFor로 연결) */}
-      <label htmlFor="images" className="mb-4 block">
+      {/* <label htmlFor="images" className="mb-4 block">
         <span className="text-sm font-medium">이미지</span>
 
         <div className="mt-2 flex items-center justify-between rounded-xl border border-gray-200 bg-white/70 px-3 py-2 cursor-pointer">
@@ -107,11 +119,11 @@ function LeftContent() {
             {displayText}
           </span>
 
-          <span className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm hover:bg-[var(--color-primary-400)] hover:text-white">
+          <span className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm hover:bg-primary-400 hover:text-white">
             파일 선택
           </span>
         </div>
-      </label>
+      </label> */}
 
       {/* 태그 추가 */}
       <div className="mt-4">
@@ -130,7 +142,7 @@ function LeftContent() {
           />
           <button
             type="button"
-            className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-[var(--color-primary-300)] hover:text-white"
+            className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-primary-300 hover:text-white"
             onClick={() => addTag()}
           >
             추가
@@ -145,7 +157,7 @@ function LeftContent() {
             tags.map((t: string) => (
               <span
                 key={t}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-primary-400)] text-sm text-[var(--color-primary-400)] bg-white shadow-sm"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary-400 text-sm text-primary-400 bg-white shadow-sm"
               >
                 <span className="text-sm">{t}</span>
                 <button type="button" className="text-xs text-red-500" onClick={() => removeTag(t)}>
@@ -166,7 +178,7 @@ function LeftContent() {
         </button>
         <button
           type="submit"
-          className="px-6 py-2 rounded-xl bg-[var(--color-primary-400)] text-white text-sm shadow-sm hover:bg-[var(--color-primary-600)]"
+          className="px-6 py-2 rounded-xl bg-primary-400 text-white text-sm shadow-sm hover:bg-primary-600"
         >
           저장
         </button>

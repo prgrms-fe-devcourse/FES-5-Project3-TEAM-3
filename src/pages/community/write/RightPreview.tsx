@@ -26,7 +26,7 @@ function RightPreview() {
 
   const categoryMap: Record<string, string> = {
     리뷰: 'bg-[#27AE60]',
-    자유: 'bg-[var(--color-primary-400)]',
+    자유: 'bg-primary-400',
     질문: 'bg-gray-700',
   };
   const badgeClass = categoryMap[category] ?? 'bg-gray-400';
@@ -44,7 +44,11 @@ function RightPreview() {
         <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm">
           {hasImages ? (
             <div className="bg-gray-50">
-              <img className="w-[680px] h-[380px] object-cover" src={mainSrc} alt={`미리보기 ${previewIndex + 1}`} />
+              <img
+                className="w-[680px] h-[380px] object-cover"
+                src={mainSrc}
+                alt={`미리보기 ${previewIndex + 1}`}
+              />
             </div>
           ) : (
             <div className="aspect-auto w-full flex items-center justify-center text-sm text-gray-400 bg-gray-50">
@@ -57,7 +61,7 @@ function RightPreview() {
               imageUrls.map((url, idx) => (
                 <div
                   key={url + idx}
-                  className={`relative w-20 h-12 rounded-md overflow-hidden border ${idx === previewIndex ? 'ring-2 ring-[var(--color-primary-400)]' : ''}`}
+                  className={`relative w-20 h-12 rounded-md overflow-hidden border ${idx === previewIndex ? 'ring-2 ring-primary-400' : ''}`}
                 >
                   <img
                     className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform"
@@ -85,7 +89,9 @@ function RightPreview() {
 
           <div className="p-5">
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white ${badgeClass}`}>
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white ${badgeClass}`}
+              >
                 {badgeLabel}
               </span>
               {title ? (
@@ -94,7 +100,11 @@ function RightPreview() {
                 <h2 className="text-xl font-semibold text-gray-400">제목이 없습니다.</h2>
               )}
             </div>
-            <p className="mt-4 text-sm text-gray-600 whitespace-pre-wrap">{body}</p>
+            <div
+              className="mt-4 text-sm text-gray-600 whitespace-pre-wrap prose prose-sm max-w-none"
+              // editor에서 생성된 HTML을 그대로 렌더링
+              dangerouslySetInnerHTML={{ __html: body || '' }}
+            />
           </div>
         </div>
       </div>
