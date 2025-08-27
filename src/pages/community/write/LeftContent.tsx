@@ -29,8 +29,8 @@ function LeftContent() {
     !imageNames || imageNames.length === 0
       ? '선택된 이미지가 없습니다.'
       : imageNames.length <= 3
-      ? imageNames.join(', ')
-      : `${imageNames.slice(0, 3).join(', ')} 외 ${imageNames.length - 3}개`;
+        ? imageNames.join(', ')
+        : `${imageNames.slice(0, 3).join(', ')} 외 ${imageNames.length - 3}개`;
 
   const preventFormSubmit = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') e.preventDefault();
@@ -48,41 +48,70 @@ function LeftContent() {
       <label className="block mb-4">
         <span className="text-sm font-medium">카테고리</span>
 
-          <select className="mt-2 block w-48 rounded-xl border border-gray-200 bg-white/70 px-3 py-2">
-            <option>선택해주세요</option>
-            <option value="review">리뷰</option>
-            <option value="free">자유</option>
-            <option value="question">질문</option>
-          </select>
-        </label>
+        <select
+          className="mt-2 block w-48 rounded-xl border border-gray-200 bg-white/70 px-3 py-2"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option>선택해주세요</option>
+          <option value="리뷰">리뷰</option>
+          <option value="자유">자유</option>
+          <option value="질문">질문</option>
+        </select>
+      </label>
 
-        {/* 제목 */}
-        <label className="block mb-4">
-          <input
-            type="text"
-            placeholder="제목을 입력하세요"
-            className="mt-2 block w-full rounded-xl border border-gray-200 bg-white/70 px-3 py-2"
-          />
-        </label>
+      {/* 제목 */}
+      <label className="block mb-4">
+        <input
+          type="text"
+          placeholder="제목을 입력하세요"
+          className="mt-2 block w-full rounded-xl border border-gray-200 bg-white/70 px-3 py-2"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          onKeyDown={preventFormSubmit}
+        />
+      </label>
 
-        {/* 내용 */}
-        <label className="block mb-4">
-          <textarea
-            placeholder="내용을 입력하세요"
-            className="mt-2 block w-full rounded-xl border border-gray-200 bg-white/70 px-3 py-2"
-            rows={4}
-          />
-        </label>
+      {/* 내용 */}
+      <label className="block mb-4">
+        <textarea
+          placeholder="내용을 입력하세요"
+          className="mt-2 block w-full rounded-xl border border-gray-200 bg-white/70 resize-none px-3 py-2"
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          rows={14}
+        />
+      </label>
 
-        {/* 이미지 */}
-        <label className="mb-4">
-          <span className="text-sm font-medium">이미지</span>
-          <input
-            type="file"
-            className="mt-2 block w-70 text-sm rounded-xl border border-gray-200 bg-white/70 px-3 py-2"
-            multiple
-          />
-        </label>
+      {/* 숨겨진 실제 input (라벨 밖) */}
+      <input
+        id="images"
+        type="file"
+        name="images"
+        className="sr-only"
+        multiple
+        accept="image/*"
+        onChange={onImagesChange}
+      />
+
+      {/* 커스텀 박스 (htmlFor로 연결) */}
+      <label htmlFor="images" className="mb-4 block">
+        <span className="text-sm font-medium">이미지</span>
+
+        <div className="mt-2 flex items-center justify-between rounded-xl border border-gray-200 bg-white/70 px-3 py-2 cursor-pointer">
+          <span
+            className={`text-sm truncate ${!imageNames || imageNames.length === 0 ? 'text-gray-400' : 'text-gray-800'}`}
+            aria-live="polite"
+            title={(imageNames || []).join(', ')}
+          >
+            {displayText}
+          </span>
+
+          <span className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm hover:bg-[var(--color-primary-400)] hover:text-white">
+            파일 선택
+          </span>
+        </div>
+      </label>
 
       {/* 태그 추가 */}
       <div className="mt-4">
@@ -90,29 +119,43 @@ function LeftContent() {
           <span className="text-sm font-medium">태그</span>
         </div>
 
-          <div className="mt-2 flex gap-2">
-            <input
-              type="text"
-              placeholder="추가 태그 입력 (최대 5개)"
-              className="rounded-xl border border-gray-200 bg-white/70 px-4 py-2.5 flex-1"
-            />
-            <button className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-[var(--color-primary-300)] hover:text-white">
-              추가
-            </button>
-          </div>
-
-          {/* 태그 삭제버튼 */}
-          <div className="mt-3 flex flex-wrap gap-2">
-            <span
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#e8d8d8] text-sm
-                                bg-white shadow-sm"
-            >
-              <button type="button" className="text-xs text-red-500">
-                ✕
-              </button>
-            </span>
-          </div>
+        <div className="mt-2 flex gap-2">
+          <input
+            type="text"
+            placeholder="추가 태그 입력 (최대 5개)"
+            className="rounded-xl border border-gray-200 bg-white/70 px-4 py-2.5 flex-1"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={handleTagKeyDown}
+          />
+          <button
+            type="button"
+            className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-[var(--color-primary-300)] hover:text-white"
+            onClick={() => addTag()}
+          >
+            추가
+          </button>
         </div>
+
+        {/* 태그 리스트 */}
+        <div className="mt-3 flex flex-wrap gap-2">
+          {tags.length === 0 ? (
+            <div className="text-sm text-gray-400">등록된 태그 없음</div>
+          ) : (
+            tags.map((t: string) => (
+              <span
+                key={t}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-primary-400)] text-sm text-[var(--color-primary-400)] bg-white shadow-sm"
+              >
+                <span className="text-sm">{t}</span>
+                <button type="button" className="text-xs text-red-500" onClick={() => removeTag(t)}>
+                  ✕
+                </button>
+              </span>
+            ))
+          )}
+        </div>
+      </div>
 
       <div className="pt-2 flex items-center justify-end gap-3">
         <button
