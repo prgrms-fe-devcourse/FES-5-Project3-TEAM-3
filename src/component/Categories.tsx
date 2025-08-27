@@ -1,14 +1,12 @@
+import { Link } from 'react-router';
 
-import { Link } from "react-router"
-
-interface Props{
-  src: string,
-  alt: string,
-  category:string
+interface Props {
+  src: string;
+  alt: string;
+  category: string;
 }
 
 function Categories({ src, alt, category }: Props) {
-  
   return (
     <Link to="">
       <div className="flex flex-col justify-center text-center">
@@ -18,4 +16,4 @@ function Categories({ src, alt, category }: Props) {
     </Link>
   );
 }
-export default Categories
+export default Categories;

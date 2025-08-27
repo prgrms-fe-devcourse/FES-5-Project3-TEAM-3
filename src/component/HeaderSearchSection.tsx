@@ -1,70 +1,72 @@
-import { useEffect, useRef, useState } from "react";
-import Categories from "./Categories";
-import clsx from "clsx";
+import { useEffect, useRef, useState } from 'react';
+import Categories from './Categories';
+import clsx from 'clsx';
 
 type Props = {
-  searchBar: boolean
-}
+  searchBar: boolean;
+};
 
 const wineCategories = [
-    {
-      src: '/icon/redWineIcon.png',
-      alt: '레드와인',
-      category: 'Red',
-    },
-    {
-      src: '/icon/whitewineIcon.png',
-      alt: '화이트와인',
-      category: 'White',
-    },
-    {
-      src: '/icon/roseWineIcon.png',
-      alt: '로제와인',
-      category: 'Rose',
-    },
-    {
-      src: '/icon/champaignIcon.png',
-      alt: '스파클링',
-      category: 'Sparkling',
-    },
-    {
-      src: '/icon/dessertWineIcon.png',
-      alt: '디저트와인',
-      category: 'Dissert',
-    },
+  {
+    src: '/icon/redWineIcon.png',
+    alt: '레드와인',
+    category: 'Red',
+  },
+  {
+    src: '/icon/whitewineIcon.png',
+    alt: '화이트와인',
+    category: 'White',
+  },
+  {
+    src: '/icon/roseWineIcon.png',
+    alt: '로제와인',
+    category: 'Rose',
+  },
+  {
+    src: '/icon/champaignIcon.png',
+    alt: '스파클링',
+    category: 'Sparkling',
+  },
+  {
+    src: '/icon/dessertWineIcon.png',
+    alt: '디저트와인',
+    category: 'Dissert',
+  },
 ];
 
 function HeaderSearchSection({ searchBar }: Props) {
-
-  const base = 'fixed top-17.5 left-0 w-full flex bg-background-base overflow-hidden transition-[max-height] duration-300'
+  const base =
+    'fixed top-17.5 left-0 w-full flex bg-background-base overflow-hidden transition-[max-height] duration-300';
 
   const searchBarClassName = clsx(base, {
     'justify-center max-h-0': !searchBar,
-    'max-h-124': searchBar
-    }
-  );
-  
+    'max-h-124': searchBar,
+  });
+
   const searchBarRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyword] = useState('');
   const [recentSearch, setRecentSearch] = useState<string[]>(() =>
-      typeof window !== 'object' ? parseArray(localStorage.getItem('recntly-search')) : []
+    typeof window !== 'object' ? parseArray(localStorage.getItem('recntly-search')) : []
   );
-  
+
   const handleFocus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if ((e.target as Element).closest('label')) return;
     searchBarRef.current?.focus();
   };
 
   const parseArray = (s: string | null): string[] => {
-  if (!s) return [];
-  try { const v = JSON.parse(s); return Array.isArray(v) ? v : []; }
-  catch { return [] }
-};
+    if (!s) return [];
+    try {
+      const v = JSON.parse(s);
+      return Array.isArray(v) ? v : [];
+    } catch {
+      return [];
+    }
+  };
 
   useEffect(() => {
-     setRecentSearch(parseArray(localStorage.getItem('recently-search')));
+    setRecentSearch(parseArray(localStorage.getItem('recently-search')));
   }, []);
-
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,15 +77,15 @@ function HeaderSearchSection({ searchBar }: Props) {
     }
 
     if (k.length <= 0) {
-      alert('검색어를 입력하세요')
-      return
+      alert('검색어를 입력하세요');
+      return;
     }
 
-    setRecentSearch(prev => {
+    setRecentSearch((prev) => {
       const next = [k, ...prev.filter((x: string) => x !== k)].slice(0, 5);
-      localStorage.setItem('recently-search',JSON.stringify(next))
-      return next
-    })
+      localStorage.setItem('recently-search', JSON.stringify(next));
+      return next;
+    });
   };
 
   return (
@@ -99,7 +101,7 @@ function HeaderSearchSection({ searchBar }: Props) {
               ref={searchBarRef}
               type="text"
               id="search"
-              autoComplete='off'
+              autoComplete="off"
               onChange={(e) => setKeyword(e.target.value)}
               placeholder="검색어를 입력하세요."
             />
@@ -137,4 +139,4 @@ function HeaderSearchSection({ searchBar }: Props) {
     </div>
   );
 }
-export default HeaderSearchSection
+export default HeaderSearchSection;

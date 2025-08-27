@@ -16,25 +16,19 @@ function RealHeader() {
   const { pathname } = useLocation();
   const [searchBar, setSearchBar] = useState(false);
   useEffect(() => {
-    setSearchBar(false)
-  },[pathname])
+    setSearchBar(false);
+  }, [pathname]);
 
-  const base = ' h-17.5 w-full flex items-center  justify-center fixed z-99'
+  const base = ' h-17.5 w-full flex items-center  justify-center fixed z-99';
 
-  const headerBgClass = clsx(
-    base,
-    {
+  const headerBgClass = clsx(base, {
     'bg-transparent': pathname === '/',
-    'bg-primary-500': pathname !== '/'
-  })
+    'bg-primary-500': pathname !== '/',
+  });
 
   return (
     <div className={pathname == '/' ? '' : 'h-17.5'}>
-      <div
-        className={
-          headerBgClass
-        }
-      >
+      <div className={headerBgClass}>
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
             <NavLink to="/">
