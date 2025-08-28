@@ -1,4 +1,10 @@
+
+import { fetchData } from "../store/useCommunityStore";
+
+
 function BoardComment() {
+  const fetch  = fetchData()
+  console.log(fetch)
   return (
     <div className="bg-secondary-100 p-4 rounded-lg">
       <div className="flex flex-col gap-4">
