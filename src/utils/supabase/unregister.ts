@@ -1,5 +1,6 @@
 import supabase from '@/supabase/supabase';
 
+/* unregister function -> 서버 띄운 후로 변경
 export async function unregister() {
   const { data: userRes, error: userErr } = await supabase.auth.getUser();
   if (userErr || !userRes.user) {
@@ -23,4 +24,28 @@ export async function unregister() {
 
   await supabase.auth.signOut();
   return true;
+}
+ */
+
+export async function deactivateProfile() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error('로그인이 필요한 서비스입니다.');
+
+  const { error } = await supabase
+    .from('profile')
+    .update({
+      is_deleted: true,
+      deleted_at: new Date().toISOString(),
+      nickname: `deleted_${user.id.slice(0, 6)}`,
+      bio: null,
+      profile_image_url: undefined,
+    })
+    .eq('profile_id', user.id);
+
+  if (error) throw new Error(error.message);
+
+  await supabase.auth.signOut();
 }
