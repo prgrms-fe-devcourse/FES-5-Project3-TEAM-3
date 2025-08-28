@@ -132,6 +132,14 @@
     background-color: var(--scroll-thumb-hover);
   }
 
+  :root{
+    --toastify-color-success: theme(--color-success-500) !important;
+    --toastify-color-error: theme(--color-error-400) !important;
+    --toastify-color-warning: theme(--color-warning-500) !important;
+    --toastify-color-info: theme(colors.rose.600);
+    
+  }
+
   input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
     box-shadow: 0 0 0px 1000px transparent inset !important;
@@ -163,6 +171,7 @@
     mask-composite: intersect;
     animation: spinner 1s infinite steps(10);
   }
+
 
   @keyframes spinner {
     to {

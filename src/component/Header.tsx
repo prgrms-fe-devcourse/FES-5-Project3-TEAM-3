@@ -1,4 +1,4 @@
-import { useAuth } from '@/store/@store';
+import { useAuth} from '@/store/@store';
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
@@ -6,6 +6,7 @@ import HeaderSearchSection from './HeaderSearchSection';
 import clsx from 'clsx';
 
 function RealHeader() {
+
   const { userId, signOut } = useAuth(
     useShallow((s) => ({
       userId: s.userId,
@@ -60,6 +61,7 @@ function RealHeader() {
       )
     }
       <div className={headerBgClass}>
+
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
             <NavLink to="/">
