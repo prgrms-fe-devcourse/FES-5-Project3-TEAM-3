@@ -25,6 +25,7 @@ function PhoneInput({ value, onChange, disabled, ...rest }: PhoneInputProps) {
     if (after.length >= before.length) {
       // 추가 입력 중일 때 마지막이 '-' 이면 커서를 한 칸 뒤로 이동
       if (after[cursorPos - 1] === '-' || after[cursorPos] === '-') adjustment = 1;
+      if (after.length - raw.length >= 2) adjustment = 2;
     } else if (after.length < before.length) {
       // 삭제 중일 때 지우기 직전 글자가 '-' 이면 커서를 한 칸 앞으로 이동
       if (before[cursorPos - 1] === '-') adjustment = -1;
@@ -69,6 +70,7 @@ function PhoneInput({ value, onChange, disabled, ...rest }: PhoneInputProps) {
       inputMode="numeric"
       name="phone"
       placeholder="연락처를 입력해주세요."
+      maxLength={13}
       ref={inputRef}
       value={value}
       onChange={handleChange}
