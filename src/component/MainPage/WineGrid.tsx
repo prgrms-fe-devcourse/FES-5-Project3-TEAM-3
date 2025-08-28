@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Button from '../../component/Button';
+import Button from '../Button';
 
 interface Props {
   src: string;

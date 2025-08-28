@@ -1,4 +1,4 @@
-import { ErrorMessages, type ErrorCode } from '@/component/MyPage/settingErrorCodes';
+import { ErrorMessages, type ErrorCode } from '@/component/MyPage/profileErrorCodes';
 import { useCallback, useReducer } from 'react';
 
 type Field = 'avatar' | 'nickname' | 'phone' | 'bio' | 'form';
@@ -42,7 +42,10 @@ function reducer(state: State, action: Action): State {
       return state;
   }
 }
-
+/**
+ * User Profile 설정 에러를 관리하는 reducer 함수입니다.
+ * @field 'avatar' | 'nickname' | 'phone' | 'bio' | 'form';
+ */
 export function useProfileSettingError() {
   const [state, dispatch] = useReducer(reducer, initialState);
 

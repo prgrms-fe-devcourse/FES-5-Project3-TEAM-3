@@ -13,6 +13,15 @@ type AuthAction = {
   signOut: () => Promise<void>;
 };
 
+type ToastState = {
+  message:string
+}
+
+type ToastAction = {
+  success: (s: string) => void
+  error:(s:string) => void
+}
+
 export const useAuth = create<AuthState & AuthAction>((set) => ({
   userId: null,
   userEmail: null,
@@ -32,7 +41,6 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
   signOut: async () => {
     const { error } = await supabase.auth.signOut();
     if (error) console.log(error);
-    alert('로그아웃 되셨습니다');
     set({ userId: null, userEmail: null });
   },
 
@@ -48,3 +56,4 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
     return () => listener.subscription.unsubscribe();
   },
 }));
+

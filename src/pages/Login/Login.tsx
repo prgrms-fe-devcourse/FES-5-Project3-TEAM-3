@@ -1,10 +1,11 @@
 import Button from '@/component/Button';
-import VisibleBtn from '@/component/VisibleBtn';
+import VisibleBtn from '@/component/Login/VisibleBtn';
 import supabase from '@/supabase/supabase';
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 function Login() {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ function Login() {
         nickname: userNickName,
         email: userEmail,
       });
-      alert('로그인 성공');
+
       navigate('/');
     }
   };
