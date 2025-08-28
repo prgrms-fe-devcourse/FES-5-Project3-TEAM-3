@@ -1,5 +1,5 @@
 import { useShallow } from 'zustand/react/shallow';
-import { useCommunityStore } from '@/pages/community/store/useCommunityStore';
+import { useCommunityStore } from '@/pages/community/write/store/useCommunityStore';
 
 /** 컨텐츠(좌측)에서 사용하는 상태/액션 래퍼 */
 /**

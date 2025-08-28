@@ -1,3 +1,4 @@
+import supabase from '@/supabase/supabase';
 import { create } from 'zustand';
 
 // 상태 타입
@@ -137,3 +138,11 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   setPreviewIndex: (previewIndex) =>
     set((state) => (state.previewIndex === previewIndex ? state : { previewIndex })),
 }));
+
+export const fetchData = create((set) => ({
+  user: [],
+  fetch: async() => {
+    const { data } =await supabase.from('reply').select('*,user_id(*)')
+    set({user:data})
+  }
+}))
