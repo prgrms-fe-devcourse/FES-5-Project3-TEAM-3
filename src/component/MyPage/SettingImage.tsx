@@ -9,6 +9,7 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024;
 function SettingImage() {
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const { busy, setBusy, setError, clearError, getMessage } = useProfileSettingError();
   const fileRef = useRef<HTMLInputElement>(null);
   const uploadAbortRef = useRef<AbortController | null>(null);
@@ -25,6 +26,7 @@ function SettingImage() {
   const fieldKey = 'avatar';
 
   const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsEditing(true);
     const file = e.target.files?.[0];
 
     if (avatarPreview && avatarPreview.startsWith('blob:')) {
@@ -76,6 +78,7 @@ function SettingImage() {
 
       if (result.success) {
         clearError(fieldKey);
+        setIsEditing(false);
         return result.url;
       } else {
         console.error('Avatar Upload Failed:', result.error);
@@ -106,6 +109,7 @@ function SettingImage() {
     setAvatar(null);
     setAvatarPreview(null);
     clearError(fieldKey);
+    setIsEditing(false);
 
     if (fileRef.current) fileRef.current.value = '';
   };
@@ -114,28 +118,30 @@ function SettingImage() {
     <section className="w-full p-8 rounded-lg bg-secondary-100 border border-gray-300 flex flex-col gap-6">
       <div className="flex justify-between">
         <h3 className="font-bold text-2xl">Profile Image</h3>
-        <div className="buttonGroup flex items-center justify-end gap-2">
-          <Button
-            type="button"
-            size="sm"
-            color="primary"
-            borderType="solid"
-            hasIcon
-            onClick={uploadAvatar}
-          >
-            Save
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            color="primary"
-            borderType="outline"
-            hasIcon
-            onClick={cancelUploadAvatar}
-          >
-            Cancel
-          </Button>
-        </div>
+        {isEditing && (
+          <div className="buttonGroup flex items-center justify-end gap-2">
+            <Button
+              type="button"
+              size="sm"
+              color="primary"
+              borderType="solid"
+              hasIcon
+              onClick={uploadAvatar}
+            >
+              Save
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              color="primary"
+              borderType="outline"
+              hasIcon
+              onClick={cancelUploadAvatar}
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
       </div>
       <hr />
       <div className="flex gap-6 justify-start items-center">
