@@ -13,15 +13,6 @@ type AuthAction = {
   signOut: () => Promise<void>;
 };
 
-type ToastState = {
-  message:string
-}
-
-type ToastAction = {
-  success: (s: string) => void
-  error:(s:string) => void
-}
-
 export const useAuth = create<AuthState & AuthAction>((set) => ({
   userId: null,
   userEmail: null,
