@@ -36,7 +36,6 @@ interface CommunityActions {
   removeImageAt: (removeIndex: number) => void;
   setPrimaryIdx: (primaryIndex: number) => void;
   setPreviewIndex: (previewIndex: number) => void;
-
 }
 
 type CommunityState = CommunityData & CommunityActions;
@@ -99,7 +98,9 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       }
       if (incomingCount > availableSlots) {
         if (typeof window !== 'undefined') {
-          window.alert(`선택한 파일 중 ${incomingCount - availableSlots}개는 최대 업로드 수(${maxImages}개)를 초과하여 제외됩니다.`);
+          window.alert(
+            `선택한 파일 중 ${incomingCount - availableSlots}개는 최대 업로드 수(${maxImages}개)를 초과하여 제외됩니다.`
+          );
         }
       }
       const toAdd = Array.from(filesToAdd).slice(0, availableSlots) as File[];
@@ -123,7 +124,10 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
       const imageNames = state.imageNames.filter((_, i) => i !== removeIndex);
 
       const primaryIdx = Math.max(0, Math.min(state.primaryIdx, Math.max(0, imageUrls.length - 1)));
-      const previewIndex = Math.max(0, Math.min(state.previewIndex, Math.max(0, imageUrls.length - 1)));
+      const previewIndex = Math.max(
+        0,
+        Math.min(state.previewIndex, Math.max(0, imageUrls.length - 1))
+      );
       return { imageUrls, imageFiles, imageNames, primaryIdx, previewIndex };
     });
   },
@@ -132,5 +136,4 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
     set((state) => (state.primaryIdx === primaryIndex ? state : { primaryIdx: primaryIndex })),
   setPreviewIndex: (previewIndex) =>
     set((state) => (state.previewIndex === previewIndex ? state : { previewIndex })),
-
 }));

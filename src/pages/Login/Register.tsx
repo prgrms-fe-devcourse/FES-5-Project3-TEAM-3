@@ -1,5 +1,5 @@
 import Button from '@/component/Button';
-import VisibleBtn from '@/component/VisibleBtn';
+import VisibleBtn from '@/component/Login/VisibleBtn';
 import supabase from '@/supabase/supabase';
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';

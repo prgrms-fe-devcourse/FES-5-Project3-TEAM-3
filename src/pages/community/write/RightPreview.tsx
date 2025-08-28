@@ -44,7 +44,11 @@ function RightPreview() {
         <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm">
           {hasImages ? (
             <div className="bg-gray-50">
-              <img className="w-[680px] h-[380px] object-cover" src={mainSrc} alt={`미리보기 ${previewIndex + 1}`} />
+              <img
+                className="w-[680px] h-[380px] object-cover"
+                src={mainSrc}
+                alt={`미리보기 ${previewIndex + 1}`}
+              />
             </div>
           ) : (
             <div className="aspect-auto w-full flex items-center justify-center text-sm text-gray-400 bg-gray-50">
@@ -85,7 +89,9 @@ function RightPreview() {
 
           <div className="p-5">
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white ${badgeClass}`}>
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white ${badgeClass}`}
+              >
                 {badgeLabel}
               </span>
               {title ? (
