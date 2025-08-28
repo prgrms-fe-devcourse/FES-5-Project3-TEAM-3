@@ -1,6 +1,6 @@
 import TextEditor from '@/component/community/TextEditor';
 import { useCommunityForm } from '@/hook/community/useCommunityForm';
-import { useCommunityStore } from '@/pages/community/store/useCommunityStore';
+import { useCommunityStore } from '@/pages/community/write/store/useCommunityStore';
 import React from 'react';
 
 function LeftContent() {
@@ -59,9 +59,9 @@ function LeftContent() {
           onChange={(e) => setCategory(e.target.value)}
         >
           <option>선택해주세요</option>
-          <option value="리뷰">리뷰</option>
-          <option value="자유">자유</option>
-          <option value="질문">질문</option>
+          <option value="review">리뷰</option>
+          <option value="free">자유</option>
+          <option value="question">질문</option>
         </select>
       </label>
 

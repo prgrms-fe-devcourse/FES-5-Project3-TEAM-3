@@ -1,5 +1,5 @@
 import { useShallow } from 'zustand/react/shallow';
-import { useCommunityStore } from '@/pages/community/store/useCommunityStore';
+import { useCommunityStore } from '@/pages/community/write/store/useCommunityStore';
 
 /**
  * selector: useCommunityPreview용 명시적 selector

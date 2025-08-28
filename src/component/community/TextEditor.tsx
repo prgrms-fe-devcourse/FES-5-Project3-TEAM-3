@@ -1,9 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
 import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
 import Button from '@/component/Button';
 
 type Props = {
@@ -20,9 +18,7 @@ export default function TextEditor({ value, onChange, onInsertImages }: Props) {
     extensions: [
       // StarterKit에 heading 허용
       StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
-      Underline,
       Image,
-      Link.configure({ openOnClick: false }),
     ],
     content: value || '',
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -101,36 +97,6 @@ export default function TextEditor({ value, onChange, onInsertImages }: Props) {
           U
         </Button>
 
-        {/* 본문 전체 지우기 */}
-        <Button
-          type="button"
-          size="sm"
-          borderType="outline"
-          className="px-2 py-1"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => {
-            // 에디터/상태 동기화
-            editor.chain().clearContent().run();
-            onChange(''); // 상위 상태에 반영
-          }}
-        >
-          지우기
-        </Button>
-
-        <Button
-          type="button"
-          size="sm"
-          borderType="outline"
-          color="primary"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => {
-            openFile();
-          }}
-          className="px-2 py-1"
-        >
-          이미지
-        </Button>
-
         {/* Heading H1/H2/H3 */}
         <Button
           type="button"
@@ -168,28 +134,34 @@ export default function TextEditor({ value, onChange, onInsertImages }: Props) {
           H3
         </Button>
 
-        {/* Link: 삽입/제거 */}
+        {/* 본문 전체 지우기 */}
         <Button
           type="button"
           size="sm"
           borderType="outline"
+          className="px-2 py-1"
           onMouseDown={(e) => e.preventDefault()}
-          className={`px-2 py-1 ${editor?.isActive('link') ? 'bg-primary-500 text-white' : ''}`}
-          aria-pressed={editor?.isActive('link') || false}
           onClick={() => {
-            if (!editor) return;
-            if (editor.isActive('link')) {
-              // 링크 제거
-              editor.chain().focus().extendMarkRange('link').unsetLink().run();
-              return;
-            }
-
-            const url = window.prompt('링크 URL을 입력하세요');
-            if (!url) return;
-            editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+            // 에디터/상태 동기화
+            editor.chain().clearContent().run();
+            onChange(''); // 상위 상태에 반영
           }}
         >
-          Link
+          지우기
+        </Button>
+
+        <Button
+          type="button"
+          size="sm"
+          borderType="outline"
+          color="primary"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => {
+            openFile();
+          }}
+          className="px-2 py-1"
+        >
+          이미지
         </Button>
 
         <input

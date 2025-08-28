@@ -25,15 +25,15 @@ function RightPreview() {
   const mainSrc = hasImages ? imageUrls[previewIndex] : '';
 
   const categoryMap: Record<string, string> = {
-    리뷰: 'bg-[#27AE60]',
-    자유: 'bg-primary-400',
-    질문: 'bg-gray-700',
+    review: 'bg-[#27AE60]',
+    free: 'bg-primary-400',
+    question: 'bg-gray-700',
   };
   const badgeClass = categoryMap[category] ?? 'bg-gray-400';
   const badgeLabel = category || '카테고리';
 
-  // console.log(setPrimaryIdx);
-  // console.log(previewIndex);
+  console.log(setPrimaryIdx);
+  console.log(previewIndex);
 
   // 1. 이미지 슬라이드 ex 인스타 스타일.
   // 태그 미리보기 없어도 괜찮아 보임.
@@ -95,16 +95,22 @@ function RightPreview() {
                 {badgeLabel}
               </span>
               {title ? (
-                <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+                <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
               ) : (
                 <h2 className="text-xl font-semibold text-gray-400">제목이 없습니다.</h2>
               )}
             </div>
-            <div
-              className="mt-4 text-sm text-gray-600 whitespace-pre-wrap prose prose-sm max-w-none"
-              // editor에서 생성된 HTML을 그대로 렌더링
-              dangerouslySetInnerHTML={{ __html: body || '' }}
-            />
+            {
+              body ? (
+              <div
+                className="mt-4 text-sm text-gray-900 whitespace-pre-wrap prose prose-sm max-w-none"
+                // editor에서 생성된 HTML을 그대로 렌더링
+                dangerouslySetInnerHTML={{ __html: body || '' }}
+              />
+              ) : (
+                <p className="mt-4 text-sm text-gray-400">내용이 없습니다.</p>
+              )}
+
           </div>
         </div>
       </div>
