@@ -133,10 +133,11 @@
   }
 
   :root{
-    --toastify-color-success: theme(--color-success-300) !important;
-    --toastify-color-error: theme(--color-error-300) !important;
-    --toastify-color-warning: theme(--color-warning-300) !important;
+    --toastify-color-success: theme(--color-success-500) !important;
+    --toastify-color-error: theme(--color-error-400) !important;
+    --toastify-color-warning: theme(--color-warning-500) !important;
     --toastify-color-info: theme(colors.rose.600);
+    
   }
 
   input:-webkit-autofill {

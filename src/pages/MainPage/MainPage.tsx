@@ -2,7 +2,7 @@ import WineGrid from '@/pages/MainPage/WineGrid';
 import { useState } from 'react';
 import Collection from '@/pages/MainPage/Collection';
 import ShowMoreBtn from '@/pages/MainPage/ShowMoreBtn';
-import useToast from '@/hook/useToast';
+
 
 
 function MainPage() {
@@ -113,16 +113,6 @@ function MainPage() {
   return (
     <main>
       <section className="relative">
-        <div className="flex gap-4">
-          <button className="w-20 h-10" onClick={() => useToast('success', '성공')}>
-            Success
-          </button>
-          <button onClick={()=>useToast('warn','경고')}>Warn</button>
-          <button className="w-20 h-10" onClick={() => useToast('error', '실패')}>
-            Fail
-          </button>
-          <button onClick={()=>useToast('info','정보')}>Info</button>
-        </div>
         <img
           className="block w-screen h-screen"
           src="/image/HeroImg.png"

@@ -9,6 +9,8 @@ createRoot(document.getElementById('root')!).render(
     <App />
     <ToastContainer
       theme='colored'
+      position='top-right'
+      className='!top-20 !right-5'
     />
   </StrictMode>
 );
