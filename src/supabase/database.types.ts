@@ -170,6 +170,7 @@ export type Database = {
           created_at: string;
           hashtag_list: string[] | null;
           image_url: string[] | null;
+          thumbnail_image: string | null;
           like_count: number;
           post_category: Database['public']['Enums']['post_category'];
           post_id: string;
