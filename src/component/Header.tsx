@@ -1,5 +1,6 @@
-import { useAuth } from '@/store/@store';
-import { useEffect, useState } from 'react';
+
+import { useAuth} from '@/store/@store';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 import HeaderSearchSection from './HeaderSearchSection';
@@ -16,10 +17,12 @@ function RealHeader() {
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
-
-  useEffect(() => {
+ 
+ 
+  useLayoutEffect(() => {
     setSearchBar(false);
   }, [pathname]);
+
 
   useEffect(() => {
     if (pathname !== '/') return;
@@ -38,6 +41,7 @@ function RealHeader() {
 
   const handleSearch = () => {
     setSearchBar(!searchBar);
+
     if (window.scrollY <= 0) {
       setScrolled(!scrolled);
     }
@@ -51,10 +55,12 @@ function RealHeader() {
   );
 
   return (
+
     <div className={pathname == '/' ? '' : 'h-17.5'}>
       {searchBar && (
         <div className="fixed inset-0 bg-black/40 z-90" onClick={() => setSearchBar(false)}></div>
       )}
+
       <div className={headerBgClass}>
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
