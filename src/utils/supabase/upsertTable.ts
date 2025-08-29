@@ -56,25 +56,24 @@ export async function upsertTable<T extends TableName, K extends FilterableCols<
     const matchValue = uploadData[matchKey] as RowFor<T>[K];
 
     // 기존 데이터 조회
-    const { data: existingRow, error: fetchError } = await query
-      .select('*')
-      .eq(matchKey as string, matchValue as Record<K, RowFor<T>[K]>)
-      .maybeSingle<RowFor<T>>();
+    const { error: fetchError, count } = await query
+      .select(`${matchKey as string}`, { head: true, count: 'exact' })
+      .eq(matchKey as string, matchValue as Record<K, RowFor<T>[K]>);
 
     if (fetchError && fetchError.code !== 'PGRST116') {
       return { result: null, error: fetchError };
     }
 
-    const mergedData = {
-      ...(existingRow ?? {}),
-      ...uploadData,
-    } as InsertFor<T>;
-
-    const { data: result, error } = await query.upsert(mergedData, {
-      onConflict: matchKey as string,
-    });
-
-    return { result, error };
+    if ((count ?? 0) > 0) {
+      const { [matchKey]: _, ...rest } = uploadData as UpdateFor<T>;
+      const { data: result, error } = await query
+        .update(rest as UpdateFor<T>)
+        .eq(matchKey as string, matchValue as Record<K, RowFor<T>[K]>);
+      return { result, error };
+    } else {
+      const { data: result, error } = await query.insert(uploadData as InsertFor<T>);
+      return { result, error };
+    }
   }
 
   throw new Error('method는 insert, update, upsert 중 하나여야 합니다.');
