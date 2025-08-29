@@ -37,6 +37,7 @@ const wineCategories = [
 function HeaderSearchSection({ searchBar }: Props) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
+
   useLayoutEffect(() => {
       const el = sectionRef.current;
       if (!el) return;
@@ -82,6 +83,8 @@ function HeaderSearchSection({ searchBar }: Props) {
    }
  }, [searchBar]);
 
+
+
   const parseArray = (s: string | null): string[] => {
     if (!s) return [];
     try {
@@ -94,8 +97,8 @@ function HeaderSearchSection({ searchBar }: Props) {
 
   const searchBarRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyword] = useState('');
-  
   const [recentSearch, setRecentSearch] = useState<string[]>(()=> parseArray(localStorage.getItem('recntly-search'))
+
   );
 
   const handleFocus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
