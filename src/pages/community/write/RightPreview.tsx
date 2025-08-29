@@ -100,17 +100,15 @@ function RightPreview() {
                 <h2 className="text-xl font-semibold text-gray-400">제목이 없습니다.</h2>
               )}
             </div>
-            {
-              body ? (
+            {body ? (
               <div
                 className="mt-4 text-sm text-gray-900 whitespace-pre-wrap prose prose-sm max-w-none"
                 // editor에서 생성된 HTML을 그대로 렌더링
                 dangerouslySetInnerHTML={{ __html: body || '' }}
               />
-              ) : (
-                <p className="mt-4 text-sm text-gray-400">내용이 없습니다.</p>
-              )}
-
+            ) : (
+              <p className="mt-4 text-sm text-gray-400">내용이 없습니다.</p>
+            )}
           </div>
         </div>
       </div>

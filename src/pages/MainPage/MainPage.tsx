@@ -1,10 +1,7 @@
 import WineGrid from '@/component/MainPage/WineGrid';
 import { useState } from 'react';
-;
 import ShowMoreBtn from '@/component/MainPage/ShowMoreBtn';
 import Collection from '@/component/MainPage/Collection';
-
-
 
 function MainPage() {
   const winesArr = [
