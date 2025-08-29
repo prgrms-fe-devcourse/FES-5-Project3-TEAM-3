@@ -1,6 +1,20 @@
-function index() {
+import Footer from '@/component/Footer';
+import Header from '@/component/Header';
+import { Outlet } from 'react-router';
+
+function Root() {
   return (
-    <div>index</div>
-  )
+    <div className="flex flex-col max-w-screen h-screen">
+      <header>
+        <Header />
+      </header>
+      <main>
+        <Outlet></Outlet>
+      </main>
+      <footer>
+        <Footer />
+      </footer>
+    </div>
+  );
 }
-export default index
+export default Root;

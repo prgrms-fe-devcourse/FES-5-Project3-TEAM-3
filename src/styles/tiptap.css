@@ -1,0 +1,28 @@
+@import 'prosemirror-view/style/prosemirror.css';
+
+/* TipTap editor wrapper 기본 설정 */
+.tiptap {
+  white-space: pre-wrap;
+}
+
+/* Tailwind Typography(prose)을 사용하지 않을 경우에 대비한 기본 헤딩 스타일 */
+.tiptap h1 {
+  @apply text-3xl font-bold;
+}
+.tiptap h2 {
+  @apply text-2xl font-semibold;
+}
+.tiptap h3 {
+  @apply text-xl font-semibold;
+}
+
+/* 미리보기에서도 동일 스타일을 적용할 수 있게 prose 클래스를 사용 */
+.prose-sm h1 {
+  @apply text-3xl font-bold;
+}
+.prose-sm h2 {
+  @apply text-2xl font-semibold;
+}
+.prose-sm h3 {
+  @apply text-xl font-semibold;
+}
