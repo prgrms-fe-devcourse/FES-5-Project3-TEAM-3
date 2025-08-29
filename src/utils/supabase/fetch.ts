@@ -15,10 +15,9 @@ export async function useProfile() {
     const { data, error } = await supabase
       .from('profile')
       .select('profile_id,nickname,profile_image_url');
-      if(error) console.error(error)
-      return data
-  }
-  catch {
-    throw new Error('실패')
+    if (error) console.error(error);
+    return data;
+  } catch {
+    throw new Error('실패');
   }
 }

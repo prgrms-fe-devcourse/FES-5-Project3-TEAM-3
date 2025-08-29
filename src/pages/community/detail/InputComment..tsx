@@ -32,9 +32,9 @@ function InputComment() {
     });
 
     if (error) console.error(error);
-    if (!error) setComment('')
-    
-    const {data} = await supabase.from('reply').select()
+    if (!error) setComment('');
+
+    const { data } = await supabase.from('reply').select();
   };
 
   return (

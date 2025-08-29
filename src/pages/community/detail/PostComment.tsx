@@ -37,7 +37,7 @@ function PostComment({
   const isMine = useIsMine(user_id ?? '');
   const [comment, setComment] = useState('');
   const [editComment, setEditComment] = useState('');
-  const [renderComment,setRenderComment] = useState('')
+  const [renderComment, setRenderComment] = useState('');
   const [postData, setPostData] = useState<Post[]>([]);
   const [reply, setReply] = useState(false);
 
@@ -51,8 +51,8 @@ function PostComment({
   };
 
   useEffect(() => {
-    setRenderComment(content)
-  },[content])
+    setRenderComment(content);
+  }, [content]);
 
   // 확인을 위헤 임시로 postId를뽑아썻습니다.
   useEffect(() => {
@@ -84,12 +84,13 @@ function PostComment({
 
   // 수정 저장 기능
   const handleSave = async () => {
-
-    setRenderComment(editComment)
+    setRenderComment(editComment);
     const { error } = await supabase
       .from('reply')
       .update({ content: editComment })
-      .eq('reply_id', replyId).select('content').single()
+      .eq('reply_id', replyId)
+      .select('content')
+      .single();
     if (error) console.log(error);
     setEdit(false);
     setComment(editComment);
@@ -97,17 +98,16 @@ function PostComment({
 
   //삭제기능
   const handleDelete = async () => {
-    const confirmDelete = confirm('정말 삭제하시겠습니까?')
+    const confirmDelete = confirm('정말 삭제하시겠습니까?');
     if (confirmDelete) {
       try {
-        const { error } = await supabase.from('reply').delete().eq('reply_id', replyId)
-        if(error) console.error(error)
-      }
-      catch {
-        console.error()
+        const { error } = await supabase.from('reply').delete().eq('reply_id', replyId);
+        if (error) console.error(error);
+      } catch {
+        console.error();
       }
     }
-  }
+  };
 
   //대댓글삭제
   const handleDeleteChild = async (targetId: string) => {

@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 import EditBtn from '@/component/community/EditBtn';
 
-
 interface Props {
   profileImage: string | null | undefined;
   nickname: string | null | undefined;
@@ -12,33 +11,41 @@ interface Props {
   userId: string | null;
   replyId: string;
   setComment: (value: React.SetStateAction<string>) => void;
-  onDelete: (id:string) =>Promise<void>
+  onDelete: (id: string) => Promise<void>;
 }
 
-function CommentReply({ profileImage, nickname, created_at, replyId, userId,setComment,content,onDelete }: Props) {
+function CommentReply({
+  profileImage,
+  nickname,
+  created_at,
+  replyId,
+  userId,
+  setComment,
+  content,
+  onDelete,
+}: Props) {
   if (!userId) return;
   const isMine = useIsMine(userId);
   const [edit, setEdit] = useState(false);
-  const [editComment,setEditComment] = useState('')
-  const [renderComment, setRenderComment] = useState('')
-  
-    useEffect(() => {
-      setComment(content)
-    },[content])
-  
-    const handleSave = async () => {
-      setRenderComment(editComment);
-      const { error } = await supabase
-        .from('reply')
-        .update({ content: editComment})
-        .eq('reply_id', replyId)
-        .select('content')
-        .single();
-      if (error) console.log(error);
-      setEdit(false);
-      setComment(editComment);
+  const [editComment, setEditComment] = useState('');
+  const [renderComment, setRenderComment] = useState('');
+
+  useEffect(() => {
+    setComment(content);
+  }, [content]);
+
+  const handleSave = async () => {
+    setRenderComment(editComment);
+    const { error } = await supabase
+      .from('reply')
+      .update({ content: editComment })
+      .eq('reply_id', replyId)
+      .select('content')
+      .single();
+    if (error) console.log(error);
+    setEdit(false);
+    setComment(editComment);
   };
-  
 
   return (
     <li className="flex gap-2 items-start">
@@ -51,14 +58,13 @@ function CommentReply({ profileImage, nickname, created_at, replyId, userId,setC
           {isMine && (
             <>
               <EditBtn state={edit} setState={setEdit} onSave={handleSave} />
-              <button className="cursor-pointer" onClick={()=>onDelete(replyId)}>
+              <button className="cursor-pointer" onClick={() => onDelete(replyId)}>
                 <img src="/icon/delete.svg" alt="삭제하기" className="w-3 h-3" />
               </button>
             </>
           )}
         </div>
-        {
-          edit ? (
+        {edit ? (
           <textarea
             rows={2}
             value={editComment}
@@ -66,11 +72,9 @@ function CommentReply({ profileImage, nickname, created_at, replyId, userId,setC
             className="resize-none w-1/4"
             onChange={(e) => setEditComment(e.target.value)}
           />
-          ): (
-            <div className="text-sm">{renderComment}</div>
-          )
-        }
-        
+        ) : (
+          <div className="text-sm">{renderComment}</div>
+        )}
       </div>
     </li>
   );

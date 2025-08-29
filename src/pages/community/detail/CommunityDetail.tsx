@@ -4,29 +4,27 @@ import PostComment from './PostComment';
 import { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 
-
 type Reply = Tables<'reply'>;
 type ReplyData = Reply & {
-  profile: Tables<'profile'>
+  profile: Tables<'profile'>;
 };
-
-
 
 function CommunityDetail() {
   const [replies, setReplies] = useState<ReplyData[]>([]);
-
 
   useEffect(() => {
     const fetchData = async () => {
       const { data, error } = await supabase
         .from('reply')
         .select('*,profile(profile_id,nickname,profile_image_url)')
-        .is('parent_id', null).order('created_at',{ascending:false})
+        .is('parent_id', null)
+        .order('created_at', { ascending: false });
       if (error) {
         console.log(error);
         return;
       }
-      if (data) setReplies(data);
+      console.log(data);
+      // if (data) setReplies(data);
     };
     fetchData();
   }, []);
@@ -108,7 +106,7 @@ function CommunityDetail() {
             <ul className="space-y-4">
               {replies.map(
                 ({ parent_id, user_id, reply_id, profile, content, created_at, like_count }) => {
-                  const nickname = profile?.nickname ;
+                  const nickname = profile?.nickname;
                   const avatar = profile?.profile_image_url;
                   return (
                     <PostComment
