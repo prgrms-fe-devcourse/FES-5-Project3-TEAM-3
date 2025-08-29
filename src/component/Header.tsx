@@ -1,5 +1,5 @@
 
-import { useAuth} from '@/store/@store';
+import { useAuth } from '@/store/@store';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
@@ -17,12 +17,10 @@ function RealHeader() {
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
- 
- 
+
   useLayoutEffect(() => {
     setSearchBar(false);
   }, [pathname]);
-
 
   useEffect(() => {
     if (pathname !== '/') return;
@@ -42,7 +40,7 @@ function RealHeader() {
   const handleSearch = () => {
     setSearchBar(!searchBar);
 
-    if (window.scrollY <= 0) {
+    if (window.scrollY <= 1) {
       setScrolled(!scrolled);
     }
   };
@@ -55,6 +53,7 @@ function RealHeader() {
   );
 
   return (
+
 
     <div className={pathname == '/' ? '' : 'h-17.5'}>
       {searchBar && (
@@ -83,7 +82,7 @@ function RealHeader() {
                 />
               </svg>
             </button>
-            <NavLink to="" className="font-semibold text-secondary-50">
+            <NavLink to="wines" className="font-semibold text-secondary-50">
               Wine
             </NavLink>
             <NavLink to="community/write" className="font-semibold text-secondary-50">
