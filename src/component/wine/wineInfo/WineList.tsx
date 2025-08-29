@@ -2,6 +2,7 @@ import type { WineInfoType } from '@/pages/wine/Wines';
 import WineInfo from './WineInfo';
 import { useWineStore } from '@/store/wineStore';
 import { memo } from 'react';
+import { Link } from 'react-router';
 
 interface WineListProps {
   wines: WineInfoType[];
@@ -58,8 +59,10 @@ function WineList({ wines }: WineListProps) {
     );
   return (
     <>
-      {filteredWines.map((wine) => (
-        <WineInfo wineInfo={wine} key={wine.title} />
+      {filteredWines.map((wine, i) => (
+        <Link key={wine.title} to={`/wines/detail/${i}`}>
+          <WineInfo wineInfo={wine} />
+        </Link>
       ))}
     </>
   );

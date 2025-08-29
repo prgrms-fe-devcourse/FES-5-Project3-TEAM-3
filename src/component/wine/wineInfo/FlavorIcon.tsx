@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { matchFlavor } from './matchFlavor';
+import clsx from 'clsx';
 
-function FlavorIcon({ flavor }: { flavor: string }) {
+function FlavorIcon({ flavor, type = 'default' }: { flavor: string; type?: 'default' | 'large' }) {
   const flavorCategory = matchFlavor(flavor);
   const textRef = useRef<HTMLParagraphElement>(null);
   const [isOverflow, setIsOverflow] = useState(false);
@@ -15,20 +16,29 @@ function FlavorIcon({ flavor }: { flavor: string }) {
   }, []);
 
   return (
-    <div className="w-13  flex flex-col overflow-hidden justify-center mx-auto font-normal">
+    <div
+      className={clsx(
+        'w-13  flex flex-col overflow-hidden justify-center mx-auto font-normal',
+        type === 'large' && 'w-full'
+      )}
+    >
       <img
-        src={`icon/flavor/${flavorCategory}.svg`}
+        src={`/icon/flavor/${flavorCategory}.svg`}
         alt={flavor}
-        className="w-10 h-10 self-center"
+        className={clsx('w-10 h-10 self-center', type === 'large' && 'w-12 h-12')}
         draggable="false"
       />
       <p
         ref={textRef}
-        className={`text-sm text-text-secondary font-normal  whitespace-nowrap transform transition-transform duration-1000 ${
-          isOverflow
-            ? '-translate-x-0 group-hover:translate-x-[calc(48px_-_100%)] self-baseline'
-            : 'text-center'
-        }`}
+        className={
+          type === 'default'
+            ? `text-sm text-text-secondary font-normal  whitespace-nowrap transform transition-transform duration-1000 ${
+                isOverflow
+                  ? '-translate-x-0 group-hover:translate-x-[calc(48px_-_100%)] self-baseline'
+                  : 'text-center'
+              }`
+            : 'text-center text-sm 2xl:text-[15px] text-text-secondary font-normal whitespace-nowrap'
+        }
       >
         {flavor}
       </p>
