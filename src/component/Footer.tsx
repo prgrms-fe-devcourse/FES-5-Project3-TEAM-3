@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { NavLink } from 'react-router';
 
 function SkeletonFooter() {
@@ -67,6 +67,7 @@ function RealFooter() {
 
 function Footer() {
   const [isLoading, setIsLoading] = useState(false);
+  console.log(setIsLoading)
   //  useEffect(() => {
   //    setTimeout(() => {
   //      setIsLoading(true);
