@@ -24,7 +24,7 @@ export async function changePassword({ current, next }: ChangePasswordParams) {
   if (signinErr) throw new Error('현재 비밀번호가 올바르지 않습니다.');
 
   const { error: updateErr } = await supabase.auth.updateUser({ password: next });
-  if (updateErr) throw new Error(`비밀번호 변경에 실패했습니다. Error:${updateErr.message}`);
+  if (updateErr) throw new Error(`비밀번호 변경 Error:${updateErr.message}`);
 
   return true;
 }
