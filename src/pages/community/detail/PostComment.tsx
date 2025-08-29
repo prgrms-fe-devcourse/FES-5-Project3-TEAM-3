@@ -6,7 +6,7 @@ import type { Tables } from '@/supabase/database.types';
 import supabase from '@/supabase/supabase';
 import { useEffect, useState } from 'react';
 import CommentReply from './CommentReply';
-import EditBtn from './editBtn';
+import EditBtn from '../../../component/community/EditBtn';
 
 interface Props {
   nickname: string;
@@ -167,8 +167,7 @@ function PostComment({
             )}
           </div>
         </div>
-        {
-          edit ? (
+        {edit ? (
           <textarea
             rows={2}
             value={editComment}
@@ -185,12 +184,9 @@ function PostComment({
             <img src="/icon/like.svg" alt="좋아요" className="w-4 h-4 " />
             <span>{likes}</span>
           </button>
-          <button className="flex gap-1 py-1 text-sm cursor-pointer">
+          <button className="flex gap-1 py-1 text-sm cursor-pointer" onClick={handleReply}>
             <img src="/icon/comment.svg" alt="답글" className="w-4 h-4 " />
             <span>{childrenCount}</span>
-          </button>
-          <button className="flex gap-1 py-1 text-sm cursor-pointer" onClick={handleReply}>
-            <span>답글</span>
           </button>
         </div>
 

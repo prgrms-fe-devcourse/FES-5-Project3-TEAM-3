@@ -140,6 +140,7 @@ function SkeletonHeader() {
 
 function Header() {
   const [isLoading, setIsLoading] = useState(false);
+  console.log(setIsLoading)
   // useEffect(() => {
   //   setTimeout(() => {
   //     setIsLoading(true)

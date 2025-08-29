@@ -1,7 +1,8 @@
 import { useIsMine } from '@/hook/useIsMine';
-import EditBtn from './editBtn';
 import { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
+import EditBtn from '@/component/community/EditBtn';
+
 
 interface Props {
   profileImage: string | null | undefined;
@@ -22,7 +23,7 @@ function CommentReply({ profileImage, nickname, created_at, replyId, userId,setC
   const [renderComment, setRenderComment] = useState('')
   
     useEffect(() => {
-      setRenderComment(content)
+      setComment(content)
     },[content])
   
     const handleSave = async () => {
@@ -36,7 +37,9 @@ function CommentReply({ profileImage, nickname, created_at, replyId, userId,setC
       if (error) console.log(error);
       setEdit(false);
       setComment(editComment);
-    };
+  };
+  
+
   return (
     <li className="flex gap-2 items-start">
       <span className="text-gray-200">ㄴ</span>

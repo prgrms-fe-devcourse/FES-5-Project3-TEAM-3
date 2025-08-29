@@ -6,8 +6,9 @@ import supabase from '@/supabase/supabase';
 
 type Reply = Tables<'reply'>;
 type ReplyData = Reply & {
-  profile: Tables<'profile'>;
+  profile: Pick<Tables<'profile'>, 'profile_id' | 'nickname' | 'profile_image_url'> | null;
 };
+
 
 function CommunityDetail() {
   const [replies, setReplies] = useState<ReplyData[]>([]);
