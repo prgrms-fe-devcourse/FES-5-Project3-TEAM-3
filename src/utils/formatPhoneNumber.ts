@@ -14,12 +14,16 @@ export const formatPhoneNumber = (input: string) => {
     if (inputNumber.length <= 2) return inputNumber;
     if (inputNumber.length <= 5) return `${inputNumber.slice(0, 2)}-${inputNumber.slice(2)}`;
     if (inputNumber.length <= 9)
+      return `${inputNumber.slice(0, 2)}-${inputNumber.slice(2, 5)}-${inputNumber.slice(5)}`;
+    if (inputNumber.length <= 10)
       return `${inputNumber.slice(0, 2)}-${inputNumber.slice(2, inputNumber.length - 4)}-${inputNumber.slice(-4)}`;
   }
 
   if (inputNumber.length <= 3) return inputNumber;
   if (inputNumber.length <= 7) return `${inputNumber.slice(0, 3)}-${inputNumber.slice(3)}`;
-  if (inputNumber.length <= 12)
+  if (inputNumber.length <= 10)
+    return `${inputNumber.slice(0, 3)}-${inputNumber.slice(3, 6)}-${inputNumber.slice(6)}`;
+  if (inputNumber.length <= 11)
     return `${inputNumber.slice(0, 3)}-${inputNumber.slice(3, inputNumber.length - 4)}-${inputNumber.slice(-4)}`;
 
   return inputNumber;

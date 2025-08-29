@@ -1,3 +1,4 @@
+import type { ConfirmOptions } from '@/@types/global';
 import supabase from '@/supabase/supabase';
 import { create } from 'zustand';
 
@@ -14,13 +15,23 @@ type AuthAction = {
 };
 
 type ToastState = {
-  message:string
-}
+  message: string;
+};
 
 type ToastAction = {
-  success: (s: string) => void
-  error:(s:string) => void
-}
+  success: (s: string) => void;
+  error: (s: string) => void;
+};
+
+type ConfirmState = {
+  isOpen: boolean;
+  options: ConfirmOptions;
+  resolver: ((v: boolean) => void) | null;
+  open: (opts: ConfirmOptions) => Promise<boolean>;
+  close: (v: boolean) => void;
+  setBusy: (busy: boolean) => void;
+  afterExit: () => void;
+};
 
 export const useAuth = create<AuthState & AuthAction>((set) => ({
   userId: null,
@@ -57,3 +68,34 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
   },
 }));
 
+export const useConfirmStore = create<ConfirmState>((set, get) => ({
+  isOpen: false,
+  options: {},
+  resolver: null,
+
+  open: (opts) => {
+    return new Promise<boolean>((resolve) => {
+      set({
+        isOpen: true,
+        options: {
+          allowOutsideClose: true,
+          allowEscapeClose: true,
+          tone: 'default',
+          confirmText: '확인',
+          cancelText: '취소',
+          ...opts,
+        },
+        resolver: resolve,
+      });
+    });
+  },
+  close: (v) => {
+    const { resolver, options } = get();
+    if (options.busy) return;
+    set({ isOpen: false });
+    resolver?.(v);
+    set({ resolver: null });
+  },
+  setBusy: (busy) => set((s) => ({ options: { ...s.options, busy } })),
+  afterExit: () => set({ options: {} }),
+}));
