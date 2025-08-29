@@ -1,4 +1,4 @@
-import { useAuth} from '@/store/@store';
+import { useAuth } from '@/store/@store';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
@@ -6,65 +6,56 @@ import HeaderSearchSection from './HeaderSearchSection';
 import clsx from 'clsx';
 
 function RealHeader() {
-
   const { userId, signOut } = useAuth(
     useShallow((s) => ({
       userId: s.userId,
       signOut: s.signOut,
     }))
   );
- 
+
   const { pathname } = useLocation();
-  const [scrolled,setScrolled] = useState(false)
+  const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
- 
- 
+
   useLayoutEffect(() => {
     setSearchBar(false);
   }, [pathname]);
 
-
   useEffect(() => {
-    if (pathname !== '/') return
+    if (pathname !== '/') return;
     const handleScroll = () => {
-          if (window.scrollY > 0) {
-            setScrolled(true);
-          } else {
-            setScrolled(false);
-          }
-    }
-    window.addEventListener('scroll',handleScroll)
+      if (window.scrollY > 0) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener('scroll',handleScroll)
-    }
-   },[pathname])
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [pathname]);
 
   const handleSearch = () => {
     setSearchBar(!searchBar);
     if (window.scrollY <= 1) {
-      setScrolled(!scrolled)
+      setScrolled(!scrolled);
     }
-  }
-  
+  };
+
   const base = ' h-17.5 w-full flex items-center justify-center fixed z-99 duration-400';
 
   const headerBgClass = clsx(
-    base, 
-    pathname == '/' ?
-      (scrolled ? 'bg-primary-500' : 'bg-tranprent'): 'bg-primary-500'
+    base,
+    pathname == '/' ? (scrolled ? 'bg-primary-500' : 'bg-tranprent') : 'bg-primary-500'
   );
 
   return (
-    
-    <div className={pathname == '/' ? '' : 'h-17.5'} >
-    {
-      searchBar && 
-      (
-        <div className='fixed inset-0 bg-black/40 z-90' onClick={()=>setSearchBar(false)}></div>
-      )
-    }
+    <div className={pathname == '/' ? '' : 'h-17.5'}>
+      {searchBar && (
+        <div className="fixed inset-0 bg-black/40 z-90" onClick={() => setSearchBar(false)}></div>
+      )}
       <div className={headerBgClass}>
-
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
             <NavLink to="/">
@@ -72,11 +63,7 @@ function RealHeader() {
             </NavLink>
           </h1>
           <nav className="flex items-center gap-4">
-            <button
-              className="cursor-pointer"
-              type="button"
-              onClick={handleSearch}
-            >
+            <button className="cursor-pointer" type="button" onClick={handleSearch}>
               <svg
                 width="25"
                 height="25"
@@ -90,7 +77,7 @@ function RealHeader() {
                 />
               </svg>
             </button>
-            <NavLink to="" className="font-semibold text-secondary-50">
+            <NavLink to="wines" className="font-semibold text-secondary-50">
               Wine
             </NavLink>
             <NavLink to="community/write" className="font-semibold text-secondary-50">
