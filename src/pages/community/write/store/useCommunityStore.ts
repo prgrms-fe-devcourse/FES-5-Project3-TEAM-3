@@ -138,4 +138,3 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   setPreviewIndex: (previewIndex) =>
     set((state) => (state.previewIndex === previewIndex ? state : { previewIndex })),
 }));
-

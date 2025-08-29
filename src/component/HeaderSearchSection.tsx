@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Categories from './MainPage/Categories';
-import gsap from 'gsap'
+import gsap from 'gsap';
 
 type Props = {
   searchBar: boolean;
@@ -35,28 +35,26 @@ const wineCategories = [
 ];
 
 function HeaderSearchSection({ searchBar }: Props) {
-
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-      if (!sectionRef.current) return;
-      if (searchBar) {
-        // 열릴 때
-        gsap.to(sectionRef.current, {
-          height: sectionRef.current.scrollHeight,
-          duration: 0.5,
-          ease: 'power2.out',
-        });
-      } else {
-        // 닫힐 때
-        gsap.to(sectionRef.current, {
-          height: 0,
-          duration: 0.5,
-          ease: 'power2.in',
-        });
-      }
-    }, [searchBar]);
-
+  useEffect(() => {
+    if (!sectionRef.current) return;
+    if (searchBar) {
+      // 열릴 때
+      gsap.to(sectionRef.current, {
+        height: sectionRef.current.scrollHeight,
+        duration: 0.5,
+        ease: 'power2.out',
+      });
+    } else {
+      // 닫힐 때
+      gsap.to(sectionRef.current, {
+        height: 0,
+        duration: 0.5,
+        ease: 'power2.in',
+      });
+    }
+  }, [searchBar]);
 
   const parseArray = (s: string | null): string[] => {
     if (!s) return [];
@@ -70,7 +68,8 @@ function HeaderSearchSection({ searchBar }: Props) {
 
   const searchBarRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyword] = useState('');
-  const [recentSearch, setRecentSearch] = useState<string[]>(()=> parseArray(localStorage.getItem('recntly-search'))
+  const [recentSearch, setRecentSearch] = useState<string[]>(() =>
+    parseArray(localStorage.getItem('recntly-search'))
   );
 
   const handleFocus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

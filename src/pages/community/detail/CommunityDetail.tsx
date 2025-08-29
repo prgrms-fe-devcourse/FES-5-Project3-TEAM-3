@@ -4,33 +4,29 @@ import PostComment from './PostComment';
 import { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 
-
-
-
 type Reply = Tables<'reply'>;
 type ReplyData = Reply & {
-  profile: Tables<'profile'> 
+  profile: Tables<'profile'>;
 };
 
-
 function CommunityDetail() {
-
-
   const [replies, setReplies] = useState<ReplyData[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {   
-      const { data,error } = await supabase
+    const fetchData = async () => {
+      const { data, error } = await supabase
         .from('reply')
         .select('*,profile:profile!reply_user_id_fkey (profile_id,nickname,profile_image_url)')
-      if(error) console.log(error)
-      if(data)setReplies(data)
+        .is('parent_id', null).order('created_at',{ascending:false})
+      if (error) {
+        console.log(error);
+        return;
       }
-   fetchData()
-  }, [])
- 
+      if (data) setReplies(data);
+    };
+    fetchData();
+  }, []);
 
-  
   return (
     <div className="min-h-full">
       <div className="max-w-[90rem] mx-auto px-6 py-10">
@@ -97,22 +93,30 @@ function CommunityDetail() {
           {/* 댓글 작성 폼 */}
           <section className="bg-white p-6 rounded-lg shadow-sm">
             <div className="mb-6">
-              <InputComment/>
+              <InputComment />
             </div>
-            
+
             {/* 댓글 목록 */}
             <ul className="space-y-4">
-              {
-                replies.map(({reply_id,profile,content,created_at}) => 
-                  <PostComment
-                    key={reply_id}
-                    nickname={profile.nickname}
-                    profileImage={profile.profile_image_url}
-                    content={content}
-                    created_at={created_at}
-                  />  
-                )
-              }
+              {replies.map(
+                ({ parent_id, user_id, reply_id, profile, content, created_at, like_count }) => {
+                  const nickname = profile?.nickname ?? '알 수 없는 사용자';
+                  const avatar = profile?.profile_image_url ?? '/img/default-avatar.png';
+                  return (
+                    <PostComment
+                      key={reply_id}
+                      likes={like_count}
+                      replyId={reply_id}
+                      user_id={user_id}
+                      parent_id={parent_id}
+                      nickname={nickname}
+                      profileImage={avatar}
+                      content={content}
+                      created_at={created_at}
+                    />
+                  );
+                }
+              )}
             </ul>
           </section>
         </div>
@@ -120,4 +124,4 @@ function CommunityDetail() {
     </div>
   );
 }
-export default CommunityDetail
+export default CommunityDetail;

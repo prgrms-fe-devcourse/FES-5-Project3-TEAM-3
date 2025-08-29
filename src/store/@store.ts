@@ -47,4 +47,3 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
     return () => listener.subscription.unsubscribe();
   },
 }));
-

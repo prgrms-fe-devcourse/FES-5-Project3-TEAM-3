@@ -20,7 +20,7 @@ const Login = lazy(() => import('@/pages/Login/Login'));
 const Register = lazy(() => import('@/pages/Login/Register'));
 
 const Wines = lazy(() => import('@/pages/wine/Wines'));
-const Page404 =lazy(()=>import('@/pages/Page404'))
+const Page404 = lazy(() => import('@/pages/Page404'));
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -95,8 +95,9 @@ export const routes = createBrowserRouter([
       },
       { path: '/wines', Component: Wines },
     ],
-  }, {
+  },
+  {
     path: '*',
-    Component:Page404
-  }
+    Component: Page404,
+  },
 ]);
