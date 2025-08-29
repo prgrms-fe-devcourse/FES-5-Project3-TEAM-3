@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Categories from './MainPage/Categories';
-import gsap from 'gsap'
+import gsap from 'gsap';
 
 type Props = {
   searchBar: boolean;
@@ -35,8 +35,8 @@ const wineCategories = [
 ];
 
 function HeaderSearchSection({ searchBar }: Props) {
-
   const sectionRef = useRef<HTMLDivElement | null>(null);
+
 
   useLayoutEffect(() => {
       const el = sectionRef.current;
@@ -84,6 +84,7 @@ function HeaderSearchSection({ searchBar }: Props) {
  }, [searchBar]);
 
 
+
   const parseArray = (s: string | null): string[] => {
     if (!s) return [];
     try {
@@ -96,8 +97,8 @@ function HeaderSearchSection({ searchBar }: Props) {
 
   const searchBarRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyword] = useState('');
-  
   const [recentSearch, setRecentSearch] = useState<string[]>(()=> parseArray(localStorage.getItem('recntly-search'))
+
   );
 
   const handleFocus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
