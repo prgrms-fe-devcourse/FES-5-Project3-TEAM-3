@@ -30,7 +30,7 @@ function CommentReply({ profileImage, nickname, created_at, replyId, userId,setC
       setRenderComment(editComment);
       const { error } = await supabase
         .from('reply')
-        .update({ content: editComment })
+        .update({ content: editComment})
         .eq('reply_id', replyId)
         .select('content')
         .single();
