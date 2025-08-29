@@ -28,6 +28,11 @@ function CommunityDetail() {
     fetchData();
   }, []);
 
+  const handleSubmit = async () => {
+    console.log(removeEventListener)
+  } 
+  handleSubmit()
+
   return (
     <div className="min-h-full">
       <div className="max-w-[90rem] mx-auto px-6 py-10">
