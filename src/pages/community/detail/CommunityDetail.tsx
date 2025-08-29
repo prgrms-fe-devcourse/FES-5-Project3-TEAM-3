@@ -4,20 +4,23 @@ import PostComment from './PostComment';
 import { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 
+
 type Reply = Tables<'reply'>;
 type ReplyData = Reply & {
-  profile: Pick<Tables<'profile'>, 'profile_id' | 'nickname' | 'profile_image_url'> | null;
+  profile: Tables<'profile'>
 };
+
 
 
 function CommunityDetail() {
   const [replies, setReplies] = useState<ReplyData[]>([]);
 
+
   useEffect(() => {
     const fetchData = async () => {
       const { data, error } = await supabase
         .from('reply')
-        .select('*,profile:profile!reply_user_id_fkey (profile_id,nickname,profile_image_url)')
+        .select('*,profile(profile_id,nickname,profile_image_url)')
         .is('parent_id', null).order('created_at',{ascending:false})
       if (error) {
         console.log(error);
@@ -28,11 +31,10 @@ function CommunityDetail() {
     fetchData();
   }, []);
 
-  const handleSubmit = async () => {
-    console.log(removeEventListener)
-  } 
-  handleSubmit()
-
+  /* 
+    - post_id eq로 붙여야합니다
+    - 의존성배열에 post_id로 붙여야합니다
+  */
   return (
     <div className="min-h-full">
       <div className="max-w-[90rem] mx-auto px-6 py-10">
@@ -106,8 +108,8 @@ function CommunityDetail() {
             <ul className="space-y-4">
               {replies.map(
                 ({ parent_id, user_id, reply_id, profile, content, created_at, like_count }) => {
-                  const nickname = profile?.nickname ?? '알 수 없는 사용자';
-                  const avatar = profile?.profile_image_url ?? '/img/default-avatar.png';
+                  const nickname = profile?.nickname ;
+                  const avatar = profile?.profile_image_url;
                   return (
                     <PostComment
                       key={reply_id}

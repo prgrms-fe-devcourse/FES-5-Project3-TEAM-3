@@ -1,5 +1,5 @@
 import Button from '@/component/Button';
-import { usePost } from '@/hook/fetch';
+import { usePost } from '@/utils/supabase/fetch';
 import { useIsMine } from '@/hook/useIsMine';
 import { useAuth } from '@/store/@store';
 import type { Tables } from '@/supabase/database.types';

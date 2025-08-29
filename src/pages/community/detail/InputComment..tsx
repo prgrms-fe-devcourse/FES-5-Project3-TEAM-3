@@ -1,5 +1,5 @@
 import Button from '@/component/Button';
-import { usePost } from '@/hook/fetch';
+import { usePost } from '@/utils/supabase/fetch';
 import { useAuth } from '@/store/@store';
 import type { Tables } from '@/supabase/database.types';
 import supabase from '@/supabase/supabase';
@@ -32,6 +32,9 @@ function InputComment() {
     });
 
     if (error) console.error(error);
+    if (!error) setComment('')
+    
+    const {data} = await supabase.from('reply').select()
   };
 
   return (
