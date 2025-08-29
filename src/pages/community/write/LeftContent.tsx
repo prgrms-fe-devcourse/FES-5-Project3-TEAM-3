@@ -2,6 +2,7 @@ import TextEditor from '@/component/community/TextEditor';
 import { useCommunityForm } from '@/hook/community/useCommunityForm';
 import { useCommunityStore } from '@/pages/community/write/store/useCommunityStore';
 import React from 'react';
+import { createCommunityPost } from '@/supabase/community/communityCreate';
 
 function LeftContent() {
   const {
@@ -17,8 +18,44 @@ function LeftContent() {
     tags,
     removeTag,
     addImages,
-    // imageNames,
   } = useCommunityForm();
+
+  const [isSaving, setIsSaving] = React.useState(false);
+  const clearImages = useCommunityStore((s) => s.clearImages);
+  const getStoreState = () => useCommunityStore.getState();
+
+  // 이미지 동기화
+  const removeImageAt = useCommunityStore((s) => s.removeImageAt);
+  const getImageUrls = () => useCommunityStore.getState().imageUrls || [];
+
+  // left 변경 시: 본문에 더 이상 존재하지 않는 store 이미지를 찾아 삭제
+  const handleEditorChange = (html: string) => {
+    setBody(html);
+
+    // 본문에 남아있는 <img> src 목록 수집
+    let doc: Document | null = null;
+    try {
+      doc = new DOMParser().parseFromString(html || '', 'text/html');
+    } catch {
+      doc = null;
+    }
+    const presentSrcs = doc
+      ? Array.from(doc.querySelectorAll('img')).map((img) => img.getAttribute('src') || '')
+      : [];
+
+    // 스토어에 있는 imageUrls 중 본문에 없는 항목 인덱스 수집
+    const storeUrls = getImageUrls();
+    const toRemove = storeUrls
+      .map((u, i) => ({ u, i }))
+      .filter(({ u }) => u && !presentSrcs.includes(u))
+      .map(({ i }) => i)
+      .sort((a, b) => b - a);
+
+    // 인덱스 역순으로 삭제 호출
+    toRemove.forEach((idx) => {
+      if (typeof removeImageAt === 'function') removeImageAt(idx);
+    });
+  };
 
   // 1) 스토어 addImages로 썸네일/대표선택 데이터 업데이트
   // 2) 추가된 URL들을 에디터에 삽입(중복 createObjectURL 방지 위해 스토어에서 가져옴)
@@ -30,12 +67,41 @@ function LeftContent() {
     return added; // 에디터에 삽입할 URL 배열
   };
 
-  // const displayText =
-  //   !imageNames || imageNames.length === 0
-  //     ? '선택된 이미지가 없습니다.'
-  //     : imageNames.length <= 3
-  //       ? imageNames.join(', ')
-  //       : `${imageNames.slice(0, 3).join(', ')} 외 ${imageNames.length - 3}개`;
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // const data = getStoreState();
+      await createCommunityPost({
+        title,
+        body,
+        // files: data.imageFiles ?? [],
+        // storeImageUrls: data.imageUrls ?? [],
+        // primaryIdx: data.primaryIdx ?? 0,
+        category,
+        tags,
+        userId: undefined,
+        // uploadOptions: { concurrency: 4, rollbackOnFail: true },
+      });
+
+      // 저장 성공: 스토어의 blob 정리 및 초기화
+      if (typeof clearImages === 'function') clearImages();
+      // 폼 초기화
+      setTitle('');
+      setBody('');
+      setTagInput('');
+      // 태그 모두 제거
+      try {
+        (tags || []).slice().forEach((t: any) => removeTag(t));
+      } catch {}
+      window.alert('게시가 완료되었습니다.');
+      // 필요 시 리다이렉트 또는 폼 리셋 추가
+    } catch (err: any) {
+      console.error('Save error', err);
+      window.alert('저장 중 오류가 발생했습니다.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const preventFormSubmit = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') e.preventDefault();
@@ -77,53 +143,12 @@ function LeftContent() {
         />
       </label>
 
-      {/* 내용 */}
-      {/*       <label className="block mb-4">
-        <textarea
-          placeholder="내용을 입력하세요"
-          className="mt-2 block w-full rounded-xl border border-gray-200 bg-white/70 resize-none px-3 py-2"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          rows={14}
-        />
-      </label> */}
-
       {/* textarea → TextEditor */}
       <TextEditor
         value={body}
-        onChange={(html) => setBody(html)} // 본문을 HTML로 저장
-        onInsertImages={handleInsertImages} // 업로드 시 본문 커서 위치에 이미지 삽입
+        onChange={handleEditorChange} // 변경 시 스토어와 동기화
+        onInsertImages={handleInsertImages}
       />
-
-      {/* 숨겨진 실제 input (라벨 밖) */}
-      {/* <input
-        id="images"
-        type="file"
-        name="images"
-        className="sr-only"
-        multiple
-        accept="image/*"
-        onChange={onImagesChange}
-      /> */}
-
-      {/* 커스텀 박스 (htmlFor로 연결) */}
-      {/* <label htmlFor="images" className="mb-4 block">
-        <span className="text-sm font-medium">이미지</span>
-
-        <div className="mt-2 flex items-center justify-between rounded-xl border border-gray-200 bg-white/70 px-3 py-2 cursor-pointer">
-          <span
-            className={`text-sm truncate ${!imageNames || imageNames.length === 0 ? 'text-gray-400' : 'text-gray-800'}`}
-            aria-live="polite"
-            title={(imageNames || []).join(', ')}
-          >
-            {displayText}
-          </span>
-
-          <span className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm hover:bg-primary-400 hover:text-white">
-            파일 선택
-          </span>
-        </div>
-      </label> */}
 
       {/* 태그 추가 */}
       <div className="mt-4">
@@ -177,10 +202,12 @@ function LeftContent() {
           취소
         </button>
         <button
-          type="submit"
-          className="px-6 py-2 rounded-xl bg-primary-400 text-white text-sm shadow-sm hover:bg-primary-600"
+          type="button"
+          onClick={handleSave}
+          disabled={isSaving}
+          className="px-6 py-2 rounded-xl bg-primary-400 text-white text-sm shadow-sm hover:bg-primary-600 disabled:opacity-60"
         >
-          저장
+          {isSaving ? '저장 중...' : '저장'}
         </button>
       </div>
     </div>

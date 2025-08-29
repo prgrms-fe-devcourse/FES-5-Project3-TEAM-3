@@ -60,7 +60,7 @@ function RightPreview() {
             {hasImages ? (
               imageUrls.map((url, idx) => (
                 <div
-                  key={url + idx}
+                  key={idx}
                   className={`relative w-20 h-12 rounded-md overflow-hidden border ${idx === previewIndex ? 'ring-2 ring-primary-400' : ''}`}
                 >
                   <img
@@ -82,7 +82,7 @@ function RightPreview() {
               ))
             ) : (
               <div className="w-20 h-12 flex items-center justify-center text-sm text-gray-400 bg-gray-50 rounded-md">
-                미리보기
+                썸네일 선택
               </div>
             )}
           </div>
