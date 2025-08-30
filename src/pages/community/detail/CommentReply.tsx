@@ -6,7 +6,6 @@ import { useTimer } from '@/hook/useTimer';
 import useToast from '@/hook/useToast';
 import { useKeyDown } from '@/hook/useKeyDown';
 
-
 interface Props {
   profileImage: string;
   nickname: string | null | undefined;
@@ -27,27 +26,27 @@ function CommentReply({
   onDelete,
 }: Props) {
   if (!userId) return;
-  
-  const time = useTimer(created_at)
+
+  const time = useTimer(created_at);
   const isMine = useIsMine(userId);
   const [edit, setEdit] = useState(false);
   const [editComment, setEditComment] = useState('');
   const [renderComment, setRenderComment] = useState('');
 
-   useEffect(() => {
-     setRenderComment(content);
-   }, [content]);
+  useEffect(() => {
+    setRenderComment(content);
+  }, [content]);
 
-   // edit이 true가 될 때만 현재 본문을 수정 입력으로 복사
-   useEffect(() => {
-     if (edit) setEditComment(renderComment);
-   }, [edit, renderComment]);
+  // edit이 true가 될 때만 현재 본문을 수정 입력으로 복사
+  useEffect(() => {
+    if (edit) setEditComment(renderComment);
+  }, [edit, renderComment]);
 
   const handleSave = async () => {
-        if (editComment.trim() === '') {
-          useToast('error', '최소 한글자 이상 입력해야합니다.')
-          return
-        }
+    if (editComment.trim() === '') {
+      useToast('error', '최소 한글자 이상 입력해야합니다.');
+      return;
+    }
     const { data, error } = await supabase
       .from('reply')
       .update({ content: editComment.trim() })
@@ -55,10 +54,10 @@ function CommentReply({
       .select('reply_id,content')
       .single();
     if (error) console.log(error);
-    if (data) { 
+    if (data) {
       setRenderComment(data.content);
       setEdit(false);
-    } 
+    }
   };
 
   return (

@@ -4,11 +4,9 @@ import { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 import type { ReplyData } from '@/@types/global';
 
-
-
 function CommunityDetail() {
   const [replies, setReplies] = useState<ReplyData[]>([]);
- 
+
   useEffect(() => {
     const fetchData = async () => {
       const { data, error } = await supabase
@@ -29,11 +27,11 @@ function CommunityDetail() {
     - post_id eq로 붙여야합니다
     - 의존성배열에 post_id로 붙여야합니다
   */
-  
+
   const handleDelete = (targetId: string) => {
-    setReplies((prev) => prev.filter((c)=>c.reply_id !== targetId))
-  }
-  
+    setReplies((prev) => prev.filter((c) => c.reply_id !== targetId));
+  };
+
   return (
     <div className="min-h-full">
       <div className="max-w-[90rem] mx-auto px-6 py-10">
@@ -100,15 +98,15 @@ function CommunityDetail() {
           {/* 댓글 작성 폼 */}
           <section className="bg-white p-6 rounded-lg shadow-sm">
             <div className="mb-6">
-              <InputComment setReplies={setReplies}/>
+              <InputComment setReplies={setReplies} />
             </div>
 
             {/* 댓글 목록 */}
             <ul className="space-y-4">
               {replies.map(
-                ({ parent_id, user_id, reply_id, profile,content, created_at, like_count }) => {
-                  const nickname = profile.nickname 
-                  const avatar = profile.profile_image_url
+                ({ parent_id, user_id, reply_id, profile, content, created_at, like_count }) => {
+                  const nickname = profile.nickname;
+                  const avatar = profile.profile_image_url;
                   return (
                     <PostComment
                       key={reply_id}

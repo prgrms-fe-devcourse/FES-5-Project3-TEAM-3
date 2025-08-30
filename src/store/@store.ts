@@ -90,5 +90,3 @@ export const useConfirmStore = create<ConfirmState>((set, get) => ({
   setBusy: (busy) => set((s) => ({ options: { ...s.options, busy } })),
   afterExit: () => set({ options: {} }),
 }));
-
-

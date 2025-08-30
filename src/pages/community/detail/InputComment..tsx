@@ -14,7 +14,7 @@ interface Props {
   setReplies: Dispatch<SetStateAction<ReplyData[]>>;
 }
 
-function InputComment({setReplies}:Props) {
+function InputComment({ setReplies }: Props) {
   const { userId } = useAuth();
   const [postData, setPostData] = useState<Post[]>([]);
   // post_id 넣은 state
@@ -34,13 +34,13 @@ function InputComment({setReplies}:Props) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!userId) {
-      useToast('error', '로그인 후 이용해주세요') 
-      return
+      useToast('error', '로그인 후 이용해주세요');
+      return;
     }
     if (comment.trim() === '') {
       useToast('warn', '최소 한글자 이상 작성해야합니다');
-      return
-    } 
+      return;
+    }
 
     const { error } = await supabase.from('reply').insert({
       user_id: userId,
@@ -51,11 +51,15 @@ function InputComment({setReplies}:Props) {
     if (error) console.error(error);
     if (!error) setComment('');
 
-    const { data } = await supabase.from('reply').select('*,profile(profile_id,nickname,profile_image_url)').is('parent_id',null).order('created_at',{ascending:false})
-    
-    if (data) setReplies(data)
+    const { data } = await supabase
+      .from('reply')
+      .select('*,profile(profile_id,nickname,profile_image_url)')
+      .is('parent_id', null)
+      .order('created_at', { ascending: false });
+
+    if (data) setReplies(data);
   };
-  
+
   return (
     <form className="flex gap-3" onSubmit={(e) => handleSubmit(e)}>
       {userId ? (
@@ -81,9 +85,9 @@ function InputComment({setReplies}:Props) {
         />
       )}
 
-        <Button type="submit" size="md" borderType="outline" className="h-12.5">
-          등록
-        </Button>
+      <Button type="submit" size="md" borderType="outline" className="h-12.5">
+        등록
+      </Button>
     </form>
   );
 }
