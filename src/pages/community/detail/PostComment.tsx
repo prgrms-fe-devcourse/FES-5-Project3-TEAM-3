@@ -4,11 +4,13 @@ import { useIsMine } from '@/hook/useIsMine';
 import { useAuth } from '@/store/@store';
 import type { Tables } from '@/supabase/database.types';
 import supabase from '@/supabase/supabase';
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useState} from 'react';
 import CommentReply from './CommentReply';
 import EditBtn from '../../../component/community/EditBtn';
 import { useTimer } from '@/hook/useTimer';
 import type { ReplyData } from '@/@types/global';
+import useToast from '@/hook/useToast';
+import { useKeyDown } from '@/hook/useKeyDown';
 
 interface Props {
   nickname: string;
@@ -36,6 +38,8 @@ function PostComment({
   const { userId } = useAuth();
   const isMine = useIsMine(user_id ?? '');
   const time = useTimer(created_at);
+
+
   const [comment, setComment] = useState('');
   const [editComment, setEditComment] = useState('');
   const [renderComment, setRenderComment] = useState('');
@@ -90,6 +94,10 @@ function PostComment({
 
   // 수정 저장 기능
   const handleSave = async () => {
+    if (editComment.trim() === '') {
+      useToast('error', '최소 한글자 이상 입력해야합니다.')
+      return
+    }
     const { data, error } = await supabase
       .from('reply')
       .update({ content: editComment.trim() })
@@ -134,7 +142,10 @@ function PostComment({
   // 댓글 기능
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+ if (editComment.trim() === '') {
+     useToast('error', '최소 한글자 이상 입력해야합니다.');
+     return;
+   }
     if (!postId) {
       console.log('postId가 없음');
       return;
@@ -194,14 +205,14 @@ function PostComment({
         </div>
         {edit ? (
           <textarea
-            rows={2}
+            rows={3}
             value={editComment}
             autoFocus
-            className="resize-none w-1/4"
+            className="resize-none w-full border-text-secondary border-1"
             onChange={(e) => setEditComment(e.target.value)}
           />
         ) : (
-          <p className="mt-1 mb-1 text-sm text-gray-700">{renderComment}</p>
+          <p className="mt-1 mb-1 text-sm text-gray-700 whitespace-pre-line break-words">{renderComment}</p>
         )}
 
         <div className="flex gap-2">
@@ -226,9 +237,10 @@ function PostComment({
               <textarea
                 name="reply"
                 className="w-5/6 rounded border border-gray-200 p-2 resize-none text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
-                rows={2}
+                rows={3}
                 value={comment}
                 placeholder="답글을 입력하세요."
+                onKeyDown={(e)=>useKeyDown(e)}
                 onChange={(e) => setComment(e.target.value)}
               />
               <div className="flex gap-2">

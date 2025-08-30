@@ -17,8 +17,10 @@ interface Props {
 function InputComment({setReplies}:Props) {
   const { userId } = useAuth();
   const [postData, setPostData] = useState<Post[]>([]);
+  // post_id 넣은 state
   const [comment, setComment] = useState('');
 
+  /* 기능 확인을 위해 임시적으로 postId를 뽑아썻습니다 postId를 내려주었다면 지워주세요 */
   useEffect(() => {
     const fetchData = async () => {
       const post = await usePost();
@@ -31,6 +33,10 @@ function InputComment({setReplies}:Props) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!userId) {
+      useToast('error', '로그인 후 이용해주세요') 
+      return
+    }
     if (comment.trim() === '') {
       useToast('warn', '최소 한글자 이상 작성해야합니다');
       return
@@ -50,22 +56,34 @@ function InputComment({setReplies}:Props) {
     if (data) setReplies(data)
   };
   
-  
-
   return (
     <form className="flex gap-3" onSubmit={(e) => handleSubmit(e)}>
-      <textarea
-        id="comment"
-        className="block w-5/6 rounded border border-gray-800 p-3 resize-none focus:outline-none focus:ring-2 focus:ring-primary-400"
-        placeholder="댓글을 입력하세요."
-        onChange={(e) => setComment(e.target.value)}
-        onKeyDown={(e)=>useKeyDown(e)}
-        value={comment}
-        rows={1}
-      />
-      <Button type="submit" size="md" borderType="outline" className="h-12.5">
-        등록
-      </Button>
+      {userId ? (
+        <textarea
+          id="comment"
+          className="block w-5/6 rounded border border-gray-800 p-3 resize-none focus:outline-none focus:ring-2 focus:ring-primary-400"
+          placeholder="댓글을 입력하세요."
+          onChange={(e) => setComment(e.target.value)}
+          onKeyDown={(e) => useKeyDown(e)}
+          value={comment}
+          rows={1}
+        />
+      ) : (
+        <textarea
+          id="comment"
+          disabled
+          className="block w-5/6 rounded border border-gray-800 p-3 resize-none focus:outline-none focus:ring-2 focus:ring-primary-400"
+          placeholder="로그인 후 이용해주세요."
+          onChange={(e) => setComment(e.target.value)}
+          onKeyDown={(e) => useKeyDown(e)}
+          value={comment}
+          rows={1}
+        />
+      )}
+
+        <Button type="submit" size="md" borderType="outline" className="h-12.5">
+          등록
+        </Button>
     </form>
   );
 }

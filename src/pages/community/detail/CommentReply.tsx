@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 import EditBtn from '@/component/community/EditBtn';
 import { useTimer } from '@/hook/useTimer';
+import useToast from '@/hook/useToast';
+import { useKeyDown } from '@/hook/useKeyDown';
 
 
 interface Props {
@@ -42,6 +44,10 @@ function CommentReply({
    }, [edit, renderComment]);
 
   const handleSave = async () => {
+        if (editComment.trim() === '') {
+          useToast('error', '최소 한글자 이상 입력해야합니다.')
+          return
+        }
     const { data, error } = await supabase
       .from('reply')
       .update({ content: editComment.trim() })
@@ -74,14 +80,17 @@ function CommentReply({
         </div>
         {edit ? (
           <textarea
-            rows={2}
+            rows={3}
             value={editComment}
             autoFocus
-            className="resize-none w-3/4"
+            className="resize-none w-200 border-text-secondary border-1"
+            onKeyDown={(e) => useKeyDown(e)}
             onChange={(e) => setEditComment(e.target.value)}
           />
         ) : (
-          <p className=" my-1 text-sm text-gray-700">{renderComment}</p>
+          <p className=" my-1 text-sm text-gray-700 whitespace-pre-line break-words">
+            {renderComment}
+          </p>
         )}
         <div>
           <button className="flex gap-1 py-1 text-sm cursor-pointer">
