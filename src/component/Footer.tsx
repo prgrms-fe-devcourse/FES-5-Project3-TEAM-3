@@ -67,7 +67,7 @@ function RealFooter() {
 
 function Footer() {
   const [isLoading, setIsLoading] = useState(false);
-  console.log(setIsLoading)
+  console.log(setIsLoading);
   //  useEffect(() => {
   //    setTimeout(() => {
   //      setIsLoading(true);

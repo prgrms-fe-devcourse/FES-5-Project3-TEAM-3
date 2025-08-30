@@ -123,13 +123,23 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   removeImageAt: (removeIndex) => {
     const current = get();
     // bounds 체크
-    if (!Array.isArray(current.imageUrls) || removeIndex < 0 || removeIndex >= current.imageUrls.length) return;
+    if (
+      !Array.isArray(current.imageUrls) ||
+      removeIndex < 0 ||
+      removeIndex >= current.imageUrls.length
+    )
+      return;
 
     // revoke blob URL 안전하게
     let urlToRevoke = '';
     try {
       urlToRevoke = current.imageUrls[removeIndex];
-      if (typeof urlToRevoke === 'string' && urlToRevoke.startsWith('blob:') && typeof URL !== 'undefined' && URL.revokeObjectURL) {
+      if (
+        typeof urlToRevoke === 'string' &&
+        urlToRevoke.startsWith('blob:') &&
+        typeof URL !== 'undefined' &&
+        URL.revokeObjectURL
+      ) {
         URL.revokeObjectURL(urlToRevoke);
       }
     } catch (e) {
@@ -185,7 +195,12 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
     const s = get();
     try {
       (s.imageUrls || []).forEach((u) => {
-        if (typeof u === 'string' && u.startsWith('blob:') && typeof URL !== 'undefined' && URL.revokeObjectURL) {
+        if (
+          typeof u === 'string' &&
+          u.startsWith('blob:') &&
+          typeof URL !== 'undefined' &&
+          URL.revokeObjectURL
+        ) {
           URL.revokeObjectURL(u);
         }
       });

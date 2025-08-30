@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/store/@store';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
@@ -53,8 +52,6 @@ function RealHeader() {
   );
 
   return (
-
-
     <div className={pathname == '/' ? '' : 'h-17.5'}>
       {searchBar && (
         <div className="fixed inset-0 bg-black/40 z-90" onClick={() => setSearchBar(false)}></div>
@@ -145,7 +142,7 @@ function SkeletonHeader() {
 
 function Header() {
   const [isLoading, setIsLoading] = useState(false);
-  console.log(setIsLoading)
+  console.log(setIsLoading);
   // useEffect(() => {
   //   setTimeout(() => {
   //     setIsLoading(true)

@@ -37,53 +37,48 @@ const wineCategories = [
 function HeaderSearchSection({ searchBar }: Props) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
-
   useLayoutEffect(() => {
-      const el = sectionRef.current;
-      if (!el) return;
-      gsap.set(el, { display: 'none', height: 0, overflow: 'hidden' });
+    const el = sectionRef.current;
+    if (!el) return;
+    gsap.set(el, { display: 'none', height: 0, overflow: 'hidden' });
   }, []);
 
- useEffect(() => {
-   const el = sectionRef.current;
-   if (!el) return;
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
 
-   gsap.killTweensOf(el);
+    gsap.killTweensOf(el);
 
-   if (searchBar) {
+    if (searchBar) {
+      gsap.set(el, { display: 'flex', height: 'auto' });
 
-     gsap.set(el, { display: 'flex', height: 'auto' });
+      const target = el.offsetHeight;
 
-     const target = el.offsetHeight;
-
-     gsap.fromTo(
-       el,
-       { height: 0 },
-       {
-         height: target,
-         duration: 0.5,
-         ease: 'power2.out',
-         onComplete: () => {
-           gsap.set(el, { height: 'auto' });
-         },
-       }
-     );
-   } else {
-
-     const current = el.offsetHeight;
-     gsap.set(el, { height: current });
-     gsap.to(el, {
-       height: 0,
-       duration: 0.5,
-       ease: 'power2.in',
-       onComplete: () => {
-         gsap.set(el, { display: 'none' });
-       },
-     });
-   }
- }, [searchBar]);
-
-
+      gsap.fromTo(
+        el,
+        { height: 0 },
+        {
+          height: target,
+          duration: 0.5,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.set(el, { height: 'auto' });
+          },
+        }
+      );
+    } else {
+      const current = el.offsetHeight;
+      gsap.set(el, { height: current });
+      gsap.to(el, {
+        height: 0,
+        duration: 0.5,
+        ease: 'power2.in',
+        onComplete: () => {
+          gsap.set(el, { display: 'none' });
+        },
+      });
+    }
+  }, [searchBar]);
 
   const parseArray = (s: string | null): string[] => {
     if (!s) return [];
@@ -97,8 +92,8 @@ function HeaderSearchSection({ searchBar }: Props) {
 
   const searchBarRef = useRef<HTMLInputElement | null>(null);
   const [keyword, setKeyword] = useState('');
-  const [recentSearch, setRecentSearch] = useState<string[]>(()=> parseArray(localStorage.getItem('recntly-search'))
-
+  const [recentSearch, setRecentSearch] = useState<string[]>(() =>
+    parseArray(localStorage.getItem('recntly-search'))
   );
 
   const handleFocus = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -132,62 +127,60 @@ function HeaderSearchSection({ searchBar }: Props) {
 
   return (
     <>
-        <div
-          className="fixed top-17.5 flex justify-center left-0 w-full bg-background-base overflow-hidden"
-          ref={sectionRef}
-        >
-          <div className="h-124 flex flex-col mx-auto mt-8 gap-7">
-            <form
-              className="flex items-center justify-center border-1 border-[#8e95a9] w-249 px-6 py-2 rounded-full gap-89.5 cursor-tex"
-              onSubmit={(e) => handleSubmit(e)}
+      <div
+        className="fixed top-17.5 flex justify-center left-0 w-full bg-background-base overflow-hidden"
+        ref={sectionRef}
+      >
+        <div className="h-124 flex flex-col mx-auto mt-8 gap-7">
+          <form
+            className="flex items-center justify-center border-1 border-[#8e95a9] w-249 px-6 py-2 rounded-full gap-89.5 cursor-tex"
+            onSubmit={(e) => handleSubmit(e)}
+          >
+            <div
+              className="flex items-center justify-between w-full"
+              onClick={(e) => handleFocus(e)}
             >
-              <div
-                className="flex items-center justify-between w-full"
-                onClick={(e) => handleFocus(e)}
-              >
-                <input
-                  className="w-full flex justify-center outline-none text-center focus:placeholder:opacity-0"
-                  ref={searchBarRef}
-                  type="text"
-                  id="search"
-                  autoComplete="off"
-                  onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="검색어를 입력하세요."
-                />
-                <label htmlFor="search">
-                  <button className="pt-1 cursor-pointer" type="submit">
-                    <img src="/icon/search-btn.svg" alt="검색아이콘" />
-                  </button>
-                </label>
+              <input
+                className="w-full flex justify-center outline-none text-center focus:placeholder:opacity-0"
+                ref={searchBarRef}
+                type="text"
+                id="search"
+                autoComplete="off"
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="검색어를 입력하세요."
+              />
+              <label htmlFor="search">
+                <button className="pt-1 cursor-pointer" type="submit">
+                  <img src="/icon/search-btn.svg" alt="검색아이콘" />
+                </button>
+              </label>
+            </div>
+          </form>
+          <div className="flex flex-col gap-7 items-start">
+            <div className="flex flex-col flex-wrap gap-4">
+              <h2>#최근 검색어</h2>
+              <div className="flex gap-4">
+                {recentSearch.map((keyword: string, i) => (
+                  <div className="bg-secondary-400 rounded-md px-2 py-1" key={i}>
+                    <p className="text-secondary-700">{keyword}</p>
+                  </div>
+                ))}
               </div>
-            </form>
-            <div className="flex flex-col gap-7 items-start">
-              <div className="flex flex-col flex-wrap gap-4">
-                <h2>#최근 검색어</h2>
-                <div className="flex gap-4">
-                  {recentSearch.map((keyword: string, i) => (
-                    <div className="bg-secondary-400 rounded-md px-2 py-1" key={i}>
-                      <p className="text-secondary-700">{keyword}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h2>#추천 태그</h2>
-              </div>
-              <div className="flex flex-col">
-                <h2>#카테고리</h2>
-                <div className="flex gap-4">
-                  {
-                    wineCategories.map(({ src, alt, category }) => (
-                      <Categories key={alt} src={src} alt={alt} category={category} />
-                    ))}
-                </div>
+            </div>
+            <div>
+              <h2>#추천 태그</h2>
+            </div>
+            <div className="flex flex-col">
+              <h2>#카테고리</h2>
+              <div className="flex gap-4">
+                {wineCategories.map(({ src, alt, category }) => (
+                  <Categories key={alt} src={src} alt={alt} category={category} />
+                ))}
               </div>
             </div>
           </div>
         </div>
-    
+      </div>
     </>
   );
 }
