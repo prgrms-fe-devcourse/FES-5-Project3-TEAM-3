@@ -76,9 +76,9 @@ function Login() {
               </div>
               <VisibleBtn ref={pwRef} />
             </div>
-            <a className="text-right text-primary-500 text-[12px] font-light">
+            <Link to='../findpassword' className="text-right text-primary-500 text-[12px] font-light">
               비밀번호를 잊어버리셨나요?
-            </a>
+            </Link>
             <div className="flex flex-col items-center gap-4">
               <Button type="submit" color="primary">
                 Sign In
