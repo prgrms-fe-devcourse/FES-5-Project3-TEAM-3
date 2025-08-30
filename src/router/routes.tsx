@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router';
 import CommunityWrite from '@/pages/community/write/CommunityWrite';
 import CommunityDetail from '@/pages/community/detail/CommunityDetail';
 
+
 /* Code Splitting */
 const Root = lazy(() => import('@/pages'));
 const MainPage = lazy(() => import('@/pages/MainPage/MainPage'));
@@ -23,6 +24,7 @@ const Wines = lazy(() => import('@/pages/wine/Wines'));
 
 const WineDetails = lazy(() => import('@/pages/wine/WineDetails'));
 const Page404 = lazy(() => import('@/pages/Page404'));
+const SearchResult = lazy(()=>import('@/pages/SearchResult'))
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -31,6 +33,10 @@ export const routes = createBrowserRouter([
       {
         index: true,
         Component: MainPage,
+      },
+      {
+        path: 'search',
+        Component:SearchResult
       },
       {
         path: 'account',
