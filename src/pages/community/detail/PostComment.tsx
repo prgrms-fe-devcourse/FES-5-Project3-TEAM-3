@@ -4,37 +4,38 @@ import { useIsMine } from '@/hook/useIsMine';
 import { useAuth } from '@/store/@store';
 import type { Tables } from '@/supabase/database.types';
 import supabase from '@/supabase/supabase';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import CommentReply from './CommentReply';
 import EditBtn from '../../../component/community/EditBtn';
+import { useTimer } from '@/hook/useTimer';
+import type { ReplyData } from '@/@types/global';
 
 interface Props {
   nickname: string;
   profileImage: string;
-  content: string;
   created_at: string;
   replyId: string;
   user_id: string | null;
   parent_id: string | null;
   likes: number;
+  content:string,
+  onDelete: () => void
 }
 type Post = Tables<'posts'>;
-
-type ReplyRow = Tables<'reply'> & {
-  profile?: { nickname?: string | null; profile_image?: string | null } | null;
-};
 
 function PostComment({
   replyId,
   user_id,
   nickname,
   profileImage,
-  content,
   created_at,
   likes,
+  content,
+  onDelete,
 }: Props) {
   const { userId } = useAuth();
   const isMine = useIsMine(user_id ?? '');
+  const time = useTimer(created_at);
   const [comment, setComment] = useState('');
   const [editComment, setEditComment] = useState('');
   const [renderComment, setRenderComment] = useState('');
@@ -42,7 +43,7 @@ function PostComment({
   const [reply, setReply] = useState(false);
 
   const [edit, setEdit] = useState(false);
-  const [children, setChildren] = useState<ReplyRow[]>([]);
+  const [children, setChildren] = useState<ReplyData[]>([]);
   const childrenCount = children.length;
 
   // 답글버튼 누르면 댓글UI토글
@@ -53,6 +54,11 @@ function PostComment({
   useEffect(() => {
     setRenderComment(content);
   }, [content]);
+
+  // edit이 true가 될 때만 현재 본문을 수정 입력으로 복사
+  useEffect(() => {
+    if (edit) setEditComment(renderComment);
+  }, [edit, renderComment]);
 
   // 확인을 위헤 임시로 postId를뽑아썻습니다.
   useEffect(() => {
@@ -70,9 +76,9 @@ function PostComment({
     const fetchChild = async () => {
       const { data, error } = await supabase
         .from('reply')
-        .select('*')
+        .select('*,profile(profile_id,nickname,profile_image_url)')
         .eq('parent_id', replyId)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: false });
       if (error) {
         console.log(error);
         return;
@@ -84,16 +90,17 @@ function PostComment({
 
   // 수정 저장 기능
   const handleSave = async () => {
-    setRenderComment(editComment);
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('reply')
-      .update({ content: editComment })
+      .update({ content: editComment.trim() })
       .eq('reply_id', replyId)
-      .select('content')
+      .select('reply_id,content')
       .single();
     if (error) console.log(error);
-    setEdit(false);
-    setComment(editComment);
+    if (data) {
+      setRenderComment(data.content);
+      setEdit(false)
+     } 
   };
 
   //삭제기능
@@ -102,6 +109,7 @@ function PostComment({
     if (confirmDelete) {
       try {
         const { error } = await supabase.from('reply').delete().eq('reply_id', replyId);
+        if (!error) onDelete();
         if (error) console.error(error);
       } catch {
         console.error();
@@ -132,20 +140,37 @@ function PostComment({
       return;
     }
 
-    const { data, error } = await supabase.from('reply').insert({
-      post_id: postId,
-      user_id: userId,
-      content: comment,
-      parent_id: replyId,
-    });
+    const { data, error } = await supabase
+      .from('reply')
+      .insert({
+        post_id: postId,
+        user_id: userId,
+        content: comment.trim(),
+        parent_id: replyId,
+      })
+      .select(
+        `
+       reply_id,
+       content,
+       created_at,
+       user_id,
+       parent_id,
+       profile:profile(
+         nickname,
+         profile_image_url
+       )
+     `
+      )
+      .single();
 
-    if (error) console.log(error);
-
+    if (error) {
+      console.log(error);
+      return;
+    }
     if (data) {
-      setChildren((prev) => [...prev, data as ReplyRow]);
+      setChildren((prev) => [...prev, data]);
     }
     setComment('');
-    setReply(false);
   };
 
   return (
@@ -155,7 +180,7 @@ function PostComment({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="font-medium text-sm">{nickname}</span>
-            <span className="text-xs text-gray-400">{created_at}</span>
+            <span className="text-xs text-gray-400">{time}</span>
 
             {isMine && (
               <>
@@ -202,6 +227,7 @@ function PostComment({
                 name="reply"
                 className="w-5/6 rounded border border-gray-200 p-2 resize-none text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
                 rows={2}
+                value={comment}
                 placeholder="답글을 입력하세요."
                 onChange={(e) => setComment(e.target.value)}
               />
@@ -214,24 +240,23 @@ function PostComment({
                 </Button>
               </div>
             </form>
-            {childrenCount > 0 && (
-              <ul className="mt-2 pl-10 space-y-2">
-                {children.map(({ reply_id, profile, created_at, content, user_id }) => (
-                  <CommentReply
-                    key={reply_id}
-                    setComment={setComment}
-                    replyId={reply_id}
-                    userId={user_id}
-                    profileImage={profile?.profile_image}
-                    nickname={profile?.nickname}
-                    created_at={created_at}
-                    content={content}
-                    onDelete={handleDeleteChild}
-                  />
-                ))}
-              </ul>
-            )}
           </>
+        )}
+        {childrenCount > 0 && (
+          <div className="mt-2 space-y-2">
+            {children.map((child) => (
+              <CommentReply
+                key={child.reply_id}
+                replyId={child.reply_id}
+                userId={child.user_id}
+                profileImage={child.profile?.profile_image_url}
+                nickname={child.profile?.nickname}
+                created_at={child.created_at}
+                content={child.content}
+                onDelete={handleDeleteChild}
+              />
+            ))}
+          </div>
         )}
       </div>
     </li>
