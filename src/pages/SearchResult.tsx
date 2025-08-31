@@ -2,20 +2,17 @@ import MainSearchBar from "@/component/MainPage/MainSearchBar"
 
 function SearchResult() {
   return (
-    <div className="w-full mt-8">
-      <div className="border-b">
-        <div className="max-w-7xl mx-auto px-4">
-          <MainSearchBar />
-          <p className="text-sm text-text-secondary">4 items</p>
-          <hr />
+    <div className="w-249 mx-auto mt-8  items-center flex flex-col">
+      <MainSearchBar /> 
+      <div className="w-300 flex mt-10">
+        <div className="w-full border-b">
+          <p>4 items</p>
         </div>
-      </div>
-      <div className="max-w-7xl mx-auto px-4">
         <section>
-          <h2>Top Searched</h2>
+          {/* 여기에 뭘 내보내지? */}
         </section>
-      </div>
-    </div>
+      </div>   
+  </div>
   );
 }
 export default SearchResult

@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Categories from './MainPage/Categories';
 import gsap from 'gsap';
 import MainSearchBar from './MainPage/MainSearchBar';
+import { Link } from 'react-router';
 
 type Props = {
   searchBar: boolean;
@@ -93,51 +94,53 @@ function HeaderSearchSection({ searchBar }: Props) {
     }
   };
 
-
   const [recentSearch, setRecentSearch] = useState<string[]>(() => parseArray(localStorage.getItem('recntly-search')));
-
-
 
   useEffect(() => {
     setRecentSearch(parseArray(localStorage.getItem('recently-search')));
   }, []);
 
-
+// overlay는 서치바가 다 들어가고나서 끄고싶은데
   return (
     <>
-        <div
-          className="fixed top-17.5 flex justify-center left-0 w-full bg-background-base overflow-hidden"
-          ref={sectionRef}
-        >
-          <div className="h-124 flex flex-col mx-auto mt-8 gap-7 w-249">
-          <MainSearchBar setReseach={ setRecentSearch } />
-            <div className="flex flex-col gap-7 items-start">
-              <div className="flex flex-col flex-wrap gap-4">
-                <h2>#최근 검색어</h2>
-                <div className="flex gap-4">
-                  {recentSearch.map((keyword: string, i) => (
-                    <div className="bg-secondary-400 rounded-md px-2 py-1" key={i}>
-                      <p className="text-secondary-700">{keyword}</p>
-                    </div>
-                  ))}
-                </div>
+      <div
+        className="fixed top-17.5 flex justify-center left-0 w-full bg-background-base overflow-hidden"
+        ref={sectionRef}
+      >
+        <div className="h-124 flex flex-col mx-auto mt-8 gap-7 w-249">
+          <MainSearchBar setReseach={setRecentSearch} />
+          {/* 검색 value를 어떻게 전달하지? */}
+          <div className="flex flex-col gap-7 items-start">
+            <div className="flex flex-col flex-wrap gap-4">
+              <h2>#최근 검색어</h2>
+              <div className="flex gap-4">
+                {recentSearch.map((keyword: string, i) => (
+                  <Link
+                    to={`/search/${keyword}`}
+                    className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"
+                    key={i}
+                  >
+                    <p className="text-secondary-700">{keyword}</p>
+                  </Link>
+                ))}
               </div>
-              <div>
-                <h2>#추천 태그</h2>
-              </div>
-              <div className="flex flex-col">
-                <h2>#카테고리</h2>
-                <div className="flex gap-4">
-                  {
-                    wineCategories.map(({ src, alt, category }) => (
-                      <Categories key={alt} src={src} alt={alt} category={category} />
-                    ))}
-                </div>
+            </div>
+            <div>
+              <h2>#추천 태그</h2>
+            </div>
+            <div className="flex flex-col">
+              <h2>#카테고리</h2>
+              <div className="flex gap-4">
+                {wineCategories.map(({ src, alt, category }) => (
+                  
+                    <Categories key={alt} src={src} alt={alt} category={category} />
+                
+                ))}
               </div>
             </div>
           </div>
         </div>
-    
+      </div>
     </>
   );
 }

@@ -31,7 +31,7 @@ function MainSearchBar({ setReseach }: Props) {
       return next;
     });
 
-    navigate('search');
+    navigate(`/search/${keyword}`);
   };
 
   const handleFocus = (e: React.MouseEvent<HTMLFormElement, MouseEvent>) => {
@@ -41,15 +41,18 @@ function MainSearchBar({ setReseach }: Props) {
 
   return (
     <form
-      className="flex items-center justify-center border-1 border-[#8e95a9] w-full px-6 py-2 rounded-full gap-89.5 cursor-tex"
+      className="flex items-center justify-center border-1 border-[#8e95a9] w-full px-6 py-2 rounded-full gap-89.5 cursor-text"
       onSubmit={(e) => handleSubmit(e)}
       onClick={(e) => handleFocus(e)}
     >
       <input
-        className="w-full flex justify-center outline-none text-center focus:placeholder:opacity-0"
+        className="w-full  outline-none 
+              flex justify-center
+             focus:placeholder:opacity-0"
         ref={searchBarRef}
         type="text"
         id="search"
+        value={ keyword }
         autoComplete="off"
         onChange={(e) => setKeyword(e.target.value)}
         placeholder="검색어를 입력하세요."
