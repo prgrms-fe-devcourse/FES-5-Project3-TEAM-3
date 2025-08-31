@@ -17,6 +17,7 @@ function RealHeader() {
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
+  const [overlay, setOverlay] = useState(false);
 
   useLayoutEffect(() => {
     setSearchBar(false);
@@ -39,6 +40,7 @@ function RealHeader() {
 
   const handleSearch = () => {
     setSearchBar(!searchBar);
+    setOverlay(true)
 
     if (window.scrollY <= 1) {
       setScrolled(!scrolled);
@@ -56,7 +58,7 @@ function RealHeader() {
 
 
     <div className={pathname == '/' ? '' : 'h-17.5'}>
-      {searchBar && (
+      {overlay && (
         <div className="fixed inset-0 bg-black/40 z-90" onClick={() => setSearchBar(false)}></div>
       )}
 
@@ -112,7 +114,7 @@ function RealHeader() {
               </NavLink>
             )}
           </nav>
-          <HeaderSearchSection searchBar={searchBar} />
+          <HeaderSearchSection searchBar={searchBar} setOverlay={setOverlay} />
         </div>
       </div>
     </div>

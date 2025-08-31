@@ -6,6 +6,7 @@ import { Link } from 'react-router';
 
 type Props = {
   searchBar: boolean;
+  setOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const wineCategories = [
@@ -36,8 +37,9 @@ const wineCategories = [
   },
 ];
 
-function HeaderSearchSection({ searchBar }: Props) {
+function HeaderSearchSection({ searchBar,setOverlay }: Props) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
+
 
  useLayoutEffect(() => {
       const el = sectionRef.current;
@@ -67,7 +69,8 @@ function HeaderSearchSection({ searchBar }: Props) {
          onComplete: () => {
            gsap.set(el, { height: 'auto' });
          },
-       }
+       },
+       
      );
    } else {
 
@@ -79,6 +82,7 @@ function HeaderSearchSection({ searchBar }: Props) {
        ease: 'power2.in',
        onComplete: () => {
          gsap.set(el, { display: 'none' });
+         setOverlay(false)
        },
      });
    }
