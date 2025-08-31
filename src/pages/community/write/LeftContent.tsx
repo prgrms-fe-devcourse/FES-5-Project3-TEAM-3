@@ -3,26 +3,26 @@ import { useCommunityForm } from '@/hook/community/useCommunityForm';
 import { useCommunityStore } from '@/pages/community/write/store/useCommunityStore';
 import React from 'react';
 import { createCommunityPost } from '@/supabase/community/communityCreate';
+import TagInput from '@/component/TagInput';
 
 function LeftContent() {
   const {
-    category,
-    setCategory,
-    title,
-    setTitle,
-    body,
-    setBody,
-    tagInput,
-    setTagInput,
-    addTag,
-    tags,
-    removeTag,
+    category, setCategory,
+    title, setTitle,
+    body, setBody,
+
+    tagInput, setTagInput,
+    addTag, tags, removeTag, clearTags,
+
     addImages,
   } = useCommunityForm();
 
   const [isSaving, setIsSaving] = React.useState(false);
   const clearImages = useCommunityStore((s) => s.clearImages);
   const getStoreState = () => useCommunityStore.getState();
+
+  console.log(getStoreState());
+
 
   // 이미지 동기화
   const removeImageAt = useCommunityStore((s) => s.removeImageAt);
@@ -107,13 +107,6 @@ function LeftContent() {
     if (e.key === 'Enter') e.preventDefault();
   };
 
-  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addTag();
-    }
-  };
-
   return (
     <div className="col-span-12 lg:col-span-6 gap-10">
       <label className="block mb-4">
@@ -150,50 +143,17 @@ function LeftContent() {
         onInsertImages={handleInsertImages}
       />
 
-      {/* 태그 추가 */}
-      <div className="mt-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">태그</span>
-        </div>
+      <TagInput
+        value={tagInput}
+        onChange={setTagInput}
+        onAdd={addTag}
+        tags={tags}
+        onRemove={removeTag}
+        onClear={clearTags}
+        max={5}
+      />
 
-        <div className="mt-2 flex gap-2">
-          <input
-            type="text"
-            placeholder="추가 태그 입력 (최대 5개)"
-            className="rounded-xl border border-gray-200 bg-white/70 px-4 py-2.5 flex-1"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={handleTagKeyDown}
-          />
-          <button
-            type="button"
-            className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm hover:bg-primary-300 hover:text-white"
-            onClick={() => addTag()}
-          >
-            추가
-          </button>
-        </div>
-
-        {/* 태그 리스트 */}
-        <div className="mt-3 flex flex-wrap gap-2">
-          {tags.length === 0 ? (
-            <div className="text-sm text-gray-400">등록된 태그 없음</div>
-          ) : (
-            tags.map((t: string) => (
-              <span
-                key={t}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary-400 text-sm text-primary-400 bg-white shadow-sm"
-              >
-                <span className="text-sm">{t}</span>
-                <button type="button" className="text-xs text-red-500" onClick={() => removeTag(t)}>
-                  ✕
-                </button>
-              </span>
-            ))
-          )}
-        </div>
-      </div>
-
+      {/* 저장 */}
       <div className="pt-2 flex items-center justify-end gap-3">
         <button
           type="button"
