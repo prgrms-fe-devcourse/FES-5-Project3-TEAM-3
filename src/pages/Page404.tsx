@@ -1,5 +1,5 @@
-import Button from "@/component/Button"
-import { Link } from "react-router";
+import Button from '@/component/Button';
+import { Link } from 'react-router';
 
 function Page404() {
   return (
@@ -17,7 +17,7 @@ function Page404() {
         </div>
         <div className="flex items-center flex-col gap-4 text-[#556987] text-[12px]">
           <p>우선 다시 돌아가볼까요?</p>
-          <Link to='/'>
+          <Link to="/">
             <Button size="lg" color="primary">
               <p className="font-bold text-[20px]">Back to Home</p>
             </Button>
@@ -30,4 +30,4 @@ function Page404() {
     </div>
   );
 }
-export default Page404
+export default Page404;

@@ -47,8 +47,6 @@ export default function TextEditor({ value, onChange, onInsertImages }: Props) {
     console.log(files);
   };
 
-
-
   if (!editor) return null;
 
   return (

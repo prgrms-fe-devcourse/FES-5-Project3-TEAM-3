@@ -21,9 +21,7 @@ function LeftContent() {
   const clearImages = useCommunityStore((s) => s.clearImages);
   const getStoreState = () => useCommunityStore.getState();
 
-  console.log(getStoreState());
-
-
+  console.log(getStoreState)
   // 이미지 동기화
   const removeImageAt = useCommunityStore((s) => s.removeImageAt);
   const getImageUrls = () => useCommunityStore.getState().imageUrls || [];
