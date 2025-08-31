@@ -3,7 +3,7 @@ import TastingReviewChart from '@/component/wine/wineDetailInfo/TastingReviewCha
 import WineBasicInfo from '@/component/wine/wineInfo/WineBasicInfo';
 import supabase from '@/supabase/supabase';
 import { computeTaste } from '@/utils/convertTasteInfo';
-import { Suspense, useReducer, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Await, useLoaderData, useParams, type LoaderFunctionArgs } from 'react-router';
 import type { WineInfoType } from './Wines';
 import type { Tables } from '@/supabase/database.types';
@@ -12,7 +12,6 @@ import ReviewRatings from '@/component/wine/wineDetailInfo/wineReview/ReviewRati
 import RatingSummary from '@/component/wine/wineDetailInfo/wineReview/RatingSummary';
 import ReviewContainer from '@/component/wine/wineDetailInfo/wineReview/ReviewContainer';
 import ReviewModal from '@/component/wine/wineDetailInfo/wineReview/ReviewModal';
-import { initialState, reviewReducer } from '@/hook/useReviewModal';
 import Spinner from '@/component/Spinner';
 import { useReviewStore } from '@/store/reviewStore';
 
