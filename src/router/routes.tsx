@@ -35,7 +35,7 @@ export const routes = createBrowserRouter([
         Component: MainPage,
       },
       {
-        path: 'search/:id',
+        path: 'search',
         Component:SearchResult
       },
       {

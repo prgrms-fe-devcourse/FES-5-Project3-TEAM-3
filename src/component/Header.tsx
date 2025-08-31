@@ -14,14 +14,15 @@ function RealHeader() {
     }))
   );
 
-  const { pathname } = useLocation();
+  const { pathname,search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
   const [overlay, setOverlay] = useState(false);
 
   useLayoutEffect(() => {
     setSearchBar(false);
-  }, [pathname]);
+  }, [pathname,search]);
+  // 쿼리스트링의 keywordk변경마다 search바 닫힘
 
   useEffect(() => {
     if (pathname !== '/') return;
@@ -40,7 +41,7 @@ function RealHeader() {
 
   const handleSearch = () => {
     setSearchBar(!searchBar);
-    setOverlay(true)
+    setOverlay(true);
 
     if (window.scrollY <= 1) {
       setScrolled(!scrolled);
@@ -53,10 +54,11 @@ function RealHeader() {
     base,
     pathname == '/' ? (scrolled ? 'bg-primary-500' : 'bg-tranprent') : 'bg-primary-500'
   );
-
+  /* 
+overlay는 서치바가 다 들어가고나서 끄고싶은데 
+상위에서 열고 하위에서 닫으면 되는구나
+*/
   return (
-
-
     <div className={pathname == '/' ? '' : 'h-17.5'}>
       {overlay && (
         <div className="fixed inset-0 bg-black/40 z-90" onClick={() => setSearchBar(false)}></div>

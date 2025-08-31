@@ -11,7 +11,7 @@ function MainSearchBar({ setReseach }: Props) {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState('');
   const searchBarRef = useRef<HTMLInputElement | null>(null);
-
+  
 
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,7 +31,7 @@ function MainSearchBar({ setReseach }: Props) {
       return next;
     });
 
-    navigate(`/search/${keyword}`);
+    navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
   };
 
   const handleFocus = (e: React.MouseEvent<HTMLFormElement, MouseEvent>) => {

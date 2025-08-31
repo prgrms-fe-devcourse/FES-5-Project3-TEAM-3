@@ -1,6 +1,14 @@
 import MainSearchBar from "@/component/MainPage/MainSearchBar"
+import { useState } from "react";
 
 function SearchResult() {
+
+  const [searched,setSearched] = useState([])
+
+  /* 
+  1. 검색어에 걸리는걸 필터링해서 어디에 담아두고
+  2. 그 어디에 담아둔걸르 내보내면되는데...
+   */
   return (
     <div className="w-249 mx-auto mt-8  items-center flex flex-col">
       <MainSearchBar /> 

@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Categories from './MainPage/Categories';
 import gsap from 'gsap';
 import MainSearchBar from './MainPage/MainSearchBar';
-import { Link } from 'react-router';
+import { Link} from 'react-router';
 
 type Props = {
   searchBar: boolean;
@@ -40,53 +40,50 @@ const wineCategories = [
 function HeaderSearchSection({ searchBar,setOverlay }: Props) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
+  useLayoutEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    gsap.set(el, { display: 'none', height: 0, overflow: 'hidden' });
+  }, []);
 
- useLayoutEffect(() => {
-      const el = sectionRef.current;
-      if (!el) return;
-      gsap.set(el, { display: 'none', height: 0, overflow: 'hidden' });
- }, []);
 
- useEffect(() => {
-   const el = sectionRef.current;
-   if (!el) return;
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
 
-   gsap.killTweensOf(el);
+    gsap.killTweensOf(el);
 
-   if (searchBar) {
+    if (searchBar) {
+      gsap.set(el, { display: 'flex', height: 'auto' });
 
-     gsap.set(el, { display: 'flex', height: 'auto' });
+      const target = el.offsetHeight;
 
-     const target = el.offsetHeight;
-
-     gsap.fromTo(
-       el,
-       { height: 0 },
-       {
-         height: target,
-         duration: 0.5,
-         ease: 'power2.out',
-         onComplete: () => {
-           gsap.set(el, { height: 'auto' });
-         },
-       },
-       
-     );
-   } else {
-
-     const current = el.offsetHeight;
-     gsap.set(el, { height: current });
-     gsap.to(el, {
-       height: 0,
-       duration: 0.5,
-       ease: 'power2.in',
-       onComplete: () => {
-         gsap.set(el, { display: 'none' });
-         setOverlay(false)
-       },
-     });
-   }
- }, [searchBar]);
+      gsap.fromTo(
+        el,
+        { height: 0 },
+        {
+          height: target,
+          duration: 0.5,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.set(el, { height: 'auto' });
+          },
+        }
+      );
+    } else {
+      const current = el.offsetHeight;
+      gsap.set(el, { height: current });
+      gsap.to(el, {
+        height: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => {
+          gsap.set(el, { display: 'none' });
+          setOverlay(false);
+        },
+      });
+    }
+  }, [searchBar]);
 
   const parseArray = (s: string | null): string[] => {
     if (!s) return [];
@@ -98,13 +95,14 @@ function HeaderSearchSection({ searchBar,setOverlay }: Props) {
     }
   };
 
-  const [recentSearch, setRecentSearch] = useState<string[]>(() => parseArray(localStorage.getItem('recntly-search')));
+  const [recentSearch, setRecentSearch] = useState<string[]>(() =>
+    parseArray(localStorage.getItem('recntly-search'))
+  );
 
   useEffect(() => {
     setRecentSearch(parseArray(localStorage.getItem('recently-search')));
   }, []);
 
-// overlay는 서치바가 다 들어가고나서 끄고싶은데
   return (
     <>
       <div
@@ -120,7 +118,7 @@ function HeaderSearchSection({ searchBar,setOverlay }: Props) {
               <div className="flex gap-4">
                 {recentSearch.map((keyword: string, i) => (
                   <Link
-                    to={`/search/${keyword}`}
+                    to={`/search?keyword=${encodeURIComponent(keyword)}`}
                     className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"
                     key={i}
                   >
@@ -136,9 +134,7 @@ function HeaderSearchSection({ searchBar,setOverlay }: Props) {
               <h2>#카테고리</h2>
               <div className="flex gap-4">
                 {wineCategories.map(({ src, alt, category }) => (
-                  
-                    <Categories key={alt} src={src} alt={alt} category={category} />
-                
+                  <Categories key={alt} src={src} alt={alt} category={category} />
                 ))}
               </div>
             </div>
