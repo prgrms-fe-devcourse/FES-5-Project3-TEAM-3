@@ -4,6 +4,7 @@ import { NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 import HeaderSearchSection from './search/HeaderSearchSection';
 import clsx from 'clsx';
+import ScrollToTop from '@/hook/ScrolToTop';
 
 function RealHeader() {
   const { userId, signOut } = useAuth(
@@ -66,7 +67,7 @@ overlay는 서치바가 다 들어가고나서 끄고싶은데
       <div className={headerBgClass}>
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
-            <NavLink to="/">
+            <NavLink to="/" onClick={ScrollToTop}>
               <img src="/image/Logo.png" alt="winepedia" />
             </NavLink>
           </h1>
