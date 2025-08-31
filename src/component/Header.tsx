@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/store/@store';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
@@ -14,14 +13,14 @@ function RealHeader() {
     }))
   );
 
-  const { pathname,search } = useLocation();
+  const { pathname, search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
   const [overlay, setOverlay] = useState(false);
 
   useLayoutEffect(() => {
     setSearchBar(false);
-  }, [pathname,search]);
+  }, [pathname, search]);
   // 쿼리스트링의 keywordk변경마다 search바 닫힘
 
   useEffect(() => {
@@ -149,7 +148,7 @@ function SkeletonHeader() {
 
 function Header() {
   const [isLoading, setIsLoading] = useState(false);
-  console.log(setIsLoading)
+  console.log(setIsLoading);
   // useEffect(() => {
   //   setTimeout(() => {
   //     setIsLoading(true)

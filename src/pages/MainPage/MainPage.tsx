@@ -4,7 +4,7 @@ import Collection from '@/component/MainPage/Collection';
 import { winesArr } from '@/assets/staticArr';
 
 function MainPage() {
-  const wines = winesArr
+  const wines = winesArr;
 
   const collection = [
     {

@@ -9,7 +9,6 @@ type ReplyData = Reply & {
   profile: Pick<Tables<'profile'>, 'profile_id' | 'nickname' | 'profile_image_url'> | null;
 };
 
-
 function CommunityDetail() {
   const [replies, setReplies] = useState<ReplyData[]>([]);
 
@@ -18,7 +17,8 @@ function CommunityDetail() {
       const { data, error } = await supabase
         .from('reply')
         .select('*,profile:profile!reply_user_id_fkey (profile_id,nickname,profile_image_url)')
-        .is('parent_id', null).order('created_at',{ascending:false})
+        .is('parent_id', null)
+        .order('created_at', { ascending: false });
       if (error) {
         console.log(error);
         return;
@@ -29,9 +29,9 @@ function CommunityDetail() {
   }, []);
 
   const handleSubmit = async () => {
-    console.log(removeEventListener)
-  } 
-  handleSubmit()
+    console.log(removeEventListener);
+  };
+  handleSubmit();
 
   return (
     <div className="min-h-full">

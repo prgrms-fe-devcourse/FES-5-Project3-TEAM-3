@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Categories from '../MainPage/Categories';
 import gsap from 'gsap';
 import MainSearchBar from '../MainPage/MainSearchBar';
-import { Link} from 'react-router';
+import { Link } from 'react-router';
 import { wineCategories } from '@/assets/staticArr';
 import { useHashCount } from '@/hook/fetch';
 import type { Tables } from '@/supabase/database.types';
@@ -11,19 +11,19 @@ type Props = {
   searchBar: boolean;
   setOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 };
-type HashCount = Tables<'hashtag_counts'>
+type HashCount = Tables<'hashtag_counts'>;
 
-function HeaderSearchSection({ searchBar,setOverlay }: Props) {
+function HeaderSearchSection({ searchBar, setOverlay }: Props) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
-  const [hashTags,setHashTags] = useState<HashCount[]>([]) 
+  const [hashTags, setHashTags] = useState<HashCount[]>([]);
 
   useEffect(() => {
     (async () => {
-      const hash = await useHashCount()
-      setHashTags(hash ?? [])
-    })()
-  }, [])
-  
+      const hash = await useHashCount();
+      setHashTags(hash ?? []);
+    })();
+  }, []);
+
   useLayoutEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -115,7 +115,7 @@ function HeaderSearchSection({ searchBar,setOverlay }: Props) {
               <div className="flex gap-4">
                 {hashTags.map((tags, i) => (
                   <Link
-                    to={tags.post_ids ? `/community/${tags.post_ids}` : `wines/${tags.wine_ids}`}
+                    to={`/search?keyword=${encodeURIComponent(tags.tag_text ?? '')}`}
                     className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"
                     key={i}
                   >

@@ -1,18 +1,16 @@
-import useToast from "@/hook/useToast";
+import useToast from '@/hook/useToast';
 
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 interface Props {
-  setReseach?: React.Dispatch<React.SetStateAction<string[]>>
+  setReseach?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 function MainSearchBar({ setReseach }: Props) {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState('');
   const searchBarRef = useRef<HTMLInputElement | null>(null);
-  
-
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,8 +33,8 @@ function MainSearchBar({ setReseach }: Props) {
   };
 
   const handleFocus = (e: React.MouseEvent<HTMLFormElement, MouseEvent>) => {
-      if ((e.target as Element).closest('label')) return;
-      searchBarRef.current?.focus();
+    if ((e.target as Element).closest('label')) return;
+    searchBarRef.current?.focus();
   };
 
   return (
@@ -52,7 +50,7 @@ function MainSearchBar({ setReseach }: Props) {
         ref={searchBarRef}
         type="text"
         id="search"
-        value={ keyword }
+        value={keyword}
         autoComplete="off"
         onChange={(e) => setKeyword(e.target.value)}
         placeholder="검색어를 입력하세요."
@@ -65,4 +63,4 @@ function MainSearchBar({ setReseach }: Props) {
     </form>
   );
 }
-export default MainSearchBar
+export default MainSearchBar;

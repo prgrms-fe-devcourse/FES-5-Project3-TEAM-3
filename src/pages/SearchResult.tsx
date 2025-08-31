@@ -1,33 +1,43 @@
-import Items from "@/component/search/Items";
-import MainSearchBar from "@/component/MainPage/MainSearchBar"
-import { useSearchParams } from "react-router";
+import Items from '@/component/search/Items';
+import MainSearchBar from '@/component/MainPage/MainSearchBar';
+import { useSearchParams } from 'react-router';
+import { useEffect, useState } from 'react';
+import { filtered } from '@/hook/useFilter';
 
 function SearchResult() {
+  const [params] = useSearchParams();
+  const keyword = params.get('keyword');
+  const [match, setMatch] = useState<any[]>([]);
 
-  const [params] = useSearchParams()
-  const keyword = params.get('keyword')
-  console.log(keyword)
+  useEffect(() => {
+    if (keyword) {
+      const target = filtered(keyword);
+      setMatch(target);
+    } else {
+      setMatch([]);
+    }
+  }, [keyword]);
 
-  /* 
-  1. 검색어에 걸리는걸 필터링해서 어디에 담아두고
-  2. 그 어디에 담아둔걸르 내보내면되는데...
-   */
   return (
     <div className="h-screen w-249 mx-auto mt-8  items-center flex flex-col">
-      <MainSearchBar /> 
+      <MainSearchBar />
       <div className="w-300 flex flex-col mt-10">
         <div className="w-full border-b">
-          <p>4 items</p>
+          <p>{match.length} items</p>
         </div>
-        <section className="mt-8">
-          {/* 여기에 뭘 내보내지? */}
-          <Items/>
+        <section className="mt-8 grid grid-cols-4 gap-8">
+          {match.length > 0 ? (
+            match.map(({ images, title, wine_description }) => (
+              <Items image={images[0]} title={title} content={wine_description} />
+            ))
+          ) : (
+            <>
+              <p className="text-2xl text">검색결과가 없습니다</p>
+            </>
+          )}
         </section>
-      </div>   
-  </div>
+      </div>
+    </div>
   );
 }
-export default SearchResult
-
-
-
+export default SearchResult;
