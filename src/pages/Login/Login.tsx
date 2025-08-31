@@ -1,5 +1,6 @@
 import Button from '@/component/Button';
 import VisibleBtn from '@/component/Login/VisibleBtn';
+import useToast from '@/hook/useToast';
 import supabase from '@/supabase/supabase';
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
@@ -23,14 +24,13 @@ function Login() {
     const userEmail = data.user?.email ?? email;
 
     if (error) {
-      console.error(error);
+      useToast('error','로그인에 실패하셨습니다')
     } else {
       await supabase.from('profile').insert({
         profile_id: userId,
         nickname: userNickName,
         email: userEmail,
       });
-
       navigate('/');
     }
   };
