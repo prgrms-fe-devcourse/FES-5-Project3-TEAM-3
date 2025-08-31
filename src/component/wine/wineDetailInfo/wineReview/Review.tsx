@@ -10,7 +10,6 @@ function Review({ review }: { review: Tables<'reviews'> }) {
     body_score: body,
     created_at,
     likes,
-    user_id,
     rating,
     content,
   } = review;
