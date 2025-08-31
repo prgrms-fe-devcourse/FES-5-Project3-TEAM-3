@@ -3,7 +3,7 @@ import { useAuth } from '@/store/@store';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
-import HeaderSearchSection from './HeaderSearchSection';
+import HeaderSearchSection from './search/HeaderSearchSection';
 import clsx from 'clsx';
 
 function RealHeader() {

@@ -1,51 +1,34 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import Categories from './MainPage/Categories';
+import Categories from '../MainPage/Categories';
 import gsap from 'gsap';
-import MainSearchBar from './MainPage/MainSearchBar';
+import MainSearchBar from '../MainPage/MainSearchBar';
 import { Link} from 'react-router';
+import { wineCategories } from '@/assets/staticArr';
+import { useHashCount } from '@/hook/fetch';
+import type { Tables } from '@/supabase/database.types';
 
 type Props = {
   searchBar: boolean;
   setOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 };
-
-const wineCategories = [
-  {
-    src: '/icon/redWineIcon.png',
-    alt: '레드와인',
-    category: 'Red',
-  },
-  {
-    src: '/icon/whitewineIcon.png',
-    alt: '화이트와인',
-    category: 'White',
-  },
-  {
-    src: '/icon/roseWineIcon.png',
-    alt: '로제와인',
-    category: 'Rose',
-  },
-  {
-    src: '/icon/champaignIcon.png',
-    alt: '스파클링',
-    category: 'Sparkling',
-  },
-  {
-    src: '/icon/dessertWineIcon.png',
-    alt: '디저트와인',
-    category: 'Dissert',
-  },
-];
+type HashCount = Tables<'hashtag_counts'>
 
 function HeaderSearchSection({ searchBar,setOverlay }: Props) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
+  const [hashTags,setHashTags] = useState<HashCount[]>([]) 
 
+  useEffect(() => {
+    (async () => {
+      const hash = await useHashCount()
+      setHashTags(hash ?? [])
+    })()
+  }, [])
+  
   useLayoutEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     gsap.set(el, { display: 'none', height: 0, overflow: 'hidden' });
   }, []);
-
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -127,8 +110,19 @@ function HeaderSearchSection({ searchBar,setOverlay }: Props) {
                 ))}
               </div>
             </div>
-            <div>
+            <div className="flex flex-col flex-wrap gap-4">
               <h2>#추천 태그</h2>
+              <div className="flex gap-4">
+                {hashTags.map((tags, i) => (
+                  <Link
+                    to={tags.post_ids ? `/community/${tags.post_ids}` : `wines/${tags.wine_ids}`}
+                    className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"
+                    key={i}
+                  >
+                    <p className="text-secondary-700">{tags.tag_text}</p>
+                  </Link>
+                ))}
+              </div>
             </div>
             <div className="flex flex-col">
               <h2>#카테고리</h2>

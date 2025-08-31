@@ -1,4 +1,4 @@
-import Items from "@/component/Items";
+import Items from "@/component/search/Items";
 import MainSearchBar from "@/component/MainPage/MainSearchBar"
 import { useSearchParams } from "react-router";
 
