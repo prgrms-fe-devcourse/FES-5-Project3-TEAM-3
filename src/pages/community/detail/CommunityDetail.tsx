@@ -1,13 +1,8 @@
-import type { Tables } from '@/supabase/database.types';
 import InputComment from './InputComment.';
 import PostComment from './PostComment';
 import { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
-
-type Reply = Tables<'reply'>;
-type ReplyData = Reply & {
-  profile: Pick<Tables<'profile'>, 'profile_id' | 'nickname' | 'profile_image_url'> | null;
-};
+import type { ReplyData } from '@/@types/global';
 
 function CommunityDetail() {
   const [replies, setReplies] = useState<ReplyData[]>([]);
@@ -16,7 +11,7 @@ function CommunityDetail() {
     const fetchData = async () => {
       const { data, error } = await supabase
         .from('reply')
-        .select('*,profile:profile!reply_user_id_fkey (profile_id,nickname,profile_image_url)')
+        .select('*,profile(profile_id,nickname,profile_image_url)')
         .is('parent_id', null)
         .order('created_at', { ascending: false });
       if (error) {
@@ -28,10 +23,14 @@ function CommunityDetail() {
     fetchData();
   }, []);
 
-  const handleSubmit = async () => {
-    console.log(removeEventListener);
+  /* 
+    - post_id eq로 붙여야합니다
+    - 의존성배열에 post_id로 붙여야합니다
+  */
+
+  const handleDelete = (targetId: string) => {
+    setReplies((prev) => prev.filter((c) => c.reply_id !== targetId));
   };
-  handleSubmit();
 
   return (
     <div className="min-h-full">
@@ -99,26 +98,27 @@ function CommunityDetail() {
           {/* 댓글 작성 폼 */}
           <section className="bg-white p-6 rounded-lg shadow-sm">
             <div className="mb-6">
-              <InputComment />
+              <InputComment setReplies={setReplies} />
             </div>
 
             {/* 댓글 목록 */}
             <ul className="space-y-4">
               {replies.map(
                 ({ parent_id, user_id, reply_id, profile, content, created_at, like_count }) => {
-                  const nickname = profile?.nickname ?? '알 수 없는 사용자';
-                  const avatar = profile?.profile_image_url ?? '/img/default-avatar.png';
+                  const nickname = profile.nickname;
+                  const avatar = profile.profile_image_url;
                   return (
                     <PostComment
                       key={reply_id}
+                      content={content}
                       likes={like_count}
                       replyId={reply_id}
                       user_id={user_id}
                       parent_id={parent_id}
                       nickname={nickname}
                       profileImage={avatar}
-                      content={content}
                       created_at={created_at}
+                      onDelete={() => handleDelete(reply_id)}
                     />
                   );
                 }

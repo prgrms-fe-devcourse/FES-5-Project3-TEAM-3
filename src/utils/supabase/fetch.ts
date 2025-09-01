@@ -6,20 +6,18 @@ export async function usePost() {
     if (error) console.error(error);
     return data;
   } catch {
-    throw new Error('posts를 찾는데 실패했습니다');
+    throw new Error('실패');
   }
 }
 
-export async function useHashCount() {
+export async function useProfile() {
   try {
     const { data, error } = await supabase
-      .from('hashtag_counts')
-      .select('*')
-      .limit(5)
-      .order('tag_count', { ascending: true });
+      .from('profile')
+      .select('profile_id,nickname,profile_image_url');
     if (error) console.error(error);
     return data;
   } catch {
-    throw new Error('hashtag_conts를 찾는데 실패했습니다');
+    throw new Error('실패');
   }
 }

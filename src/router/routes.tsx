@@ -16,8 +16,10 @@ const MyActivities = lazy(() => import('@/pages/MyPage/MyActivities'));
 const MyAchievement = lazy(() => import('@/pages/MyPage/MyAchievement'));
 const Settings = lazy(() => import('@/pages/MyPage/Settings'));
 
+// account 하위페이지
 const Login = lazy(() => import('@/pages/Login/Login'));
 const Register = lazy(() => import('@/pages/Login/Register'));
+const Findpassword = lazy(() => import('@/pages/Login/FindPassword'));
 
 const Wines = lazy(() => import('@/pages/wine/Wines'));
 
@@ -49,6 +51,10 @@ export const routes = createBrowserRouter([
             path: 'register',
             Component: Register,
           },
+          {
+            path: 'findpassword',
+            Component:Findpassword,
+          }
         ],
       },
       {
