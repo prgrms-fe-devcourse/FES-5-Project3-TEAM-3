@@ -1,6 +1,38 @@
-import Button from '@/component/Button'
+import type { Tables } from '@/supabase/database.types';
+import InputComment from './InputComment.';
+import PostComment from './PostComment';
+import { useEffect, useState } from 'react';
+import supabase from '@/supabase/supabase';
+
+type Reply = Tables<'reply'>;
+type ReplyData = Reply & {
+  profile: Pick<Tables<'profile'>, 'profile_id' | 'nickname' | 'profile_image_url'> | null;
+};
+
 
 function CommunityDetail() {
+  const [replies, setReplies] = useState<ReplyData[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from('reply')
+        .select('*,profile:profile!reply_user_id_fkey (profile_id,nickname,profile_image_url)')
+        .is('parent_id', null).order('created_at',{ascending:false})
+      if (error) {
+        console.log(error);
+        return;
+      }
+      if (data) setReplies(data);
+    };
+    fetchData();
+  }, []);
+
+  const handleSubmit = async () => {
+    console.log(removeEventListener)
+  } 
+  handleSubmit()
+
   return (
     <div className="min-h-full">
       <div className="max-w-[90rem] mx-auto px-6 py-10">
@@ -66,163 +98,36 @@ function CommunityDetail() {
 
           {/* 댓글 작성 폼 */}
           <section className="bg-white p-6 rounded-lg shadow-sm">
-            <form className="mb-6">
-              <div className="flex gap-3">
-                <textarea
-                  id="comment"
-                  className="block w-5/6 rounded border border-gray-800 p-3 resize-none focus:outline-none focus:ring-2 focus:ring-primary-400"
-                  placeholder="댓글을 입력하세요."
-                  rows={1}
-                />
-                <Button type="submit" size="md" borderType="outline" className="h-12.5">
-                  등록
-                </Button>
-              </div>
-            </form>
+            <div className="mb-6">
+              <InputComment />
+            </div>
 
             {/* 댓글 목록 */}
             <ul className="space-y-4">
-              <li className="flex gap-3">
-                <img
-                  src="/images/avatar-placeholder.png"
-                  alt="댓글작성자"
-                  className="w-9 h-9 rounded-full"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm">댓글작성자1</span>
-                      <span className="text-xs text-gray-400">2025년 08월 28일</span>
-
-                      <button className="cursor-pointer">
-                        <img src="/icon/modify.svg" alt="수정하기" className="w-3 h-3" />
-                      </button>
-                      <button className="cursor-pointer">
-                        <img src="/icon/delete.svg" alt="삭제하기" className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                  <p className="mt-1 mb-1 text-sm text-gray-700">댓글 내용 예시입니다.</p>
-
-                  <div className="flex gap-2">
-                    <button className="flex gap-1 py-1 text-sm cursor-pointer">
-                      <img src="/icon/like.svg" alt="좋아요" className="w-4 h-4 " />
-                      <span>10</span>
-                    </button>
-                    <button className="flex gap-1 py-1 text-sm cursor-pointer">
-                      <img src="/icon/comment.svg" alt="답글" className="w-4 h-4 " />
-                      <span>2</span>
-                    </button>
-                    <button className="flex gap-1 py-1 text-sm cursor-pointer">
-                      <span>답글</span>
-                    </button>
-                  </div>
-
-                  {/* 답글 작성 폼 */}
-                  <form
-                    className="reply-form mt-3 pl-10 flex gap-3 items-start"
-                    onSubmit={(e) => e.preventDefault()}
-                  >
-                    <textarea
-                      name="reply"
-                      className="w-5/6 rounded border border-gray-200 p-2 resize-none text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
-                      rows={2}
-                      placeholder="답글을 입력하세요."
+              {replies.map(
+                ({ parent_id, user_id, reply_id, profile, content, created_at, like_count }) => {
+                  const nickname = profile?.nickname ?? '알 수 없는 사용자';
+                  const avatar = profile?.profile_image_url ?? '/img/default-avatar.png';
+                  return (
+                    <PostComment
+                      key={reply_id}
+                      likes={like_count}
+                      replyId={reply_id}
+                      user_id={user_id}
+                      parent_id={parent_id}
+                      nickname={nickname}
+                      profileImage={avatar}
+                      content={content}
+                      created_at={created_at}
                     />
-                    <div className="flex gap-2">
-                      <Button type="submit" size="sm" borderType="outline">
-                        등록
-                      </Button>
-                      <Button type="button" size="sm" borderType="outline">
-                        취소
-                      </Button>
-                    </div>
-                  </form>
-                </div>
-              </li>
-
-              {/* 댓글 2 */}
-              <li className="flex gap-3">
-                <img
-                  src="/images/avatar-placeholder.png"
-                  alt="댓글작성자"
-                  className="w-9 h-9 rounded-full"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm">댓글작성자2</span>
-                      <span className="text-xs text-gray-400">2025년 08월 28일</span>
-                      <button className="cursor-pointer">
-                        <img src="/icon/modify.svg" alt="수정하기" className="w-3 h-3" />
-                      </button>
-                      <button className="cursor-pointer">
-                        <img src="/icon/delete.svg" alt="삭제하기" className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                  <p className="mt-1 mb-1 text-sm text-gray-700">댓글 내용 예시입니다.</p>
-                  <div className="flex gap-2">
-                    <button className="flex gap-1 py-1 text-sm cursor-pointer">
-                      <img src="/icon/like.svg" alt="좋아요" className="w-4 h-4 " />
-                      <span>10</span>
-                    </button>
-                    <button className="flex gap-1 py-1 text-sm cursor-pointer">
-                      <img src="/icon/comment.svg" alt="답글" className="w-4 h-4 " />
-                      <span>1</span>
-                    </button>
-                    <button className="flex gap-1 py-1 text-sm cursor-pointer">
-                      <span>답글</span>
-                    </button>
-                  </div>
-
-                  {/* 답글 작성 완료 폼 */}
-                  <form
-                    className="reply-form mt-3 pl-10 flex gap-3 items-start"
-                    onSubmit={(e) => e.preventDefault()}
-                  >
-                    <img
-                  src="/images/avatar-placeholder.png"
-                  alt="댓글작성자"
-                  className="w-9 h-9 rounded-full"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm">댓글작성자2</span>
-                      <span className="text-xs text-gray-400">2025년 08월 28일</span>
-                      <button className="cursor-pointer">
-                        <img src="/icon/modify.svg" alt="수정하기" className="w-3 h-3" />
-                      </button>
-                      <button className="cursor-pointer">
-                        <img src="/icon/delete.svg" alt="삭제하기" className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                  <p className="mt-1 mb-1 text-sm text-gray-700">댓글 내용 예시입니다.</p>
-                  <div className="flex gap-2">
-                    <button className="flex gap-1 py-1 text-sm cursor-pointer">
-                      <img src="/icon/like.svg" alt="좋아요" className="w-4 h-4 " />
-                      <span>10</span>
-                    </button>
-                    <button className="flex gap-1 py-1 text-sm cursor-pointer">
-                      <img src="/icon/comment.svg" alt="답글" className="w-4 h-4 " />
-                      <span>1</span>
-                    </button>
-                    <button className="flex gap-1 py-1 text-sm cursor-pointer">
-                      <span>답글</span>
-                    </button>
-                  </div>
-                </div>
-
-              </form>
-            </div>
-          </li>
-        </ul>
-      </section>
+                  );
+                }
+              )}
+            </ul>
+          </section>
         </div>
       </div>
     </div>
   );
 }
-export default CommunityDetail
+export default CommunityDetail;
