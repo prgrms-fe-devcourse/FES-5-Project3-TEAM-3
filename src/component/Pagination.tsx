@@ -36,19 +36,33 @@ function Pagination({
   if (totalPages < 2) return null;
 
   const [uncontrolledPage, setUncontrolledPage] = useState(defaultPage);
+  const [nextPage, setNextPage] = useState<number | null>(null);
+
   const isControlled = typeof controlledPage === 'number';
-  const page = isControlled ? (controlledPage as number) : uncontrolledPage;
+
+  const page = isControlled ? (nextPage ?? (controlledPage as number)) : uncontrolledPage;
 
   const clamp = useCallback((n: number) => Math.max(1, Math.min(totalPages, n)), [totalPages]);
 
   const setPage = useCallback(
     (next: number) => {
       const n = clamp(next);
-      if (!isControlled) setUncontrolledPage(n);
+      if (isControlled) {
+        setNextPage(n);
+      } else {
+        setUncontrolledPage(n);
+      }
       onPageChange?.(n);
     },
     [isControlled, clamp, onPageChange]
   );
+
+  useEffect(() => {
+    if (!isControlled) return;
+    if (nextPage !== null && controlledPage === nextPage) {
+      setNextPage(null);
+    }
+  }, [controlledPage, nextPage, isControlled]);
 
   const items = usePagination({
     page,
@@ -160,7 +174,7 @@ function Pagination({
               onClick={() => isButton && item.page && setPage(item.page)}
               className={tw(
                 'inline-flex items-center justify-center rounded-xl border',
-                'transition-colors duration-150',
+                // 'transition-colors duration-150',
                 'select-none whitespace-nowrap',
                 sizeClasses[size],
                 selected

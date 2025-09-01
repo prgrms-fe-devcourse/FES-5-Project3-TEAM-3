@@ -12,7 +12,7 @@ function MyActivities() {
       <Pagination
         page={page}
         onPageChange={setPage}
-        totalPages={5}
+        totalPages={12}
         siblingCount={1}
         boundaryCount={1}
         showFirstLast={false}
