@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ErrorCode } from './profileErrorCodes';
-import { useProfileSettingError } from '@/hook/useProfileSettingError';
+import { useProfileSettingError } from '@/hook/profileSetting/useProfileSettingError';
 import { uploadImage } from '@/utils/supabase/uploadImage';
 import Button from '../Button';
 import { useAuth } from '@/store/@store';
@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from 'react-router';
 import Spinner from '../Spinner';
 import supabase from '@/supabase/supabase';
 import { useConfirm } from '@/hook/useConfirm';
-import { useProfile, useUpdateAvatar } from '@/hook/useProfile';
+import { useProfile, useUpdateAvatar } from '@/hook/profileSetting/useProfile';
 import { useQueryClient } from '@tanstack/react-query';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;

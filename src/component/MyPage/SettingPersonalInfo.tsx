@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Button from '../Button';
 import PhoneInput from './PhoneInput';
 import { formatPhoneNumber } from '@/utils/formatPhoneNumber';
-import { useProfileSettingError } from '@/hook/useProfileSettingError';
+import { useProfileSettingError } from '@/hook/profileSetting/useProfileSettingError';
 import { ErrorCode } from './profileErrorCodes';
 import { isValidPhone } from '@/utils/isValidPhone';
 

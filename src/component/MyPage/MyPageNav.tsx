@@ -5,7 +5,7 @@ import { extractNavItems } from '@/utils/extractNavItems';
 import tw from '@/utils/tw';
 import { MyPageIcons } from './NavIcons';
 import { useAuth } from '@/store/@store';
-import { useProfile } from '@/hook/useProfile';
+import { useProfile } from '@/hook/profileSetting/useProfile';
 
 interface MyPageNavProps {
   routes: RouteWithHandle[];
