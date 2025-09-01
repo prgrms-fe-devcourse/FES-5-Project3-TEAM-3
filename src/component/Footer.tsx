@@ -1,3 +1,4 @@
+import ScrollToTop from '@/hook/ScrolToTop';
 import { useState } from 'react';
 import { NavLink } from 'react-router';
 
@@ -34,7 +35,7 @@ function RealFooter() {
     <div className="bg-secondary-100 h-31 w-full flex items-center justify-center">
       <div className="w-360 px-25 py-8 flex justify-between items-center">
         <h1 className="w-41.5 h-11.75 flex items-center pt-1">
-          <NavLink to="/">
+          <NavLink to="/" onClick={ScrollToTop}>
             <img src="/image/Logo-Black.png" alt="로고아이콘" />
           </NavLink>
         </h1>

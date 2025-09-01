@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Button from '../Button';
+import { Link } from 'react-router';
 
 interface Props {
   src: string;
@@ -32,11 +33,11 @@ function WineGrid({ src, alt, title, text }: Props) {
           <div className="flex flex-col items-center justify-center gap-6 absolute inset-0">
             <h4 className="text-2xl font-semibold text-background-base">{title}</h4>
             <p className="text-background-base">{text}</p>
-            <div className="flex">
+            <Link to={`/search?keyword=${encodeURIComponent(title)}`} className="flex">
               <Button size="md" borderType="solid" color="primary">
                 더보기
               </Button>
-            </div>
+            </Link>
           </div>
         </div>
       ) : (

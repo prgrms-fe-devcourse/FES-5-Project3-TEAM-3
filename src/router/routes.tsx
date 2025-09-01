@@ -27,6 +27,7 @@ const Wines = lazy(() => import('@/pages/wine/Wines'));
 
 const WineDetails = lazy(() => import('@/pages/wine/WineDetails'));
 const Page404 = lazy(() => import('@/pages/Page404'));
+const SearchResult = lazy(() => import('@/pages/SearchResult'));
 
 export const routes = createBrowserRouter([
   {
@@ -36,6 +37,11 @@ export const routes = createBrowserRouter([
       {
         index: true,
         Component: MainPage,
+      },
+      {
+        path: 'search',
+        Component: SearchResult,
+        handle: { title: '검색결과' },
       },
       {
         path: 'account',
