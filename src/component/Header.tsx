@@ -118,8 +118,12 @@ overlay는 서치바가 다 들어가고나서 끄고싶은데
                 >
                   Logout
                 </button>
-                <Link to='my-page'>
-                  <img src={userImage} alt="프로필이미지" className='rounded-full w-10 h-10 cursor-pointer' />
+                <Link to="my-page">
+                  <img
+                    src={userImage ? userImage : '/image/defaultProfile.png'}
+                    alt="프로필이미지"
+                    className="rounded-full w-10 h-10 cursor-pointer"
+                  />
                 </Link>
               </div>
             ) : (
