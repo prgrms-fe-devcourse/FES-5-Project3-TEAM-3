@@ -21,6 +21,7 @@ export const selectCommunityForm = (s: any) => ({
   tags: s.tags,
   addTag: s.addTag,
   removeTag: s.removeTag,
+  clearTags: s.clearTags,
 
   // images
   addImages: s.addImages,
