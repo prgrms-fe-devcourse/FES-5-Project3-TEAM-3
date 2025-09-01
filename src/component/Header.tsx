@@ -4,6 +4,8 @@ import { Link, NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 import HeaderSearchSection from './search/HeaderSearchSection';
 import clsx from 'clsx';
+import supabase from '@/supabase/supabase';
+import ScrollToTop from '@/hook/ScrolToTop';
 
 function RealHeader() {
   const { userId, signOut } = useAuth(
@@ -17,7 +19,7 @@ function RealHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
   const [overlay, setOverlay] = useState(false);
-
+  const [userImage,setUserImage] = useState('')
   useLayoutEffect(() => {
     setSearchBar(false);
   }, [pathname, search]);
