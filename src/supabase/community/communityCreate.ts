@@ -12,13 +12,7 @@ export type CreatePostParams = {
 const VALID_CATEGORIES = ['free', 'question', 'review'];
 
 export async function createCommunityPost(params: CreatePostParams) {
-  const {
-    title,
-    body,
-    category = '',
-    tags = null,
-    userId = null,
-  } = params;
+  const { title, body, category = '', tags = null, userId = null } = params;
 
   const safeCategory = VALID_CATEGORIES.includes(category) ? category : '';
 

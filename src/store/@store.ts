@@ -1,4 +1,5 @@
 import type { ConfirmOptions } from '@/@types/global';
+import useToast from '@/hook/useToast';
 import supabase from '@/supabase/supabase';
 import { create } from 'zustand';
 
@@ -42,7 +43,7 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
 
   signOut: async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) console.log(error);
+    if (!error) useToast('success','로그아웃 하셨습니다')
     set({ userId: null, userEmail: null });
   },
 
