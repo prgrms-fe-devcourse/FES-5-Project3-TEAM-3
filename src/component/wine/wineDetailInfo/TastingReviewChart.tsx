@@ -23,14 +23,14 @@ function TastingReviewChart({ infoData, reviewData }: TastingReviewChartType) {
             data: infoData,
             backgroundColor: '#6E0E2E',
             barThickness: 16,
-            borderRadius: 4,
+            borderRadius: 8,
           },
           {
             label: '리뷰',
             data: reviewData,
             backgroundColor: '#EFD6B2',
             barThickness: 16,
-            borderRadius: 4,
+            borderRadius: 8,
           },
         ],
       },
@@ -68,11 +68,16 @@ function TastingReviewChart({ infoData, reviewData }: TastingReviewChartType) {
             xAlign: 'left',
             position: 'nearest',
           },
+          datalabels: {
+            display: false,
+          },
         },
       },
     };
 
-    if (!chartRef.current) chartRef.current = new Chart(canvasRef.current, config);
+    if (!chartRef.current) {
+      chartRef.current = new Chart(canvasRef.current, config);
+    }
 
     Chart.defaults.font.size = 16;
 
@@ -87,7 +92,7 @@ function TastingReviewChart({ infoData, reviewData }: TastingReviewChartType) {
     if (!chartRef.current) return;
     chartRef.current.data.datasets[0].data = infoData;
     chartRef.current.data.datasets[1].data = reviewData;
-    chartRef.current.update('active');
+    chartRef.current.update();
   }, [infoData, reviewData]);
 
   return <canvas ref={canvasRef} />;

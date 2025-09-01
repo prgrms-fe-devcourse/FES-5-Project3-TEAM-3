@@ -2,6 +2,8 @@ import { lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router';
 import CommunityWrite from '@/pages/community/write/CommunityWrite';
 import CommunityDetail from '@/pages/community/detail/CommunityDetail';
+import { wineLoader } from '@/pages/wine/Wines';
+import { wineDetailLoader } from '@/pages/wine/WineDetails';
 
 /* Code Splitting */
 const Root = lazy(() => import('@/pages'));
@@ -26,6 +28,7 @@ const Wines = lazy(() => import('@/pages/wine/Wines'));
 const WineDetails = lazy(() => import('@/pages/wine/WineDetails'));
 const Page404 = lazy(() => import('@/pages/Page404'));
 const SearchResult = lazy(() => import('@/pages/SearchResult'));
+
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -110,10 +113,12 @@ export const routes = createBrowserRouter([
       {
         path: 'wines',
         Component: Wines,
+        loader: wineLoader,
       },
       {
         path: 'wines/detail/:wineId',
         Component: WineDetails,
+        loader: wineDetailLoader,
       },
     ],
   },
