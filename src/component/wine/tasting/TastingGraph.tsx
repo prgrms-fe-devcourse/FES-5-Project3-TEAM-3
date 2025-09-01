@@ -39,7 +39,7 @@ function TastingGraph({
   );
   const [selected, setSelected] = useState<number | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
-  const [state, dispatch] = useReducer(reviewReducer, initialState);
+  const [_state, dispatch] = useReducer(reviewReducer, initialState);
 
   const reviewSweetness = useCallback(
     (v: number) => dispatch({ type: 'setSweetnessTaste', payload: v }),
