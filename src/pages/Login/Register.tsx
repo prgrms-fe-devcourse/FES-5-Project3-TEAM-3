@@ -10,16 +10,40 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
+  const [phone, setPhone] = useState('')
+  
   const navigate = useNavigate();
+  const phoneRef = useRef<HTMLInputElement|null>(null)
   const pwRef = useRef<HTMLInputElement | null>(null);
   const pwConfirmRef = useRef<HTMLInputElement | null>(null);
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!nickname.trim()) useToast('error','닉네임을 입력해주세요');
-    if (!email.trim()) useToast('error','이메일을 입력해주세요');
-    if (!password.trim()) useToast('error','비밀번호를 입력해주세요');
+    if (!nickname.trim()) { 
+      useToast('error', '닉네임을 입력해주세요');
+      return
+    } 
+    if (!email.trim()) {
+      useToast('error', '이메일을 입력해주세요');
+      return
+     } 
+    if (!password.trim()) { 
+      useToast('error', '비밀번호를 입력해주세요');
+      return
+    } 
+    if (!phone.trim()) {
+      useToast('error', '휴대폰 번호를 입력해주세요');
+      return
+     } 
+    if (phone.length < 11) { 
+      useToast('error', '휴대폰번호를 확인해주세요');
+      return
+    } 
+    if (!phone.startsWith('010')) {
+      useToast('error', '휴대전화 형식이 다릅니다')
+      return
+    }
     if (password !== confirmPassword) {
       useToast('error','비밀번호를 다시 확인해주세요');
       return;
@@ -29,7 +53,7 @@ function Register() {
       email,
       password,
       options: {
-        data: { nickname },
+        data: { nickname, phone },
       },
     });
     if (error) {
@@ -38,9 +62,23 @@ function Register() {
       return;
     } else {
       useToast('success','회원가입에 성공하셨습니다');
-      navigate('../login');
+      navigate('/');
     }
   };
+
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.target.value
+    let raw = target.replace(/\D/g, '');
+  
+    if (raw.length <= 11) {
+      raw = raw.replace(/(\d{3})(\d{4})(\d{4})/,"$1-$2-$3")
+       setPhone(raw);
+    } else if (raw.length > 11) {
+      e.preventDefault()
+    }
+  };
+  
 
   return (
     <div className="flex m-98 mt-10 items-center justify-between">
@@ -58,7 +96,7 @@ function Register() {
               <img src="/icon/profileIcon.svg" alt="닉네임아이콘" />
             </label>
             <input
-              className="outline-none"
+              className="outline-none w-full"
               id="nickname"
               type="text"
               value={nickname}
@@ -72,11 +110,25 @@ function Register() {
             </label>
             <input
               id="email"
-              className="outline-none"
+              className="outline-none w-full"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="이메일을 입력해주세요"
+            />
+          </div>
+          <div className="flex items-center gap-4 bg-secondary-50 border-1 border-[#8e95a9] rounded-2xl px-6 py-4">
+            <label htmlFor="phone">
+              <img src="/icon/phone.svg" alt="전화번호아이콘" />
+            </label>
+            <input
+              className="outline-none w-full"
+              id="phone"
+              type="tel"
+              ref={phoneRef}
+              value={phone}
+              onChange={(e) => handleChange(e)}
+              placeholder=' "ㅡ" 없이 휴대폰번호를 입력해주세요'
             />
           </div>
           <div className="flex items-center justify-between bg-secondary-50 border-1 border-[#8e95a9] rounded-2xl px-6 py-4">
@@ -87,7 +139,7 @@ function Register() {
               <input
                 id="password"
                 ref={pwRef}
-                className="outline-none"
+                className="outline-none w-full"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -104,10 +156,10 @@ function Register() {
               <input
                 id="passwordConfirm"
                 ref={pwConfirmRef}
-                className="outline-none"
+                className="outline-none w-full"
                 value={confirmPassword}
                 type="password"
-                placeholder="비밀번호 확인"
+                placeholder="비밀번호를 확인해 주세요"
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>

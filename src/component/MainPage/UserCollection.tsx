@@ -11,7 +11,7 @@ interface Props {
 }
 
 function UserCollection({id,image,title,content,icon,flavor}: Props) {
-  const country = countryInfo[icon]
+  const country = countryInfo[icon] ?? ''
 
   return (
     <div className="min-h-full flex items-center justify-center p-4">
