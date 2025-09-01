@@ -4,6 +4,7 @@ import CommunityWrite from '@/pages/community/write/CommunityWrite';
 import CommunityDetail from '@/pages/community/detail/CommunityDetail';
 import { wineLoader } from '@/pages/wine/Wines';
 import { wineDetailLoader } from '@/pages/wine/WineDetails';
+import { MainPageLoader } from '@/pages/MainPage/MainPage';
 
 /* Code Splitting */
 const Root = lazy(() => import('@/pages'));
@@ -37,6 +38,7 @@ export const routes = createBrowserRouter([
       {
         index: true,
         Component: MainPage,
+        loader:MainPageLoader
       },
       {
         path: 'search',
