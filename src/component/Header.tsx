@@ -1,9 +1,10 @@
 import { useAuth } from '@/store/@store';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { NavLink, useLocation } from 'react-router';
+import { Link, NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 import HeaderSearchSection from './HeaderSearchSection';
 import clsx from 'clsx';
+import supabase from '@/supabase/supabase';
 
 function RealHeader() {
   const { userId, signOut } = useAuth(
@@ -16,7 +17,7 @@ function RealHeader() {
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
-
+  const [userImage, setUserImage] = useState('');
   useLayoutEffect(() => {
     setSearchBar(false);
   }, [pathname]);
@@ -35,6 +36,21 @@ function RealHeader() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [pathname]);
+
+  useEffect(() => {
+    if (!userId) return
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from('profile')
+        .select('profile_image_url')
+        .eq('profile_id', userId)
+        .single();
+     
+      if (error) console.log(error);
+      if(data) setUserImage(data.profile_image_url)
+    };
+    fetchData();
+  }, [userId]);
 
   const handleSearch = () => {
     setSearchBar(!searchBar);
@@ -95,9 +111,9 @@ function RealHeader() {
                 >
                   Logout
                 </button>
-                <div className="rounded-full w-10 h-10 flex">
-                  <img src="/image/github.png" alt="프로필이미지" />
-                </div>
+                <Link to='my-page'>
+                  <img src={userImage} alt="프로필이미지" className='rounded-full w-10 h-10 cursor-pointer' />
+                </Link>
               </div>
             ) : (
               <NavLink

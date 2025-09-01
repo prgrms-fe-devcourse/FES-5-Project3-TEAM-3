@@ -1,5 +1,6 @@
 import Button from '@/component/Button';
 import VisibleBtn from '@/component/Login/VisibleBtn';
+import useToast from '@/hook/useToast';
 import supabase from '@/supabase/supabase';
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
@@ -16,11 +17,11 @@ function Register() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!nickname.trim()) alert('닉네임을 입력해주세요');
-    if (!email.trim()) alert('이메일을 입력해주세요');
-    if (!password.trim()) alert('비밀번호를 입력해주세요');
+    if (!nickname.trim()) useToast('error','닉네임을 입력해주세요');
+    if (!email.trim()) useToast('error','이메일을 입력해주세요');
+    if (!password.trim()) useToast('error','비밀번호를 입력해주세요');
     if (password !== confirmPassword) {
-      alert('비밀번호를 다시 확인해주세요');
+      useToast('error','비밀번호를 다시 확인해주세요');
       return;
     }
 
@@ -33,10 +34,10 @@ function Register() {
     });
     if (error) {
       console.error(error);
-      alert('회원가입 실패');
+      useToast('error','회원가입에 실패하셨습니다');
       return;
     } else {
-      alert('회원가입성공');
+      useToast('success','회원가입에 성공하셨습니다');
       navigate('../login');
     }
   };
