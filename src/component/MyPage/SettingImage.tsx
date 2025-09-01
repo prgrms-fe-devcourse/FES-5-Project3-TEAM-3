@@ -119,7 +119,7 @@ function SettingImage() {
     }
 
     const extension = avatar.name.split('.').pop()?.toLowerCase() || 'png';
-    const filePath = `userAvatar-${profileId}.${extension}`;
+    const filePath = `${profileId}/userAvatar-${Date.now()}.${extension}`;
 
     setBusy('image', true);
     uploadAbortRef.current?.abort();

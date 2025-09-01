@@ -39,7 +39,7 @@ function MyPageNav({ routes, basePath = '/my-page', className }: MyPageNavProps)
             <img
               src={avatarSrc}
               alt={`${displayName} 님의 프로필 이미지`}
-              className="size-full object-cover"
+              className="size-full rounded-full object-cover"
               loading="lazy"
               referrerPolicy="no-referrer"
             />
