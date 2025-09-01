@@ -1,36 +1,38 @@
 import TastingGraph from './TastingGraph';
 
 interface TastingInfoProps {
-  tasting: {
+  tasting?: {
     sweetness: number | null;
     acidic: number | null;
     tannic: number | null;
     body: number | null;
   };
   style: 'review' | 'info';
+  type?: 'readonly' | 'select';
+  className?: string;
 }
 
-function TastingInfo({ tasting: { sweetness, acidic, tannic, body }, style }: TastingInfoProps) {
+function TastingInfo({
+  tasting = { sweetness: 0, acidic: 0, tannic: 0, body: 0 },
+  style,
+  type = 'readonly',
+  className,
+}: TastingInfoProps) {
+  const { sweetness, acidic, tannic, body } = tasting;
   return (
-    <ul className="flex flex-col gap-1 mb-4 font-normal text-text-secondary">
-      <li className="flex gap-4 items-center" key="sweetness">
-        <span className="align-bottom text-nowrap">당도</span>
-        <TastingGraph rating={sweetness} style={style} />
-      </li>
-      <li className="flex gap-4 items-center" key="acidic">
-        <span className="align-bottom text-nowrap">산미</span>
-        <TastingGraph rating={acidic} style={style} />
-      </li>
-
-      <li className="flex gap-4 items-center" key="tannic">
-        <span className="align-bottom text-nowrap">탄닌</span>
-        <TastingGraph rating={tannic} style={style} />
-      </li>
-
-      <li className="flex gap-4 items-center" key="body">
-        <span className="align-bottom text-nowrap">바디</span>
-        <TastingGraph rating={body} style={style} />
-      </li>
+    <ul
+      className={`flex flex-col ${type === 'select' ? 'gap-3' : 'gap-1'} mb-4 font-normal text-text-secondary`}
+    >
+      <TastingGraph
+        name="당도"
+        type={type}
+        rating={sweetness}
+        style={style}
+        className={className}
+      />
+      <TastingGraph name="산미" type={type} rating={acidic} style={style} className={className} />
+      <TastingGraph name="탄닌" type={type} rating={tannic} style={style} className={className} />
+      <TastingGraph name="바디" type={type} rating={body} style={style} className={className} />
     </ul>
   );
 }

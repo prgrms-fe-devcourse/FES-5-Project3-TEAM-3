@@ -12,7 +12,7 @@ function WineList({ wines }: WineListProps) {
   const appliedFilters = useWineStore((s) => s.appliedFilters);
 
   const filteredWines: WineInfoType[] = wines.filter((wine) => {
-    const alcoholPercentage = wine.alcohol_content ? parseFloat(wine.alcohol_content) : null;
+    const alcoholPercentage = wine.abv ? parseFloat(wine.abv) : null;
     console.log(appliedFilters.도수);
 
     const ranges = [
@@ -31,23 +31,31 @@ function WineList({ wines }: WineListProps) {
       });
 
     return (
-      (appliedFilters.국가.length === 0 || appliedFilters.국가.includes(wine.country)) &&
+      (appliedFilters.국가.length === 0 ||
+        (wine.country && appliedFilters.국가.includes(wine.country))) &&
       (appliedFilters.품종.length === 0 ||
-        wine.grapes.some((g) => appliedFilters.품종.some((f) => g.includes(f)))) &&
+        (wine.variety &&
+          wine.variety.some((g) => appliedFilters.품종.some((f) => g.includes(f))))) &&
       (appliedFilters.도수.length === 0 ||
         appliedFilters.도수.some((f) => {
-          if (alcoholPercentage !== null)
-            return f.min === f.max
-              ? alcoholPercentage === 0
-              : f.max
-                ? alcoholPercentage >= f.min && alcoholPercentage <= f.max
-                : alcoholPercentage > f.min;
+          if (alcoholPercentage !== null) {
+            const zeroToFiveCheck =
+              f.min === 0 && f.max === 5 ? alcoholPercentage > 0 && alcoholPercentage <= 5 : true;
+            const check =
+              f.min === f.max
+                ? alcoholPercentage === 0
+                : f.max
+                  ? alcoholPercentage >= f.min && alcoholPercentage <= f.max
+                  : alcoholPercentage > f.min;
+            return check && zeroToFiveCheck;
+          }
         })) &&
-      (appliedFilters.종류.length === 0 || appliedFilters.종류.includes(wine.category)) &&
-      matchTaste(wine.taste.sweetness ?? 1000, appliedFilters.당도) &&
-      matchTaste(wine.taste.acidic ?? 1000, appliedFilters.산미) &&
-      matchTaste(wine.taste.tannic ?? 1000, appliedFilters.탄닌) &&
-      matchTaste(wine.taste.body ?? 1000, appliedFilters.바디)
+      (appliedFilters.종류.length === 0 ||
+        (wine.category !== null && appliedFilters.종류.includes(wine.category))) &&
+      matchTaste(wine.sweetness ?? 1000, appliedFilters.당도) &&
+      matchTaste(wine.acidic ?? 1000, appliedFilters.산미) &&
+      matchTaste(wine.tannic ?? 1000, appliedFilters.탄닌) &&
+      matchTaste(wine.body ?? 1000, appliedFilters.바디)
     );
   });
 
@@ -59,8 +67,8 @@ function WineList({ wines }: WineListProps) {
     );
   return (
     <>
-      {filteredWines.map((wine, i) => (
-        <Link key={wine.title} to={`/wines/detail/${i}`}>
+      {filteredWines.map((wine) => (
+        <Link key={wine.name} to={`/wines/detail/${wine.wine_id}`}>
           <WineInfo wineInfo={wine} />
         </Link>
       ))}
