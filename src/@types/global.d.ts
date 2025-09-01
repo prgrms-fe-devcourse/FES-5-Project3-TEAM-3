@@ -26,3 +26,8 @@ export type ConfirmOptions = {
   icon?: React.ReactNode;
   busy?: boolean;
 };
+
+export type Reply = Tables<'reply'>;
+export type ReplyData = Reply & {
+  profile: Pick<Tables<'profile'>, 'profile_id' | 'nickname' | 'profile_image_url'> | null;
+};
