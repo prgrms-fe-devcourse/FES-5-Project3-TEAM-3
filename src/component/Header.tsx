@@ -2,9 +2,10 @@ import { useAuth } from '@/store/@store';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
-import HeaderSearchSection from './HeaderSearchSection';
+import HeaderSearchSection from './search/HeaderSearchSection';
 import clsx from 'clsx';
 import supabase from '@/supabase/supabase';
+import ScrollToTop from '@/hook/ScrolToTop';
 
 function RealHeader() {
   const { userId, signOut } = useAuth(
@@ -14,13 +15,15 @@ function RealHeader() {
     }))
   );
 
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
-  const [userImage, setUserImage] = useState('');
+  const [overlay, setOverlay] = useState(false);
+  const [userImage,setUserImage] = useState('')
   useLayoutEffect(() => {
     setSearchBar(false);
-  }, [pathname]);
+  }, [pathname, search]);
+  // 쿼리스트링의 keywordk변경마다 search바 닫힘
 
   useEffect(() => {
     if (pathname !== '/') return;
@@ -54,6 +57,7 @@ function RealHeader() {
 
   const handleSearch = () => {
     setSearchBar(!searchBar);
+    setOverlay(true);
 
     if (window.scrollY <= 1) {
       setScrolled(!scrolled);
@@ -66,17 +70,20 @@ function RealHeader() {
     base,
     pathname == '/' ? (scrolled ? 'bg-primary-500' : 'bg-tranprent') : 'bg-primary-500'
   );
-
+  /* 
+overlay는 서치바가 다 들어가고나서 끄고싶은데 
+상위에서 열고 하위에서 닫으면 되는구나
+*/
   return (
     <div className={pathname == '/' ? '' : 'h-17.5'}>
-      {searchBar && (
+      {overlay && (
         <div className="fixed inset-0 bg-black/40 z-90" onClick={() => setSearchBar(false)}></div>
       )}
 
       <div className={headerBgClass}>
         <div className="w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
-            <NavLink to="/">
+            <NavLink to="/" onClick={ScrollToTop}>
               <img src="/image/Logo.png" alt="winepedia" />
             </NavLink>
           </h1>
@@ -125,7 +132,7 @@ function RealHeader() {
               </NavLink>
             )}
           </nav>
-          <HeaderSearchSection searchBar={searchBar} />
+          <HeaderSearchSection searchBar={searchBar} setOverlay={setOverlay} />
         </div>
       </div>
     </div>

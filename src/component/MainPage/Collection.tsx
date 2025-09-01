@@ -88,6 +88,8 @@ export default function Collection({ collection }: { collection: Item[] }) {
       if (rafId.current) cancelAnimationFrame(rafId.current);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      target.current = 0;
+      current.current = 0;
     };
   }, []);
 

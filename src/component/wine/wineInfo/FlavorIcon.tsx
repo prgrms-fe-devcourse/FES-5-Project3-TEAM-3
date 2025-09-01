@@ -34,10 +34,10 @@ function FlavorIcon({ flavor, type = 'default' }: { flavor: string; type?: 'defa
           type === 'default'
             ? `text-sm text-text-secondary font-normal  whitespace-nowrap transform transition-transform duration-1000 ${
                 isOverflow
-                  ? '-translate-x-0 group-hover:translate-x-[calc(48px_-_100%)] self-baseline'
+                  ? 'translate-x-0 group-hover:translate-x-[calc(48px_-_100%)] self-baseline'
                   : 'text-center'
               }`
-            : 'text-center text-sm 2xl:text-[15px] text-text-secondary font-normal whitespace-nowrap'
+            : 'text-center md:text-sm xl:text-[15px] text-text-secondary font-normal whitespace-nowrap'
         }
       >
         {flavor}
