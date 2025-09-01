@@ -19,7 +19,7 @@ function Review({ review }: { review: Tables<'reviews'> }) {
       <div className="flex flex-col flex-1">
         <div className="flex justify-between">
           <p className="py-3">리뷰작성한사람 {created_at.slice(0, 10)}</p>
-          <ReviewRatings rating={rating} w="w-6 h-6" />
+          <ReviewRatings rating={rating} w="w-6" h="h-6" />
         </div>
         {content}
       </div>

@@ -11,7 +11,6 @@ function Parings({ pairing }: { pairing: Tables<'pairings'> }) {
   useEffect(() => {
     const el = textRef.current;
     if (el) {
-      console.log(el.scrollWidth, el.clientWidth);
       setIsOverflow(el.scrollWidth > el.clientWidth);
     }
   }, []);
