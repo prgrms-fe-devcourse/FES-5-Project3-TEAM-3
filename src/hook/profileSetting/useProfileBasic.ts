@@ -4,7 +4,7 @@ import { upsertTable } from '@/utils/supabase/upsertTable';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 type ProfileRow = Database['public']['Tables']['profile']['Row'];
-type ProfileBasic = Pick<ProfileRow, 'profile_id' | 'nickname' | 'profile_image_url'>;
+export type ProfileBasic = Pick<ProfileRow, 'profile_id' | 'nickname' | 'profile_image_url'>;
 
 export function useProfile(profileId?: string) {
   return useQuery({

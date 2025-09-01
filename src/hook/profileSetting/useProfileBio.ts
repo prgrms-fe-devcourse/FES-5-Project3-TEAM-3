@@ -42,7 +42,7 @@ export function useUpdateBio() {
       return { profileId, bio };
     },
     onSuccess: ({ profileId, bio }) => {
-      queryClient.setQueryData<ProfileBio>(['profileBio', profileId], (prev) =>
+      queryClient.setQueryData<ProfileBio | null>(['profileBio', profileId], (prev) =>
         prev ? { ...prev, bio } : prev
       );
       queryClient.invalidateQueries({ queryKey: ['profileBio', profileId] });

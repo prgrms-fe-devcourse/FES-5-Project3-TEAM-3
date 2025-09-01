@@ -149,7 +149,7 @@ function SettingBio({ maxLength = 300 }: BioProps) {
                 color="primary"
                 borderType="solid"
                 hasIcon
-                disabled={!!getMessage(fieldKey)}
+                disabled={!!getMessage(fieldKey) || updateBio.isPending || busy.bio}
                 onClick={saveBio}
               >
                 Save
@@ -160,6 +160,7 @@ function SettingBio({ maxLength = 300 }: BioProps) {
                 color="primary"
                 borderType="outline"
                 hasIcon
+                disabled={updateBio.isPending || busy.bio}
                 onClick={cancelEditBio}
               >
                 Cancel

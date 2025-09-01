@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from 'react-router';
 import Spinner from '../Spinner';
 import supabase from '@/supabase/supabase';
 import { useConfirm } from '@/hook/useConfirm';
-import { useProfile, useUpdateAvatar } from '@/hook/profileSetting/useProfile';
+import { useProfile, useUpdateAvatar } from '@/hook/profileSetting/useProfileBasic';
 import { useQueryClient } from '@tanstack/react-query';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
@@ -214,6 +214,7 @@ function SettingImage() {
               color="primary"
               borderType="solid"
               hasIcon
+              disabled={busy.image || updateAvatar.isPending}
               onClick={uploadAvatar}
             >
               Save
@@ -224,6 +225,7 @@ function SettingImage() {
               color="primary"
               borderType="outline"
               hasIcon
+              disabled={busy.image || updateAvatar.isPending}
               onClick={cancelUploadAvatar}
             >
               Cancel
