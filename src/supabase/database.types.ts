@@ -689,6 +689,16 @@ export type Database = {
           updated_at: string | null
         }
       }
+      toggle_post_like: {
+        Args: {
+          p_post_id: string;
+          p_user_id: string;
+        };
+        Returns: {
+          action: string;
+          like_count: number;
+        }[];
+      };
     }
     Enums: {
       post_category: "free" | "question" | "review"
