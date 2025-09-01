@@ -4,17 +4,15 @@ import type { Swiper as SwiperType } from 'swiper';
 import { Pagination } from 'swiper/modules';
 import UserCollection from './UserCollection';
 import VerticalPagination from './MainPagination';
-
-type Item = {
-  id: number;
-  src: string;
-  icon: string;
-  title: string;
-  content: string;
-  price: string;
+import type { Tables } from '@/supabase/database.types';
+type Review = Tables<'reviews'>;
+type Wine = Tables<'wines'>;
+type Collection = Review & {
+  profile: Pick<Tables<'profile'>, 'nickname'> | null;
+  wines: Wine | null;
 };
 
-export default function Collection({ collection }: { collection: Item[] }) {
+export default function Collection({ collection }:{collection:Collection[]}) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -148,9 +146,17 @@ export default function Collection({ collection }: { collection: Item[] }) {
                   onSwiper={(sw) => (swiperRef.current = sw)}
                   className="h-full"
                 >
-                  {collection.map((item) => (
-                    <SwiperSlide key={item.id} className="h-full">
-                      <UserCollection {...item} />
+                  {collection &&
+                    collection.map((item, index) => (
+                      
+                    <SwiperSlide key={item.review_id} className="h-full">
+                        <UserCollection
+                          id={index}
+                          image={item.wines?.image_url ?? [] }
+                          title={item.wines?.name ?? ''}
+                          content={item.content}
+                          icon={item.wines?.country ?? ""}
+                          flavor={item.wines?. representative_flavor ?? []} />
                     </SwiperSlide>
                   ))}
                 </Swiper>
