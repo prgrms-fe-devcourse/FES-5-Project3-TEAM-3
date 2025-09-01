@@ -12,7 +12,7 @@ function ReviewTagInput({
 }) {
   const options: string[] = [];
   const [text, setText] = useState('');
-  const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
+  const [_filteredOptions, setFilteredOptions] = useState<string[]>([]);
 
   const addTag = useReviewStore((s) => s.addTag);
   const deleteTag = useReviewStore((s) => s.deleteTag);
