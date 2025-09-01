@@ -174,7 +174,6 @@ export type Database = {
           like_count: number;
           post_category: Database['public']['Enums']['post_category'];
           post_id: string;
-          primary_idx: number;
           reply_count: number;
           title: string;
           updated_at: string;
@@ -188,7 +187,7 @@ export type Database = {
           like_count?: number;
           post_category: Database['public']['Enums']['post_category'];
           post_id?: string;
-          primary_idx?: number;
+          thumbnail_image: string | null;
           reply_count?: number;
           title: string;
           updated_at?: string;
@@ -202,7 +201,7 @@ export type Database = {
           like_count?: number;
           post_category?: Database['public']['Enums']['post_category'];
           post_id?: string;
-          primary_idx?: number;
+          thumbnail_image: string | null;
           reply_count?: number;
           title?: string;
           updated_at?: string;

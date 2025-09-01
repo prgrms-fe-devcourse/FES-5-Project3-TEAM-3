@@ -13,7 +13,7 @@ function ReviewRatings({ rating = 3.5 }: { rating?: number }) {
     }
   }
 
-  console.log(percentage);
+  // console.log(percentage);
 
   return (
     <div className="flex justify-center items-center gap-2">

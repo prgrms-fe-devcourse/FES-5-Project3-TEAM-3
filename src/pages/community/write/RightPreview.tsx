@@ -32,8 +32,8 @@ function RightPreview() {
   const badgeClass = categoryMap[category] ?? 'bg-gray-400';
   const badgeLabel = category || '카테고리';
 
-  console.log(setPrimaryIdx);
-  console.log(previewIndex);
+  // console.log(setPrimaryIdx);
+  // console.log(previewIndex);
 
   // 1. 이미지 슬라이드 ex 인스타 스타일.
   // 태그 미리보기 없어도 괜찮아 보임.
