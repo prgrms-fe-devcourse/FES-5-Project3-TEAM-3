@@ -259,6 +259,7 @@ export type Database = {
           email: string
           is_deleted: boolean
           nickname: string
+          phone: string | null
           profile_id: string
           profile_image_url: string
           updated_at: string | null
@@ -270,6 +271,7 @@ export type Database = {
           email: string
           is_deleted?: boolean
           nickname: string
+          phone?: string | null
           profile_id?: string
           profile_image_url?: string
           updated_at?: string | null
@@ -281,6 +283,7 @@ export type Database = {
           email?: string
           is_deleted?: boolean
           nickname?: string
+          phone?: string | null
           profile_id?: string
           profile_image_url?: string
           updated_at?: string | null
@@ -527,14 +530,14 @@ export type Database = {
           {
             foreignKeyName: "user_badge_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profile"
             referencedColumns: ["profile_id"]
           },
           {
             foreignKeyName: "user_badge_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profile_public"
             referencedColumns: ["profile_id"]
           },
@@ -674,6 +677,12 @@ export type Database = {
       }
     }
     Functions: {
+      compute_and_upsert_user_badges: {
+        Args: { p_user_id: string }
+        Returns: {
+          badge: string
+        }[]
+      }
       get_my_profile: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -683,10 +692,26 @@ export type Database = {
           email: string
           is_deleted: boolean
           nickname: string
+          phone: string | null
           profile_id: string
           profile_image_url: string
           updated_at: string | null
         }
+      }
+      is_phone_available: {
+        Args: { p_phone: string; p_self: string }
+        Returns: boolean
+      }
+      recompute_badges_for_user: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
+      toggle_post_like: {
+        Args: { p_post_id: string; p_user_id: string }
+        Returns: {
+          action: string
+          like_count: number
+        }[]
       }
     }
     Enums: {
