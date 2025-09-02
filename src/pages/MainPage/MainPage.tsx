@@ -72,18 +72,17 @@ function MainPage() {
 
 
   return (
-    
-      <main>
-        <section className="relative">
-          <img
-            className="block w-screen h-screen"
-            src="/image/HeroImg.png"
-            alt="와인과 석류 이미지"
-          />
-          <h2 className="absolute left-85.5 bottom-38 text-primary-100 text-[108px]">
-            <img src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
-          </h2>
-        </section>
+    <main>
+      <section className="relative">
+        <img
+          className="block w-screen h-screen"
+          src="/image/HeroImg.png"
+          alt="와인과 석류 이미지"
+        />
+        <h2 className="absolute left-85.5 bottom-38 text-primary-100 text-[108px]">
+          <img src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
+        </h2>
+      </section>
       <Suspense fallback={<SkeletonMainPage />}>
         <Await resolve={Promise.all([nickname, postData, collectionData])}>
           <section className="bg-radial from-background-base from-60% to-secondary-300 to-100% flex justify-center">
@@ -99,22 +98,21 @@ function MainPage() {
             <Collection collection={collectionData} />
           </section>
 
-          <section className="h-200 mt-35 flex flex-col items-center">
+          <section className="h-200 mt-35 flex flex-col items-center gap-8">
             <h3>
               <img src="image/Trending posts.png" alt="trending posts" />
             </h3>
-            <div className="mt-13 shrink-0 flex items-center gap-3">
-              {
-                postData.map((post) => (
-                  <Card post={post} key={ post.post_id} />
-                ))
-              }
+
+            <div className="mx-90 w-310 h-90 flex gap-3">
+              {postData.map((post) => (
+                <Card post={post} key={post.post_id} />
+              ))}
               <ShowMoreBtn />
             </div>
           </section>
         </Await>
-        </Suspense>
-      </main>
+      </Suspense>
+    </main>
   );
 }
 export default MainPage;

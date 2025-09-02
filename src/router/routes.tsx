@@ -46,7 +46,6 @@ export const routes = createBrowserRouter([
       {
         path: 'search',
         Component: SearchResult,
-        handle: { title: '검색결과' },
       },
       {
         path: 'account',
