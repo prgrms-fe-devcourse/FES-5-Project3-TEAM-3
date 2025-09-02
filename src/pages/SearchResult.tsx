@@ -23,6 +23,7 @@ function SearchResult() {
             {filterWine.length > 0 ? (
               filterWine.map((item) => (
                 <Items
+                  key={item.wine_id}
                   image={item.image_url[0]}
                   title={item.name}
                   content={item.description_ko ?? ''}

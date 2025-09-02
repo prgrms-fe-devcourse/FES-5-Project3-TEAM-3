@@ -68,6 +68,7 @@ function MainPage() {
   const wines = winesArr;
   const { nickname, postData, collectionData } = useLoaderData() as LoaderData;
 
+
   return (
     <main>
       <section className="relative">
