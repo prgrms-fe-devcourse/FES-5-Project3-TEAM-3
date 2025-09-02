@@ -193,19 +193,20 @@ export type Database = {
       }
       posts: {
         Row: {
-          content: string
-          created_at: string
-          hashtag_list: string[] | null
-          image_url: string[] | null
-          like_count: number
-          post_category: Database["public"]["Enums"]["post_category"]
-          post_id: string
-          reply_count: number
-          thumbnail_image: string
-          title: string
-          updated_at: string
-          user_id: string | null
-        }
+          content: string;
+          created_at: string;
+          hashtag_list: string[] | null;
+          image_url: string[] | null;
+          thumbnail_image: string | null;
+          like_count: number;
+          post_category: Database['public']['Enums']['post_category'];
+          post_id: string;
+          primary_idx: number;
+          reply_count: number;
+          title: string;
+          updated_at: string;
+          user_id: string | null;
+        };
         Insert: {
           content: string
           created_at?: string
