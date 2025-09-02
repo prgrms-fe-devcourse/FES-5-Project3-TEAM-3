@@ -1,7 +1,6 @@
 import type { ConfirmOptions } from '@/@types/global';
 import useToast from '@/hook/useToast';
 import supabase from '@/supabase/supabase';
-import { useEffect } from 'react';
 import { create } from 'zustand';
 
 type AuthState = {
