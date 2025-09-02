@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import ReviewTagInput from './ReviewTagInput';
 
-function ReviewPairingInput() {
+function ReviewPairingInput({
+  disabled,
+  pairingOptions,
+}: {
+  disabled?: boolean;
+  pairingOptions: string[];
+}) {
   const options: string[] = [
     '고기-소,돼지',
     '고기-닭',
@@ -22,9 +28,10 @@ function ReviewPairingInput() {
       <div className="flex  items-center gap-2 p-1 mb-2 text-text-primary">
         페어링
         <select
-          value={selected}
+          value={disabled ? '' : selected}
           onChange={(e) => setSelected(e.target.value)}
-          className="w-40 bg-white rounded-lg p-1"
+          className="w-40 bg-white rounded-lg p-1 disabled:bg-gray-200"
+          disabled={disabled}
         >
           <option value="" disabled hidden>
             카테고리
@@ -35,7 +42,12 @@ function ReviewPairingInput() {
         </select>
       </div>
 
-      <ReviewTagInput type="페어링" category={selected} />
+      <ReviewTagInput
+        type="페어링"
+        category={selected}
+        disabled={disabled}
+        pairingOptions={pairingOptions}
+      />
     </div>
   );
 }

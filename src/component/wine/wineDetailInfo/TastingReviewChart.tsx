@@ -62,7 +62,7 @@ function TastingReviewChart({ infoData, reviewData }: TastingReviewChartType) {
               label: (context) => {
                 const datasetLabel = context.dataset.label; // 예: '리뷰' or '공식'
                 const value = context.formattedValue;
-                return `${datasetLabel} : ${value}`;
+                return `${datasetLabel} : ${value === '0' ? '정보없음' : value}`;
               },
             },
             xAlign: 'left',
