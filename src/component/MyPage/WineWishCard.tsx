@@ -63,10 +63,7 @@ function WineWishCard({
       </button>
 
       <h3
-        onMouseEnter={() => {
-          setHover(true);
-          console.log(name.length, shiftPx);
-        }}
+        onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         aria-label={name}
         title={name}
