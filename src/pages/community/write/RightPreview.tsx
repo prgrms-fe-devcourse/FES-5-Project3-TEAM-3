@@ -86,7 +86,7 @@ function RightPreview() {
                 className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
                 style={categoryStyle}
               >
-                {category === 'review' ? '리뷰' : category === 'question' ? '질문' : '자유'}
+                {category === 'review' ? '리뷰' : category === 'question' ? '질문' : category === 'free' ? '자유' : '카테고리 없음'}
               </span>
               {title ? (
                 <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
