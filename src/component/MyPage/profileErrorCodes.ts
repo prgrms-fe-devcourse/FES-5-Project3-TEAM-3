@@ -11,6 +11,7 @@ export const ErrorCode = {
   // nickname 에러
   NicknameExists: 'NICKNAME_EXISTS',
   NicknameTooLong: 'NICKNAME_TOO_LONG',
+  NicknameRequired: 'NICKNAME_REQUIRED',
   // phoneNumber 에러
   PhoneNumberExists: 'PHONENUMBER_EXISTS',
   InvalidPhoneNumber: 'INVALID_PHONE_NUMBER',
@@ -37,6 +38,7 @@ export const ErrorMessages: Record<ErrorCode, string> = {
 
   [ErrorCode.NicknameExists]: '이미 사용 중인 닉네임입니다.',
   [ErrorCode.NicknameTooLong]: '닉네임은 최대 20자까지 입력할 수 있습니다.',
+  [ErrorCode.NicknameRequired]: '닉네임은 필수값입니다.',
 
   [ErrorCode.PhoneNumberExists]:
     '입력하신 정보를 처리하는 데 실패했습니다. 전화번호를 확인하신 후 다시 시도해주세요.',
