@@ -3,7 +3,7 @@ import supabase from '@/supabase/supabase';
 import { useEffect, useState } from 'react';
 
 type ReviewRow = Database['public']['Tables']['reviews']['Row'];
-type WineRow = Database['public']['Tables']['wines']['Row'];
+export type WineRow = Database['public']['Tables']['wines']['Row'];
 
 export type ReviewWithWine = ReviewRow & {
   wines: Pick<WineRow, 'name' | 'country' | 'abv' | 'image_url'> | null;
@@ -90,7 +90,9 @@ export function useMyReviews(page: number, pageSize: number = 8, reserveLastSlot
         .range(from, to);
 
       if (queryErr) {
-        if (!cancelled) setError(queryErr.message);
+        if (!cancelled) {
+          setError(queryErr.message);
+        }
       } else {
         if (!cancelled) {
           setData(rows ?? []);
