@@ -82,6 +82,16 @@ function HeaderSearchSection({ searchBar, setOverlay }: Props) {
     parseArray(localStorage.getItem('recntly-search'))
   );
 
+
+  const handleClick = (keyword:string) => {
+    const k = keyword.toLowerCase().trim();
+        setRecentSearch?.((prev) => {
+          const next = [k, ...prev.filter((x: string) => x !== k)].slice(0, 5);
+          localStorage.setItem('recently-search', JSON.stringify(next));
+          return next;
+        });
+  }
+
   useEffect(() => {
     setRecentSearch(parseArray(localStorage.getItem('recently-search')));
   }, []);
@@ -104,6 +114,7 @@ function HeaderSearchSection({ searchBar, setOverlay }: Props) {
                     to={`/search?keyword=${encodeURIComponent(keyword)}`}
                     className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"
                     key={i}
+                    onClick={() => handleClick(keyword)}
                   >
                     <p className="text-secondary-700">{keyword}</p>
                   </Link>
@@ -113,7 +124,7 @@ function HeaderSearchSection({ searchBar, setOverlay }: Props) {
             <div className="flex flex-col flex-wrap gap-4">
               <h2>#추천 태그</h2>
               <div className="flex gap-4">
-                {hashTags.map((tags, i) => (
+                {hashTags.map((tags,i) => (
                   <Link
                     to={`/search?keyword=${encodeURIComponent(tags.tag_text ?? '')}`}
                     className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"

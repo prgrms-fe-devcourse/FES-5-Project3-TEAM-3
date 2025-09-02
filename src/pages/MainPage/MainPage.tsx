@@ -7,6 +7,7 @@ import { Suspense } from 'react';
 import SkeletonMainPage from './skeleton/SkeletonMainPage';
 import { Await, useLoaderData} from 'react-router';
 import type { Tables } from '@/supabase/database.types';
+import Card from '../community/Main/Card';
 
 type Review = Tables<'reviews'>
 type Wine = Tables<'wines'>
@@ -47,7 +48,7 @@ type LoaderData = {
   export const getPosts = async () => {
     const { data, error } = await supabase
       .from('posts')
-      .select('*').limit(4)
+      .select('*,profile(nickname)').limit(4)
       .order('like_count', { ascending: false });
     if (error) console.error(error);
     return data ?? []
@@ -99,11 +100,15 @@ function MainPage() {
           </section>
 
           <section className="h-200 mt-35 flex flex-col items-center">
-            <h3 className="text-[108px]">
+            <h3>
               <img src="image/Trending posts.png" alt="trending posts" />
             </h3>
-            <div className="mt-13 flex items-center">
-              <div className="rounded-2xl w-70 h-90 bg-gray-600"></div>
+            <div className="mt-13 shrink-0 flex items-center gap-3">
+              {
+                postData.map((post) => (
+                  <Card post={post} key={ post.post_id} />
+                ))
+              }
               <ShowMoreBtn />
             </div>
           </section>
