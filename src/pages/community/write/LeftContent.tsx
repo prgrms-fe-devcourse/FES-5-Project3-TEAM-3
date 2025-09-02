@@ -2,6 +2,8 @@ import TextEditor from '@/component/community/TextEditor';
 import { useCommunityForm } from '@/hook/community/useCommunityForm';
 import { useCommunityStore } from '@/pages/community/write/store/useCommunityStore';
 import React from 'react';
+import { uploadFilesToBucket } from '@/supabase/community/uploadImages';
+import supabase from '@/supabase/supabase';
 import { createCommunityPost } from '@/supabase/community/communityCreate';
 import TagInput from '@/component/TagInput';
 
@@ -21,7 +23,9 @@ function LeftContent() {
   const clearImages = useCommunityStore((s) => s.clearImages);
   const getStoreState = () => useCommunityStore.getState();
 
-  console.log(getStoreState);
+  // console.log(getStoreState)
+
+
   // 이미지 동기화
   const removeImageAt = useCommunityStore((s) => s.removeImageAt);
   const getImageUrls = () => useCommunityStore.getState().imageUrls || [];
@@ -68,31 +72,58 @@ function LeftContent() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // const data = getStoreState();
+      // 0) 로그인 확인 (필수: 업로드 권한)
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) {
+        window.alert('로그인이 필요합니다. 로그인 후 시도하세요.');
+        setIsSaving(false);
+        return;
+      }
+
+      // 1) 스토어에서 File과 blob URL 목록 읽기
+      const store = getStoreState();
+      const files: File[] = store.imageFiles ?? [];
+      const blobs: string[] = store.imageUrls ?? [];
+      const primaryIdx = typeof store.primaryIdx === 'number' ? store.primaryIdx : 0;
+
+      // 2) 파일 업로드 (있으면)
+      const STORAGE_BUCKET = (import.meta.env.VITE_SUPABASE_STORAGE_BUCKET as string) ?? 'post_images';
+      let publicUrls: string[] = [];
+      if (files.length > 0) {
+        const res = await uploadFilesToBucket(files, STORAGE_BUCKET);
+        publicUrls = res?.publicUrls || [];
+      }
+
+      // 3) 본문 내 blob URL들을 public URL로 치환 (인덱스 순서 대응)
+      let newBody = body || '';
+      for (let i = 0; i < blobs.length; i++) {
+        const blobUrl = blobs[i];
+        const pub = publicUrls[i];
+        if (blobUrl && pub) {
+          newBody = newBody.split(blobUrl).join(pub);
+        }
+      }
+
+      // 4) DB 저장 (imageUrls -> image_url, thumbnail_image 자동 반영)
       await createCommunityPost({
         title,
-        body,
-        // files: data.imageFiles ?? [],
-        // storeImageUrls: data.imageUrls ?? [],
-        // primaryIdx: data.primaryIdx ?? 0,
+        body: newBody,
+        imageUrls: publicUrls,
+        primaryIdx, // 여기서 사용자가 선택한 대표 이미지 인덱스를 전달
         category,
         tags,
         userId: undefined,
-        // uploadOptions: { concurrency: 4, rollbackOnFail: true },
       });
 
-      // 저장 성공: 스토어의 blob 정리 및 초기화
+      // 5) 성공 처리: 스토어 정리 및 폼 초기화
       if (typeof clearImages === 'function') clearImages();
-      // 폼 초기화
       setTitle('');
       setBody('');
       setTagInput('');
-      // 태그 모두 제거
       try {
         (tags || []).slice().forEach((t: any) => removeTag(t));
       } catch {}
       window.alert('게시가 완료되었습니다.');
-      // 필요 시 리다이렉트 또는 폼 리셋 추가
     } catch (err: any) {
       console.error('Save error', err);
       window.alert('저장 중 오류가 발생했습니다.');
