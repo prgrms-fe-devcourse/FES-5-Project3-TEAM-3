@@ -1,9 +1,12 @@
 import RatingSummaryChart from './RatingSummaryChart';
 import ReviewRatings from './ReviewRatings';
+interface ratingSummaryProps {
+  rating: number;
+  reviewerCount: number;
+  ratingChartData: number[];
+}
 
-function RatingSummary() {
-  const rating = 4.5;
-  const reviewerCount = 1482;
+function RatingSummary({ rating, reviewerCount, ratingChartData }: ratingSummaryProps) {
   return (
     <div className="flex flex-col gap-2">
       <h3 className="text-lg px-3">리뷰</h3>
@@ -15,7 +18,7 @@ function RatingSummary() {
           </p>
         </div>
         <div className="min-h-60  w-90">
-          <RatingSummaryChart data={[972, 385, 72, 22, 30]} />
+          <RatingSummaryChart data={ratingChartData} />
         </div>
       </div>
     </div>
