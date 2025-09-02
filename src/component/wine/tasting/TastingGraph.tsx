@@ -1,7 +1,8 @@
-import { initialState, reviewReducer } from '@/hook/useReviewModal';
+import { useReviewStore } from '@/store/reviewStore';
 import tw from '@/utils/tw';
 import React from 'react';
-import { useCallback, useMemo, useReducer, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useShallow } from 'zustand/shallow';
 
 interface TastingGraphProps {
   name: string;
@@ -19,7 +20,12 @@ function TastingGraph({
   className,
 }: TastingGraphProps) {
   if (rating === null)
-    return <p className="text-sm text-text-secondary">정보가 존재하지 않습니다</p>;
+    return (
+      <li className="flex gap-4 items-center">
+        <span className="align-bottom text-nowrap">{name}</span>
+        <p className="text-sm text-text-secondary">등록된 정보가 없습니다</p>
+      </li>
+    );
   const colors = useMemo(
     () =>
       style === 'info'
@@ -39,21 +45,19 @@ function TastingGraph({
   );
   const [selected, setSelected] = useState<number | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
-  const [_state, dispatch] = useReducer(reviewReducer, initialState);
+  const { setSweetnessTaste, setAcidicTaste, setTannicTaste, setBodyTaste } = useReviewStore(
+    useShallow((s) => ({
+      setSweetnessTaste: s.setSweetnessTaste,
+      setAcidicTaste: s.setAcidicTaste,
+      setTannicTaste: s.setTannicTaste,
+      setBodyTaste: s.setBodyTaste,
+    }))
+  );
 
-  const reviewSweetness = useCallback(
-    (v: number) => dispatch({ type: 'setSweetnessTaste', payload: v }),
-    []
-  );
-  const reviewAcidic = useCallback(
-    (v: number) => dispatch({ type: 'setAcidicTaste', payload: v }),
-    []
-  );
-  const reviewTannic = useCallback(
-    (v: number) => dispatch({ type: 'setTannicTaste', payload: v }),
-    []
-  );
-  const reviewBody = useCallback((v: number) => dispatch({ type: 'setBodyTaste', payload: v }), []);
+  const reviewSweetness = useCallback((v: number) => setSweetnessTaste(v), []);
+  const reviewAcidic = useCallback((v: number) => setAcidicTaste(v), []);
+  const reviewTannic = useCallback((v: number) => setTannicTaste(v), []);
+  const reviewBody = useCallback((v: number) => setBodyTaste(v), []);
 
   const reviewTaste = useCallback((v: number) => {
     switch (name) {

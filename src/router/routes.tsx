@@ -4,8 +4,8 @@ import CommunityWrite from '@/pages/community/write/CommunityWrite';
 import CommunityDetail from '@/pages/community/detail/CommunityDetail';
 import { wineLoader } from '@/pages/wine/Wines';
 import { wineDetailLoader } from '@/pages/wine/WineDetails';
+import CommunityMain from '@/pages/community/Main/CommunityMain';
 import { MainPageLoader } from '@/pages/MainPage/MainPage';
-
 /* Code Splitting */
 const Root = lazy(() => import('@/pages'));
 const MainPage = lazy(() => import('@/pages/MainPage/MainPage'));
@@ -72,12 +72,16 @@ export const routes = createBrowserRouter([
         ],
       },
       {
+        path: 'community',
+        element: <CommunityMain />,
+      },
+      {
         path: 'community/write',
         element: <CommunityWrite />,
       },
       {
-        // path: 'community/:id', 나중에 연결
-        path: 'community/detail',
+        // path: 'community/:id'
+        path: 'community/detail/:postId',
         element: <CommunityDetail />,
       },
       // MyPage route

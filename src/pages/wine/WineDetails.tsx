@@ -4,7 +4,7 @@ import WineBasicInfo from '@/component/wine/wineInfo/WineBasicInfo';
 import supabase from '@/supabase/supabase';
 import { computeTaste } from '@/utils/convertTasteInfo';
 import { Suspense, useState } from 'react';
-import { Await, useLoaderData, useParams, type LoaderFunctionArgs } from 'react-router';
+import { Await, Link, useLoaderData, useParams, type LoaderFunctionArgs } from 'react-router';
 import type { WineInfoType } from './Wines';
 import type { Tables } from '@/supabase/database.types';
 import ItemsContainer from '@/component/wine/wineDetailInfo/ItemsContainer';
@@ -65,34 +65,99 @@ export async function wineDetailLoader({ params }: LoaderFunctionArgs) {
   const wineData = getWineDetails(wineId);
   const tagData = getWineTag(wineId);
   const pairingData = getPairings(wineId);
-  const reviewData = getWineReview(wineId);
-  return { wines: wineData, tags: tagData, pairings: pairingData, reviews: reviewData };
+  const reviewData = await getWineReview(wineId);
+  const reviewRating = [0, 0, 0, 0, 0];
+  const tasteRating = { sweetness: 0, acidic: 0, tannic: 0, body: 0 };
+  let total = 0;
+  let validTasteCount = 0;
+  reviewData?.forEach((r) => {
+    const rating = r.rating;
+
+    total += rating;
+
+    const sweetness = r.sweetness_score ?? 0;
+    const acidic = r.acidity_score ?? 0;
+    const tannic = r.tannin_score ?? 0;
+    const body = r.body_score ?? 0;
+
+    if (sweetness || acidic || tannic || body) validTasteCount++;
+
+    tasteRating.sweetness += sweetness;
+    tasteRating.acidic += acidic;
+    tasteRating.tannic += tannic;
+    tasteRating.body += body;
+
+    if (rating > 4) reviewRating[0]++;
+    else if (rating > 3) reviewRating[1]++;
+    else if (rating > 2) reviewRating[2]++;
+    else if (rating > 1) reviewRating[3]++;
+    else if (rating > 0) reviewRating[4]++;
+  });
+  const averageRating = reviewData && reviewData.length > 0 ? total / reviewData.length : 0;
+  const averageTaste =
+    validTasteCount > 0
+      ? {
+          sweetness: tasteRating.sweetness / validTasteCount,
+          acidic: tasteRating.acidic / validTasteCount,
+          tannic: tasteRating.tannic / validTasteCount,
+          body: tasteRating.body / validTasteCount,
+        }
+      : { sweetness: 0, acidic: 0, tannic: 0, body: 0 };
+  const reviewers = reviewData?.length ?? 0;
+
+  return {
+    wines: wineData,
+    tags: tagData,
+    pairings: pairingData,
+    reviews: reviewData,
+    reviewRating,
+    averageRating,
+    averageTaste,
+    reviewers,
+  };
 }
 
 function WineDetails() {
   // 데이터 fetch -> props로 못 받음 : supabase에 올려서 디테일정보 가져오기, 주소도 와인인덱스말고 id로 하기
-  const { wineId } = useParams();
-  const [rating] = useState(3.7); // supabase에서 가져오기
-  const openModal = useReviewStore((state) => state.openModal);
-
-  if (!wineId) return;
-
   const data = useLoaderData() as {
     wines: Promise<WineInfoType[]>;
     tags: Promise<Tables<'hashtag_counts'>[]>;
     pairings: Promise<Tables<'pairings'>[]>;
-    reviews: Promise<Tables<'reviews'>[]>;
+    reviews: Tables<'reviews'>[];
+    reviewRating: number[];
+    averageRating: number;
+    averageTaste: { sweetness: 0; acidic: 0; tannic: 0; body: 0 };
+    reviewers: number;
   };
+
+  const { wineId } = useParams();
+  const [rating] = useState(data.averageRating); // supabase에서 가져오기
+  const openModal = useReviewStore((state) => state.openModal);
+
+  if (!wineId) return;
 
   return (
     <>
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Spinner className="m-auto h-[calc(100vh-12.125rem)]" />}>
         <Await resolve={data.wines}>
           {(wines) => {
-            if (!wines) {
+            console.log(wines);
+            if (wines.length === 0) {
               return (
-                <div className="w-full h-full flex justify-center items-center">
-                  와인 정보를 찾을 수 없습니다.
+                <div className="w-full h-[calc(100vh-12.125rem)] flex justify-center items-center text-2xl gap-30">
+                  <img src="/image/404image.png" alt="" className="w-80 rounded-2xl" />
+                  <h2 className="font-extrabold text-6xl text-center text-primary-500">
+                    Wine not found
+                    <p className="text-center text-[#556987] text-lg font-bold pt-5">
+                      요청하신 와인을 찾을 수 없습니다 <br />
+                      길을 잃어버리셨나요?
+                    </p>
+                    <Link to="/wines">
+                      <Button size="lg" color="primary">
+                        <p className="font-bold text-[20px]">Back to WineList</p>
+                      </Button>
+                    </Link>
+                  </h2>
                 </div>
               );
             }
@@ -126,25 +191,27 @@ function WineDetails() {
                             (computeTaste(w.tannic) as number) ?? 0,
                             (computeTaste(w.body) as number) ?? 0,
                           ]}
-                          reviewData={[1, 2, 3, 4]}
+                          reviewData={[
+                            data.averageTaste.sweetness,
+                            data.averageTaste.acidic,
+                            data.averageTaste.tannic,
+                            data.averageTaste.body,
+                          ]}
                         />
                       </div>
                       <div className="h-fit flex justify-center w-full">
                         <p className="m-auto text-lg">리뷰</p>
-                        <ReviewRatings rating={rating} />
-                        <p className="m-auto">{rating}</p>
+                        <ReviewRatings rating={rating} w="w-8" h="h-8" />
+                        <p className="m-auto">{rating} / 5</p>
                       </div>
                     </div>
                   </div>
-                  {/* <Await resolve={data.tags}>{(tags)=><TagContainer/>}</Await> */}
                   <Await resolve={data.tags}>
                     {(tags) => <ItemsContainer items={tags} type="tags" />}
                   </Await>
                   <Await resolve={data.pairings}>
                     {(pairings) => <ItemsContainer items={pairings} type="pairings" />}
                   </Await>
-                  {/* TODO : supabase에서 태그 많은순으로 가져와서 렌더링하기 */}
-                  {/* TODO : supabase에서 페어링 많은순으로 가져와서 렌더링하기 */}
                   <h3 className="text-xl">이 와인 드셔보셨나요 ? 리뷰를 작성해주세요</h3>
                   <Button
                     type="button"
@@ -154,10 +221,12 @@ function WineDetails() {
                     리뷰작성하기
                   </Button>
                   <div className="w-full flex items-center justify-center flex-wrap gap-20">
-                    <RatingSummary />
-                    <Await resolve={data.reviews}>
-                      {(reviews) => <ReviewContainer reviews={reviews} />}
-                    </Await>
+                    <RatingSummary
+                      rating={data.averageRating}
+                      reviewerCount={data.reviewers}
+                      ratingChartData={data.reviewRating}
+                    />
+                    <ReviewContainer reviews={data.reviews} />
                   </div>
                 </div>
                 {<ReviewModal wineImage={w.image_url} wineName={w.name} />}

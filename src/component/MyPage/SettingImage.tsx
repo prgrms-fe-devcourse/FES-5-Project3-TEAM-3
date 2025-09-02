@@ -1,37 +1,45 @@
 import { useEffect, useRef, useState } from 'react';
 import { ErrorCode } from './profileErrorCodes';
-import { useProfileSettingError } from '@/hook/useProfileSettingError';
+import { useProfileSettingError } from '@/hook/profileSetting/useProfileSettingError';
 import { uploadImage } from '@/utils/supabase/uploadImage';
 import Button from '../Button';
 import { useAuth } from '@/store/@store';
 import useToast from '@/hook/useToast';
 import { useLocation, useNavigate } from 'react-router';
 import Spinner from '../Spinner';
-import { upsertTable } from '@/utils/supabase/upsertTable';
 import supabase from '@/supabase/supabase';
 import { useConfirm } from '@/hook/useConfirm';
+import { useProfile, useUpdateAvatar } from '@/hook/profileSetting/useProfileBasic';
+import { useQueryClient } from '@tanstack/react-query';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
 function SettingImage() {
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
   const { busy, setBusy, setError, clearError, getMessage } = useProfileSettingError();
   const fileRef = useRef<HTMLInputElement>(null);
   const uploadAbortRef = useRef<AbortController | null>(null);
 
   const profileId = useAuth((s) => s.userId);
-  const isLoading = useAuth((s) => s.isLoading);
+  const isAuthLoading = useAuth((s) => s.isLoading);
+  const { data: profile, isLoading: profileLoading } = useProfile(profileId || undefined);
+  const updateAvatar = useUpdateAvatar();
 
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const location = useLocation();
   const announcedRef = useRef(false);
   const confirm = useConfirm();
 
+  const fieldKey = 'avatar';
+
   /* profile guard */
   useEffect(() => {
-    if (isLoading || profileId) return;
+    if (isAuthLoading || profileId) return;
 
     // error toast 1회만
     if (!announcedRef.current) {
@@ -49,9 +57,15 @@ function SettingImage() {
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
-      // scheduleRef.current = false;
     };
-  }, [profileId, isLoading]);
+  }, [profileId, isAuthLoading, navigate, location]);
+
+  // 서버 값으로 avatarUrl 초기화
+  useEffect(() => {
+    if (!isEditing) {
+      setAvatarUrl(profile?.profile_image_url ?? null);
+    }
+  }, [profile?.profile_image_url, isEditing]);
 
   // preview URL 갱신 / unmount시 revoke
   useEffect(() => {
@@ -61,8 +75,6 @@ function SettingImage() {
       }
     };
   }, [avatarPreview]);
-
-  const fieldKey = 'avatar';
 
   /* 파일 미리보기 설정 */
   const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,21 +106,6 @@ function SettingImage() {
     setAvatarPreview(URL.createObjectURL(file));
   };
 
-  /* supabase profile 테이블 업데이트 */
-  const saveAvatarUrlToProfile = async (publicUrl: string, profileId: string) => {
-    const { error } = await upsertTable({
-      method: 'upsert',
-      tableName: 'profile',
-      matchKey: 'profile_id',
-      uploadData: {
-        profile_id: profileId,
-        profile_image_url: publicUrl,
-        updated_at: new Date().toDateString(),
-      },
-    });
-    if (error) throw error;
-  };
-
   /* supabase bucket에 업로드 */
   const uploadAvatar = async () => {
     if (!avatar) {
@@ -122,7 +119,7 @@ function SettingImage() {
     }
 
     const extension = avatar.name.split('.').pop()?.toLowerCase() || 'png';
-    const filePath = `userAvatar-${profileId}.${extension}`;
+    const filePath = `${profileId}/userAvatar-${Date.now()}.${extension}`;
 
     setBusy('image', true);
     uploadAbortRef.current?.abort();
@@ -145,16 +142,20 @@ function SettingImage() {
       const { data } = supabase.storage.from('user_avatar').getPublicUrl(filePath);
       const publicUrl = result.url ?? data.publicUrl;
 
-      try {
-        await saveAvatarUrlToProfile(publicUrl, profileId);
-      } catch (err) {
-        console.error(err);
-      }
+      await updateAvatar.mutateAsync({ profileId, publicUrl });
 
-      clearError(fieldKey);
+      setAvatarUrl(publicUrl);
+      if (avatarPreview && avatarPreview.startsWith('blob:')) URL.revokeObjectURL(avatarPreview);
+      setAvatarPreview(null);
+      setAvatar(null);
       setIsEditing(false);
-      setAvatarPreview(publicUrl);
+      clearError(fieldKey);
       useToast('success', '프로필 이미지가 변경되었습니다.');
+
+      queryClient.invalidateQueries({ queryKey: ['profileBasic', profileId] });
+
+      if (fileRef.current) fileRef.current.value = '';
+
       return publicUrl;
     } catch (err) {
       console.error('Avatar Upload Failed:', err);
@@ -191,7 +192,10 @@ function SettingImage() {
     if (fileRef.current) fileRef.current.value = '';
   };
 
-  if (isLoading || !profileId)
+  // 나중에 default profile image로 변경 필요
+  const imageSrc = avatarPreview ?? avatarUrl ?? undefined;
+
+  if (isAuthLoading || profileLoading || !profileId)
     return (
       <section className="w-full p-8 rounded-lg bg-secondary-100 border border-gray-300 flex flex-col gap-6">
         <Spinner />
@@ -210,6 +214,7 @@ function SettingImage() {
               color="primary"
               borderType="solid"
               hasIcon
+              disabled={busy.image || updateAvatar.isPending}
               onClick={uploadAvatar}
             >
               Save
@@ -220,6 +225,7 @@ function SettingImage() {
               color="primary"
               borderType="outline"
               hasIcon
+              disabled={busy.image || updateAvatar.isPending}
               onClick={cancelUploadAvatar}
             >
               Cancel
@@ -230,8 +236,8 @@ function SettingImage() {
       <hr />
       <div className="flex gap-6 justify-start items-center">
         <div className="size-25 border border-secondary-800/40 rounded-full flex justify-center items-center">
-          {avatarPreview ? (
-            <img src={avatarPreview} alt="프로필사진" className="size-25 rounded-full" />
+          {imageSrc ? (
+            <img src={imageSrc} alt="프로필사진" className="size-25 rounded-full" />
           ) : (
             <div className="bg-slate-500"></div>
           )}
