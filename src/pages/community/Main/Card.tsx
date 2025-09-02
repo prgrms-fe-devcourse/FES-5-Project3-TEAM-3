@@ -57,7 +57,7 @@ export default function Card({ post }: { post?: PostWithProfile }) {
 
     const uid = currentUserId;
     if (!uid) {
-      window.location.href = '/login';
+      useToast('info', '로그인이 필요합니다. 로그인 후 시도하세요.');
       return;
     }
     if (post.user_id && post.user_id === uid) {
@@ -126,9 +126,9 @@ export default function Card({ post }: { post?: PostWithProfile }) {
           </div>
 
           <div className="flex-1">
-            <h3 className="text-base font-semibold mb-2 line-clamp-2">{post?.title ?? '제목 없음'}</h3>
+            <h3 className="text-base font-semibold mb-2 line-clamp-2">{post?.title ? post.title.replace(/<[^>]+>/g, '').slice(0, 26) + (post.title.length > 26 ? '...' : '') : '제목 없음'}</h3>
             <p className="text-sm text-gray-500 mb-3">
-              {post?.content ? post.content.replace(/<[^>]+>/g, '').slice(0, 90) + (post.content.length > 90 ? '...' : '') : ''}
+              {post?.content ? post.content.replace(/<[^>]+>/g, '').slice(0, 45) + (post.content.length > 45 ? '...' : '') : ''}
             </p>
           </div>
 
