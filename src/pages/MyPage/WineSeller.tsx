@@ -1,6 +1,7 @@
 import AddNewCard from '@/component/MyPage/WineSeller/AddNewCard';
 import WineSellerCard from '@/component/MyPage/WineSeller/WineSellerCard';
 import WineSellerCardSkeleton from '@/component/MyPage/WineSeller/WineSellerCardSkeleton';
+import WineTasteAnalysis from '@/component/MyPage/WineSeller/WineTasteAnalysis';
 import Pagination from '@/component/Pagination';
 import { useMyReviews } from '@/hook/myPage/useMyReviews';
 import { useProfile } from '@/hook/profileSetting/useProfileBasic';
@@ -61,7 +62,7 @@ function WineSeller() {
 
   return (
     <div className="flex flex-col gap-12 overflow-scroll">
-      <div className="flex flex-col gap-6">
+      <section className="flex flex-col gap-6">
         <h2 className="w-full inline-flex flex-col justify-start items-start text-2xl font-semibold">
           My Wine Seller
         </h2>
@@ -77,7 +78,8 @@ function WineSeller() {
           showPrevNext
           size="md"
         />
-      </div>
+      </section>
+      <WineTasteAnalysis />
     </div>
   );
 }
