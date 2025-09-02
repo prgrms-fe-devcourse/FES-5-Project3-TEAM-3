@@ -48,7 +48,7 @@ function RealHeader() {
         .select('profile_image_url')
         .eq('profile_id', userId)
         .single();
-     
+
       if (error) console.log(error);
       if(data) setUserImage(data.profile_image_url)
     };
@@ -70,8 +70,8 @@ function RealHeader() {
     base,
     pathname == '/' ? (scrolled ? 'bg-primary-500' : 'bg-tranprent') : 'bg-primary-500'
   );
-  /* 
-overlay는 서치바가 다 들어가고나서 끄고싶은데 
+  /*
+overlay는 서치바가 다 들어가고나서 끄고싶은데
 상위에서 열고 하위에서 닫으면 되는구나
 */
   return (
@@ -105,7 +105,7 @@ overlay는 서치바가 다 들어가고나서 끄고싶은데
             <NavLink to="wines" className="font-semibold text-secondary-50">
               Wine
             </NavLink>
-            <NavLink to="community/write" className="font-semibold text-secondary-50">
+            <NavLink to="community" className="font-semibold text-secondary-50">
               Community
             </NavLink>
 
