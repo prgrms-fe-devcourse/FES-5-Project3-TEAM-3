@@ -71,20 +71,20 @@ function MainPage() {
 
 
   return (
-    <Suspense fallback={<SkeletonMainPage />}>
-      <Await resolve={Promise.all([nickname,postData,collectionData])}>
-        <main>
-          <section className="relative">
-            <img
-              className="block w-screen h-screen"
-              src="/image/HeroImg.png"
-              alt="와인과 석류 이미지"
-            />
-            <h2 className="absolute left-85.5 bottom-38 text-primary-100 text-[108px]">
-              <img src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
-            </h2>
-          </section>
-
+    
+      <main>
+        <section className="relative">
+          <img
+            className="block w-screen h-screen"
+            src="/image/HeroImg.png"
+            alt="와인과 석류 이미지"
+          />
+          <h2 className="absolute left-85.5 bottom-38 text-primary-100 text-[108px]">
+            <img src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
+          </h2>
+        </section>
+      <Suspense fallback={<SkeletonMainPage />}>
+        <Await resolve={Promise.all([nickname, postData, collectionData])}>
           <section className="bg-radial from-background-base from-60% to-secondary-300 to-100% flex justify-center">
             <div className="grid grid-rows-3 grid-cols-3 gap-5 py-34.75">
               {wines &&
@@ -107,9 +107,9 @@ function MainPage() {
               <ShowMoreBtn />
             </div>
           </section>
-        </main>
-      </Await>
-    </Suspense>
+        </Await>
+        </Suspense>
+      </main>
   );
 }
 export default MainPage;

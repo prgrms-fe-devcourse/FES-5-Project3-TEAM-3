@@ -1,6 +1,7 @@
 import type { ConfirmOptions } from '@/@types/global';
 import useToast from '@/hook/useToast';
 import supabase from '@/supabase/supabase';
+import { useEffect } from 'react';
 import { create } from 'zustand';
 
 type AuthState = {
@@ -14,6 +15,7 @@ type AuthAction = {
   fetch: () => Promise<void>;
   subscribe: () => void;
   signOut: () => Promise<void>;
+  resetPassword: (email:string) => Promise<void>
 };
 
 type ConfirmState = {
@@ -62,6 +64,19 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
 
     return () => listener.subscription.unsubscribe();
   },
+  
+  resetPassword: async(userEmail) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
+      redirectTo: `${window.location.origin}/account/resetpassword`,
+    });
+    if (error) {
+      useToast('error', '이메일을 다시 확인해주세요')
+      return
+    } else {
+      useToast('success', '인증메일을 확인해주세요')
+    }
+  }
+  
 }));
 
 export const useConfirmStore = create<ConfirmState>((set, get) => ({

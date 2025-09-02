@@ -96,7 +96,10 @@ function Login() {
               </div>
               <VisibleBtn ref={pwRef} />
             </div>
-            <Link to='../findpassword' className="text-right text-primary-500 text-[12px] font-light">
+            <Link
+              to="../findpassword"
+              className="text-right text-primary-500 text-[12px] font-light"
+            >
               비밀번호를 잊어버리셨나요?
             </Link>
             <div className="flex flex-col items-center gap-4">
@@ -109,6 +112,21 @@ function Login() {
                   회원가입 하러가기
                 </Link>
               </p>
+              <div className='flex gap-8'>
+                <Link
+                  to="../findemail"
+                  className="text-right text-primary-500 text-[12px] font-light"
+                >
+                  이메일찾기
+                </Link>{' '}
+           
+                <Link
+                  to="../findpassword"
+                  className="text-right text-primary-500 text-[12px] font-light"
+                >
+                  비밀번호찾기
+                </Link>
+              </div>
             </div>
           </form>
         </section>

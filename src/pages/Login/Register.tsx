@@ -13,7 +13,6 @@ function Register() {
   const [phone, setPhone] = useState('')
   
   const navigate = useNavigate();
-  const phoneRef = useRef<HTMLInputElement|null>(null)
   const pwRef = useRef<HTMLInputElement | null>(null);
   const pwConfirmRef = useRef<HTMLInputElement | null>(null);
 
@@ -119,13 +118,13 @@ function Register() {
           </div>
           <div className="flex items-center gap-4 bg-secondary-50 border-1 border-[#8e95a9] rounded-2xl px-6 py-4">
             <label htmlFor="phone">
-              <img src="/icon/phone.svg" alt="전화번호아이콘" />
+              <img src="/icon/phone.svg" alt="휴대폰 아이콘" />
             </label>
             <input
               className="outline-none w-full"
               id="phone"
               type="tel"
-              ref={phoneRef}
+              required
               value={phone}
               onChange={(e) => handleChange(e)}
               placeholder=' "ㅡ" 없이 휴대폰번호를 입력해주세요'

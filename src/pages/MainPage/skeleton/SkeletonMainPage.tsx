@@ -1,14 +1,6 @@
 function SkeletonMainPage() {
   return (
-    <main>
-      {/* Hero Section */}
-      <section className="relative">
-        <div className="block w-screen h-screen bg-background-base animate-pulse" />
-        <h2 className="absolute left-85.5 bottom-38 flex flex-col gap-4">
-          <div className="w-100 h-20 bg-gray-400 rounded animate-pulse" />
-          <div className="w-200 h-20 bg-gray-400 rounded animate-pulse" />
-        </h2>
-      </section>
+    <main className="overflow-x-hidden">
 
       {/* Wine Grid Section */}
       <section className="bg-radial from-background-base from-60% to-secondary-300 to-100% flex justify-center">

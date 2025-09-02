@@ -23,6 +23,9 @@ const Settings = lazy(() => import('@/pages/MyPage/Settings'));
 const Login = lazy(() => import('@/pages/Login/Login'));
 const Register = lazy(() => import('@/pages/Login/Register'));
 const Findpassword = lazy(() => import('@/pages/Login/FindPassword'));
+const ResetPassword =lazy(()=> import('@/pages/Login/ResetPassword'))
+const FindEmail = lazy(() => import('@/pages/Login/FindEmail'))
+
 
 const Wines = lazy(() => import('@/pages/wine/Wines'));
 
@@ -59,6 +62,12 @@ export const routes = createBrowserRouter([
           {
             path: 'findpassword',
             Component:Findpassword,
+          }, {
+            path: 'resetpassword',
+            Component:ResetPassword
+          }, {
+            path: 'findemail',
+            Component:FindEmail
           }
         ],
       },
