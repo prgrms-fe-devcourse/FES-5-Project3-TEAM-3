@@ -19,7 +19,7 @@ function RealHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
   const [overlay, setOverlay] = useState(false);
-  const [userImage,setUserImage] = useState('')
+  const [userImage, setUserImage] = useState('');
   useLayoutEffect(() => {
     setSearchBar(false);
   }, [pathname, search]);
@@ -41,7 +41,7 @@ function RealHeader() {
   }, [pathname]);
 
   useEffect(() => {
-    if (!userId) return
+    if (!userId) return;
     const fetchData = async () => {
       const { data, error } = await supabase
         .from('profile')
@@ -50,7 +50,7 @@ function RealHeader() {
         .single();
 
       if (error) console.log(error);
-      if(data) setUserImage(data.profile_image_url)
+      if (data) setUserImage(data.profile_image_url);
     };
     fetchData();
   }, [userId]);

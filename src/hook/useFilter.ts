@@ -2,24 +2,21 @@ import type { Tables } from '@/supabase/database.types';
 import supabase from '@/supabase/supabase';
 import { useEffect, useState } from 'react';
 
-type Wines = Tables<'wines'>
-
+type Wines = Tables<'wines'>;
 
 export const filtered = (keyword: string) => {
-
   const k = keyword.toLowerCase().trim();
   const [wines, setWines] = useState<Wines[]>([]);
- 
 
   useEffect(() => {
     const fetchData = async () => {
-      const {data,error} = await  supabase.from('wines').select('*')
-      if(error) console.log(error)
-        if(data)setWines(data)
-      } 
-    fetchData()
-  }, [keyword])
-  
+      const { data, error } = await supabase.from('wines').select('*');
+      if (error) console.log(error);
+      if (data) setWines(data);
+    };
+    fetchData();
+  }, [keyword]);
+
   return wines.filter((wine) => {
     const title = wine.name.toLowerCase();
     const titleKo = wine.name_ko?.toLowerCase();
@@ -52,22 +49,20 @@ export const filtered = (keyword: string) => {
 
     const pronunciations = JSON.stringify(wine.pronunciations).toLowerCase();
 
-
-
-      return (
-        (country && country.includes(k)) ||
-        title.includes(k) ||
-        grapes.includes(k) ||
-        (contents && contents.includes(k)) ||
-        (scent && scent.includes(k)) ||
-        category?.includes(k) ||
-        titleKo?.includes(k) ||
-        countryKo?.includes(k) ||
-        grapesKo?.includes(k) ||
-        categoryKo?.includes(k) ||
-        scentKo?.includes(k) ||
-        pronunciations.includes(k) ||
-        category?.includes(k) 
-      );
-    });
+    return (
+      (country && country.includes(k)) ||
+      title.includes(k) ||
+      grapes.includes(k) ||
+      (contents && contents.includes(k)) ||
+      (scent && scent.includes(k)) ||
+      category?.includes(k) ||
+      titleKo?.includes(k) ||
+      countryKo?.includes(k) ||
+      grapesKo?.includes(k) ||
+      categoryKo?.includes(k) ||
+      scentKo?.includes(k) ||
+      pronunciations.includes(k) ||
+      category?.includes(k)
+    );
+  });
 };

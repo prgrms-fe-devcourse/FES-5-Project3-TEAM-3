@@ -1,13 +1,12 @@
-import Button from "@/component/Button";
-import { useAuth } from "@/store/@store";
-import { useState } from "react";
-import { Link } from "react-router";
+import Button from '@/component/Button';
+import { useAuth } from '@/store/@store';
+import { useState } from 'react';
+import { Link } from 'react-router';
 
 function FindPassword() {
+  const resetPassword = useAuth((s) => s.resetPassword);
+  const [email, setEmail] = useState('');
 
-  const resetPassword = useAuth((s) => s.resetPassword)
-  const [email,setEmail] = useState('')
-  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     resetPassword(email);
@@ -54,4 +53,4 @@ function FindPassword() {
     </>
   );
 }
-export default FindPassword
+export default FindPassword;

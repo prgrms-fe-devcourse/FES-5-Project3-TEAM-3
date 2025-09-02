@@ -12,7 +12,7 @@ type Collection = Review & {
   wines: Wine | null;
 };
 
-export default function Collection({ collection }:{collection:Collection[]}) {
+export default function Collection({ collection }: { collection: Collection[] }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -148,17 +148,17 @@ export default function Collection({ collection }:{collection:Collection[]}) {
                 >
                   {collection &&
                     collection.map((item, index) => (
-                      
-                    <SwiperSlide key={item.review_id} className="h-full">
+                      <SwiperSlide key={item.review_id} className="h-full">
                         <UserCollection
                           id={index}
-                          image={item.wines?.image_url ?? [] }
+                          image={item.wines?.image_url ?? []}
                           title={item.wines?.name ?? ''}
                           content={item.content}
-                          icon={item.wines?.country ?? ""}
-                          flavor={item.wines?. representative_flavor ?? []} />
-                    </SwiperSlide>
-                  ))}
+                          icon={item.wines?.country ?? ''}
+                          flavor={item.wines?.representative_flavor ?? []}
+                        />
+                      </SwiperSlide>
+                    ))}
                 </Swiper>
               </div>
             </div>

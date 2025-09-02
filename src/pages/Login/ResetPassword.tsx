@@ -1,51 +1,47 @@
-import Button from "@/component/Button";
-import VisibleBtn from "@/component/Login/VisibleBtn";
-import useToast from "@/hook/useToast";
-import supabase from "@/supabase/supabase";
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import Button from '@/component/Button';
+import VisibleBtn from '@/component/Login/VisibleBtn';
+import useToast from '@/hook/useToast';
+import supabase from '@/supabase/supabase';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 function ResetPassword() {
+  const [resetPassword, setResetPassword] = useState(false);
+  const navigate = useNavigate();
+  const pwRef = useRef(null);
+  const pwConfirmRef = useRef(null);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-    const [resetPassword,setResetPassword] = useState(false)
-    const navigate = useNavigate();
-    const pwRef = useRef(null);
-    const pwConfirmRef = useRef(null);
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-
-  
-  
   useEffect(() => {
-    const { data:{subscription} } = supabase.auth.onAuthStateChange(
-      async (event, session) => { 
-      if (event === 'PASSWORD_RECOVERY') setResetPassword(true)
-      if(event === 'SIGNED_IN' && session?.user) setResetPassword(true)
-    })
-    
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'PASSWORD_RECOVERY') setResetPassword(true);
+      if (event === 'SIGNED_IN' && session?.user) setResetPassword(true);
+    });
+
     supabase.auth.getSession().then(({ data }) => {
-      if(data.session) setResetPassword(true)
-    })
-    
-    return () => subscription.unsubscribe()
-  },[])
+      if (data.session) setResetPassword(true);
+    });
 
+    return () => subscription.unsubscribe();
+  }, []);
 
-
-  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (password !== confirmPassword) {
       useToast('error', '비밀번호를 다시 확인해주세요.');
       return;
     }
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
-      useToast('error','비밀번호를 다시 확인해주세요')
-      console.error(error)
-      return
+      useToast('error', '비밀번호를 다시 확인해주세요');
+      console.error(error);
+      return;
     }
-    useToast('success', '비밀번호가 변경되었습니다.')
-    navigate('../login')
+    useToast('success', '비밀번호가 변경되었습니다.');
+    navigate('../login');
   };
 
   return (
@@ -106,4 +102,4 @@ function ResetPassword() {
     </div>
   );
 }
-export default ResetPassword
+export default ResetPassword;

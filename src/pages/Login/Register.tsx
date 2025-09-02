@@ -10,8 +10,8 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [phone, setPhone] = useState('')
-  
+  const [phone, setPhone] = useState('');
+
   const navigate = useNavigate();
   const pwRef = useRef<HTMLInputElement | null>(null);
   const pwConfirmRef = useRef<HTMLInputElement | null>(null);
@@ -19,32 +19,32 @@ function Register() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!nickname.trim()) { 
+    if (!nickname.trim()) {
       useToast('error', '닉네임을 입력해주세요');
-      return
-    } 
+      return;
+    }
     if (!email.trim()) {
       useToast('error', '이메일을 입력해주세요');
-      return
-     } 
-    if (!password.trim()) { 
+      return;
+    }
+    if (!password.trim()) {
       useToast('error', '비밀번호를 입력해주세요');
-      return
-    } 
+      return;
+    }
     if (!phone.trim()) {
       useToast('error', '휴대폰 번호를 입력해주세요');
-      return
-     } 
-    if (phone.length < 11) { 
+      return;
+    }
+    if (phone.length < 11) {
       useToast('error', '휴대폰번호를 확인해주세요');
-      return
-    } 
+      return;
+    }
     if (!phone.startsWith('010')) {
-      useToast('error', '휴대전화 형식이 다릅니다')
-      return
+      useToast('error', '휴대전화 형식이 다릅니다');
+      return;
     }
     if (password !== confirmPassword) {
-      useToast('error','비밀번호를 다시 확인해주세요');
+      useToast('error', '비밀번호를 다시 확인해주세요');
       return;
     }
 
@@ -57,27 +57,25 @@ function Register() {
     });
     if (error) {
       console.error(error);
-      useToast('error','회원가입에 실패하셨습니다');
+      useToast('error', '회원가입에 실패하셨습니다');
       return;
     } else {
-      useToast('success','회원가입에 성공하셨습니다');
+      useToast('success', '회원가입에 성공하셨습니다');
       navigate('/');
     }
   };
 
-  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const target = e.target.value
+    const target = e.target.value;
     let raw = target.replace(/\D/g, '');
-  
+
     if (raw.length <= 11) {
-      raw = raw.replace(/(\d{3})(\d{4})(\d{4})/,"$1-$2-$3")
-       setPhone(raw);
+      raw = raw.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+      setPhone(raw);
     } else if (raw.length > 11) {
-      e.preventDefault()
+      e.preventDefault();
     }
   };
-  
 
   return (
     <div className="flex m-98 mt-10 items-center justify-between">

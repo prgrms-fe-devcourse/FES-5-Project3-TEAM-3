@@ -12,7 +12,8 @@ type ProfileJoined = {
 type PostWithProfile = PostRow & { profile?: ProfileJoined | null };
 
 export default function Card({ post }: { post?: PostWithProfile }) {
-  const rawImg = post?.thumbnail_image ?? (Array.isArray(post?.image_url) ? post?.image_url?.[0] : undefined);
+  const rawImg =
+    post?.thumbnail_image ?? (Array.isArray(post?.image_url) ? post?.image_url?.[0] : undefined);
   const img = typeof rawImg === 'string' && rawImg.trim() !== '' ? rawImg : null;
   const category = post?.post_category ?? 'free';
   const replies = post?.reply_count ?? 0;
@@ -92,13 +93,12 @@ export default function Card({ post }: { post?: PostWithProfile }) {
     }
   };
 
-
   const categoryStyle =
     category === 'review'
       ? { background: '#E6F7EE', color: '#0F9D58' }
       : category === 'question'
-      ? { background: '#EEF2FF', color: '#2B6CB0' }
-      : { background: '#FFF1F0', color: '#B91C1C' };
+        ? { background: '#EEF2FF', color: '#2B6CB0' }
+        : { background: '#FFF1F0', color: '#B91C1C' };
 
   // profile 우선 사용: nickname / profile_image_url
   const nickname = post?.profile?.nickname ?? post?.user_id ?? '익명';

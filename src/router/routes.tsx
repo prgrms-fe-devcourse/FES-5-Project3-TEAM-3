@@ -23,9 +23,8 @@ const Settings = lazy(() => import('@/pages/MyPage/Settings'));
 const Login = lazy(() => import('@/pages/Login/Login'));
 const Register = lazy(() => import('@/pages/Login/Register'));
 const Findpassword = lazy(() => import('@/pages/Login/FindPassword'));
-const ResetPassword =lazy(()=> import('@/pages/Login/ResetPassword'))
-const FindEmail = lazy(() => import('@/pages/Login/FindEmail'))
-
+const ResetPassword = lazy(() => import('@/pages/Login/ResetPassword'));
+const FindEmail = lazy(() => import('@/pages/Login/FindEmail'));
 
 const Wines = lazy(() => import('@/pages/wine/Wines'));
 
@@ -41,7 +40,7 @@ export const routes = createBrowserRouter([
       {
         index: true,
         Component: MainPage,
-        loader:MainPageLoader
+        loader: MainPageLoader,
       },
       {
         path: 'search',
@@ -60,14 +59,16 @@ export const routes = createBrowserRouter([
           },
           {
             path: 'findpassword',
-            Component:Findpassword,
-          }, {
+            Component: Findpassword,
+          },
+          {
             path: 'resetpassword',
-            Component:ResetPassword
-          }, {
+            Component: ResetPassword,
+          },
+          {
             path: 'findemail',
-            Component:FindEmail
-          }
+            Component: FindEmail,
+          },
         ],
       },
       {

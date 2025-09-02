@@ -5,58 +5,57 @@ import { winesArr } from '@/assets/staticArr';
 import supabase from '@/supabase/supabase';
 import { Suspense } from 'react';
 import SkeletonMainPage from './skeleton/SkeletonMainPage';
-import { Await, useLoaderData} from 'react-router';
+import { Await, useLoaderData } from 'react-router';
 import type { Tables } from '@/supabase/database.types';
 import Card from '../community/Main/Card';
 
-type Review = Tables<'reviews'>
-type Wine = Tables<'wines'>
-type Post = Tables<'posts'>
+type Review = Tables<'reviews'>;
+type Wine = Tables<'wines'>;
+type Post = Tables<'posts'>;
 type Collection = Review & {
-    profile: Pick<Tables<'profile'>, 'nickname' > | null;
-    wines: Wine | null
-}
+  profile: Pick<Tables<'profile'>, 'nickname'> | null;
+  wines: Wine | null;
+};
 type LoaderData = {
-  nickname: string | null | undefined
-  postData: Post[]
-  collectionData: Collection[]
+  nickname: string | null | undefined;
+  postData: Post[];
+  collectionData: Collection[];
 };
 
+export const getUser = async () => {
+  const { data, error } = await supabase
+    .from('user_badge')
+    .select('profile(nickname)')
+    .contains('badge_type', ['Apprentice Sommelier']);
+  if (error) console.error(error);
+  const random = data?.map((a) => a.profile.nickname);
+  if (!random) return;
+  const index = Math.floor(Math.random() * random?.length);
+  return random[index];
+};
 
-  export const getUser = async () => {
-    const { data, error } = await supabase
-      .from('user_badge')
-      .select('profile(nickname)')
-      .contains('badge_type', ['Apprentice Sommelier']);
-    if (error) console.error(error)
-    const random = data?.map(a => a.profile.nickname)
-     if (!random) return;
-    const index = Math.floor(Math.random() * random?.length)
-    return random[index] 
-  };
+export const getCollection = async (nickname: string): Promise<Collection[]> => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*,profile(nickname),wines(*)')
+    .eq('profile.nickname', nickname)
+    .limit(5);
+  if (error) console.error(error);
+  return data ?? [];
+};
 
- export const getCollection = async (nickname: string):Promise<Collection[]> => {
-    const { data, error } = await supabase
-      .from('reviews')
-      .select('*,profile(nickname),wines(*)')
-      .eq('profile.nickname',nickname)
-      .limit(5);
-    if (error) console.error(error);
-    return data ?? [];
-  };
-
-  export const getPosts = async () => {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*,profile(nickname)').limit(4)
-      .order('like_count', { ascending: false });
-    if (error) console.error(error);
-    return data ?? []
-  };
-
+export const getPosts = async () => {
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*,profile(nickname)')
+    .limit(4)
+    .order('like_count', { ascending: false });
+  if (error) console.error(error);
+  return data ?? [];
+};
 
 export async function MainPageLoader(): Promise<LoaderData> {
-  const nickname = await getUser(); 
+  const nickname = await getUser();
   const [postData, collectionData] = await Promise.all([
     getPosts(),
     nickname ? getCollection(nickname) : Promise.resolve<Collection[]>([]),
@@ -65,11 +64,9 @@ export async function MainPageLoader(): Promise<LoaderData> {
   return { nickname, postData, collectionData };
 }
 
-
 function MainPage() {
   const wines = winesArr;
-  const {nickname, postData, collectionData} = useLoaderData() as LoaderData
-
+  const { nickname, postData, collectionData } = useLoaderData() as LoaderData;
 
   return (
     <main>

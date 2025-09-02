@@ -1,16 +1,15 @@
-import Button from "@/component/Button";
-import Spinner from "@/component/Spinner";
-import useToast from "@/hook/useToast";
-import { useState } from "react";
-import { Link } from "react-router";
+import Button from '@/component/Button';
+import Spinner from '@/component/Spinner';
+import useToast from '@/hook/useToast';
+import { useState } from 'react';
+import { Link } from 'react-router';
 
 function FindEmail() {
+  const [phone, setPhone] = useState('');
 
-  const [phone, setPhone] = useState('')
-  
   const [foundEmail, setFoundEmail] = useState<string | null>(null);
   const [mode, setMode] = useState<'form' | 'result'>('form');
-  const [isloading ,setIsloading] = useState(false)
+  const [isloading, setIsloading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target.value;
@@ -24,46 +23,42 @@ function FindEmail() {
     }
   };
 
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsloading(true)
-        if (!phone.trim()) {
-          useToast('error', '휴대폰 번호를 입력해주세요');
-          return
-         } 
-        if (phone.length < 11) { 
-          useToast('error', '휴대폰번호를 확인해주세요');
-          return
-        } 
-        if (!phone.startsWith('010')) {
-          useToast('error', '휴대전화 형식이 다릅니다')
-          return
-        }
+    e.preventDefault();
+    setIsloading(true);
+    if (!phone.trim()) {
+      useToast('error', '휴대폰 번호를 입력해주세요');
+      return;
+    }
+    if (phone.length < 11) {
+      useToast('error', '휴대폰번호를 확인해주세요');
+      return;
+    }
+    if (!phone.startsWith('010')) {
+      useToast('error', '휴대전화 형식이 다릅니다');
+      return;
+    }
 
     try {
-      const response = await fetch(
-        'https://tejflzndemytckczpazg.supabase.co/functions/v1/findId', {
+      const response = await fetch('https://tejflzndemytckczpazg.supabase.co/functions/v1/findId', {
         method: 'POST',
         headers: {
-            'Content-type':'application/json'
-          },
-        body:JSON.stringify({phone})
-        }
-      )
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify({ phone }),
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!response.ok) {
-        useToast('error', '일치하는 계정을 찾지 못했습니다')
-        return
+        useToast('error', '일치하는 계정을 찾지 못했습니다');
+        return;
       }
-      setMode('result')
-      setFoundEmail(result.maskedEmail)
-      setIsloading(false)
-    }
-    catch{
-      useToast('error','서버 요청 중 오류가 발생했습니다.')
+      setMode('result');
+      setFoundEmail(result.maskedEmail);
+      setIsloading(false);
+    } catch {
+      useToast('error', '서버 요청 중 오류가 발생했습니다.');
     }
   };
 
@@ -119,4 +114,4 @@ function FindEmail() {
     </>
   );
 }
-export default FindEmail
+export default FindEmail;

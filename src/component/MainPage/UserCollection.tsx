@@ -1,17 +1,16 @@
-import { countryInfo } from "../wine/filterSearch/filterInfo";
-
+import { countryInfo } from '../wine/filterSearch/filterInfo';
 
 interface Props {
-  id: number,
-  image: string[], 
-  title: string,
-  content: string,
-  icon: string,
-  flavor:string[]
+  id: number;
+  image: string[];
+  title: string;
+  content: string;
+  icon: string;
+  flavor: string[];
 }
 
-function UserCollection({id,image,title,content,icon,flavor}: Props) {
-  const country = countryInfo[icon] ?? ''
+function UserCollection({ id, image, title, content, icon, flavor }: Props) {
+  const country = countryInfo[icon] ?? '';
 
   return (
     <div className="min-h-full flex items-center justify-center p-4">

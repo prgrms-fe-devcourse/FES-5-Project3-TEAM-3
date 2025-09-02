@@ -3,7 +3,7 @@ import VisibleBtn from '@/component/Login/VisibleBtn';
 import useToast from '@/hook/useToast';
 import { useAuth } from '@/store/@store';
 import supabase from '@/supabase/supabase';
-import {useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 
@@ -11,11 +11,10 @@ function Login() {
   const { userId, signOut } = useAuth(
     useShallow((s) => ({
       userId: s.userId,
-      signOut: s.signOut
+      signOut: s.signOut,
     }))
-  )
-    
-  
+  );
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -23,33 +22,31 @@ function Login() {
 
   useLayoutEffect(() => {
     if (userId) {
-    (async () => await signOut())();
+      (async () => await signOut())();
     }
-  },[])
-
-
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      password
+      password,
     });
 
     const userNickName = data.user?.user_metadata.nickname;
     const userId = data.user?.id;
     const userEmail = data.user?.email ?? email;
-    const userPhone = data.user?.user_metadata.phone
+    const userPhone = data.user?.user_metadata.phone;
 
     if (error) {
-      useToast('error','로그인 정보를 다시 확인해주세요')
+      useToast('error', '로그인 정보를 다시 확인해주세요');
     } else {
       await supabase.from('profile').insert({
         profile_id: userId,
         nickname: userNickName,
         email: userEmail,
-        phone: userPhone
+        phone: userPhone,
       });
       navigate('/');
     }
@@ -112,14 +109,13 @@ function Login() {
                   회원가입 하러가기
                 </Link>
               </p>
-              <div className='flex gap-8'>
+              <div className="flex gap-8">
                 <Link
                   to="../findemail"
                   className="text-right text-primary-500 text-[12px] font-light"
                 >
                   이메일찾기
                 </Link>{' '}
-           
                 <Link
                   to="../findpassword"
                   className="text-right text-primary-500 text-[12px] font-light"

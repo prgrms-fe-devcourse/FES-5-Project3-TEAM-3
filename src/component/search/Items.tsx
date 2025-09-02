@@ -4,10 +4,10 @@ interface Props {
   image: string;
   content: string;
   title: string;
-  wineId:string
+  wineId: string;
 }
 
-function Items({ image, content, title,wineId }: Props) {
+function Items({ image, content, title, wineId }: Props) {
   return (
     <Link to={`/wines/detail/${wineId}`}>
       <div className="w-74 h-88 flex flex-col bg-white p-4 gap-4  rounded-lg cursor-pointer  hover:-translate-y-1 shadow-md hover:duration-200">

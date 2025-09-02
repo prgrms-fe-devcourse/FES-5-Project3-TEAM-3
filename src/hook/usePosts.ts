@@ -15,9 +15,7 @@ export function usePosts(limit = 30) {
       try {
         const trimmed = (term ?? '').trim();
         const orderMode = sort ?? sortBy;
-        let builder = supabase
-          .from('posts')
-          .select('*, profile(nickname, profile_image_url)');
+        let builder = supabase.from('posts').select('*, profile(nickname, profile_image_url)');
 
         // 정렬 적용
         if (orderMode === 'likes') {

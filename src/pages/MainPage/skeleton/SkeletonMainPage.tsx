@@ -1,7 +1,6 @@
 function SkeletonMainPage() {
   return (
     <main className="overflow-x-hidden">
-
       {/* Wine Grid Section */}
       <section className="bg-radial from-background-base from-60% to-secondary-300 to-100% flex justify-center">
         <div className="grid grid-rows-3 grid-cols-3 gap-5 py-34.75">
@@ -29,4 +28,4 @@ function SkeletonMainPage() {
     </main>
   );
 }
-export default SkeletonMainPage
+export default SkeletonMainPage;

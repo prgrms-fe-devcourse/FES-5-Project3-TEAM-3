@@ -5,12 +5,11 @@ import { filtered } from '@/hook/useFilter';
 import { useState } from 'react';
 import Pagination from '@/component/Pagination';
 
-
 function SearchResult() {
   const [params] = useSearchParams();
   const keyword = params.get('keyword');
-  const filterWine = filtered(keyword ?? '')
-  const [page,_setPage] = useState(1)
+  const filterWine = filtered(keyword ?? '');
+  const [page, _setPage] = useState(1);
 
   return (
     <div className="min-h-screen w-249 mx-auto mt-8  items-center flex flex-col flex-1">
@@ -19,9 +18,8 @@ function SearchResult() {
         <div className="w-full border-b">
           <p>{filterWine.length} items</p>
         </div>
-        <div className='flex flex-col gap-10'>
+        <div className="flex flex-col gap-10">
           <section className="mt-8 grid grid-cols-4 gap-8">
-            
             {filterWine.length > 0 ? (
               filterWine.map((item) => (
                 <Items
