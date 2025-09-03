@@ -68,27 +68,27 @@ export const winesArr = [
 export const wineCategories = [
   {
     src: '/icon/redWineIcon.png',
-    alt: '레드와인',
+    alt: 'Red wine',
     category: 'Red',
   },
   {
     src: '/icon/whitewineIcon.png',
-    alt: '화이트와인',
+    alt: 'White wine',
     category: 'White',
   },
   {
     src: '/icon/roseWineIcon.png',
-    alt: '로제와인',
+    alt: 'Rose wine',
     category: 'Rose',
   },
   {
     src: '/icon/champaignIcon.png',
-    alt: '스파클링',
+    alt: 'Sparkling wine',
     category: 'Sparkling',
   },
   {
     src: '/icon/dessertWineIcon.png',
-    alt: '디저트와인',
+    alt: 'Dissert wine',
     category: 'Dissert',
   },
 ];
