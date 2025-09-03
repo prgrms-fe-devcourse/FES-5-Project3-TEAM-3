@@ -1,7 +1,7 @@
 import Button from '@/component/Button';
 import useToast from '@/hook/useToast';
 import { useReviewStore } from '@/store/reviewStore';
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 function ReviewTagInput({
   type = '태그',
@@ -9,10 +9,12 @@ function ReviewTagInput({
   disabled = false,
   tagOptions,
   pairingOptions,
+  isEditMode,
 }: {
   type?: '태그' | '페어링';
   category?: string;
   disabled?: boolean;
+  isEditMode?: boolean;
   tagOptions?: string[];
   pairingOptions?: string[];
 }) {
@@ -27,6 +29,16 @@ function ReviewTagInput({
   const deletePairings = useReviewStore((s) => s.deletePairing);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [tags, pairings]);
 
   const addTagOption = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -126,10 +138,10 @@ function ReviewTagInput({
           onChange={handleChange}
           className="bg-white rounded-lg h-8 p-2 disabled:bg-gray-200"
           placeholder={`${type === '페어링' ? '페어링을' : '태그를'} 입력하세요`}
-          disabled={disabled}
+          disabled={disabled || isEditMode}
         />
 
-        <Button size="sm" disabled={disabled}>
+        <Button size="sm" disabled={disabled || isEditMode}>
           추가
         </Button>
       </form>
@@ -155,7 +167,7 @@ function ReviewTagInput({
         </div>
       )}
 
-      <div className="flex gap-2 flex-wrap w-70 h-12 overflow-auto p-2">
+      <div className="flex gap-2 flex-wrap w-70 h-12 overflow-auto p-2" ref={containerRef}>
         {type === '태그' &&
           !disabled &&
           tags.map((tag) => (

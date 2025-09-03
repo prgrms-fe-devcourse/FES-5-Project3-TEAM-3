@@ -34,21 +34,39 @@ function ReviewModal({
   );
   const tagText = tags.map((t) => t.tag_text ?? '');
 
-  const { isOpen, closeModal, setContent, toggleOnlyReview, onlyReview, rating, content, reset } =
-    useReviewStore(
-      useShallow((s) => ({
-        isOpen: s.isOpen,
-        closeModal: s.closeModal,
-        setContent: s.setContent,
-        toggleOnlyReview: s.toggleOnlyReview,
-        onlyReview: s.onlyReview,
-        addTag: s.addTag,
-        deleteTag: s.deleteTag,
-        rating: s.rating,
-        content: s.content,
-        reset: s.reset,
-      }))
-    );
+  const {
+    isOpen,
+    closeModal,
+    setContent,
+    toggleOnlyReview,
+    onlyReview,
+    rating,
+    content,
+    reset,
+    isEditMode,
+    sweetness,
+    tannic,
+    acidic,
+    body,
+  } = useReviewStore(
+    useShallow((s) => ({
+      isOpen: s.isOpen,
+      closeModal: s.closeModal,
+      setContent: s.setContent,
+      toggleOnlyReview: s.toggleOnlyReview,
+      onlyReview: s.onlyReview,
+      addTag: s.addTag,
+      deleteTag: s.deleteTag,
+      rating: s.rating,
+      content: s.content,
+      reset: s.reset,
+      isEditMode: s.isEditMode,
+      sweetness: s.sweetness,
+      tannic: s.tannic,
+      acidic: s.acidic,
+      body: s.body,
+    }))
+  );
 
   const close = (e: MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
     e.stopPropagation();
@@ -59,8 +77,15 @@ function ReviewModal({
     e.stopPropagation();
   };
 
-  const submitReview = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // 줄바꿈 막기
+      submitReview();
+    }
+  };
+
+  const submitReview = async (e?: FormEvent<HTMLFormElement>) => {
+    if (e) e.preventDefault();
 
     if (!user_id) {
       useToast('error', '리뷰를 작성하려면 로그인하셔야 합니다');
@@ -75,22 +100,21 @@ function ReviewModal({
       return;
     }
 
-    const { data: existing } = await supabase
-      .from('reviews')
-      .select()
-      .eq('user_id', user_id)
-      .eq('wine_id', wineId)
-      .maybeSingle();
-
-    if (existing) {
-      useToast('warn', '이미 작성한 리뷰가 있습니다');
-      reset();
-      return;
-    }
-
     if (onlyReview) {
       const review = { wine_id: wineId, rating, content, user_id };
       const { data, error } = await supabase.from('reviews').insert(review).select();
+      if (error) {
+        console.error(error);
+        return;
+      }
+      reset();
+      closeModal();
+      refresh();
+      return data;
+    } else if (isEditMode) {
+      const { data, error } = await supabase
+        .from('reviews')
+        .upsert({ rating, content, wine_id: wineId, user_id }, { onConflict: 'user_id, wine_id' });
       if (error) {
         console.error(error);
         return;
@@ -115,71 +139,71 @@ function ReviewModal({
         return;
       }
 
-      const review = {
-        p_wine_id: wineId,
-        p_rating: rating,
-        p_content: content,
-        p_user_id: user_id,
-        p_sweetness: sweetness,
-        p_acidity: acidic,
-        p_tannin: tannic,
-        p_body: body,
-        p_pairings: pairing,
-        p_tags: tag,
-      };
-
-      const { data, error } = await supabase
-        .rpc('insert_review_with_tags_and_pairings', {
-          ...review,
-          p_pairings: JSON.stringify(review.p_pairings),
-        })
-        .select();
-      if (error) console.log(error);
-      else console.log('성공', data);
-
       // const review = {
-      //   wine_id: wineId,
-      //   rating,
-      //   content,
-      //   user_id,
-      //   sweetness_score: sweetness,
-      //   acidity_score: acidic,
-      //   tannin_score: tannic,
-      //   body_score: body,
+      //   p_wine_id: wineId,
+      //   p_rating: rating,
+      //   p_content: content,
+      //   p_user_id: user_id,
+      //   p_sweetness: sweetness,
+      //   p_acidity: acidic,
+      //   p_tannin: tannic,
+      //   p_body: body,
+      //   p_pairings: pairing,
+      //   p_tags: tag,
       // };
 
-      // const { data, error } = await supabase.from('reviews').insert(review).select();
-      // if (error) {
-      //   console.error('리뷰', error);
-      //   return;
-      // } else {
-      //   const { error } = await supabase
-      //     .from('hashtags')
-      //     .upsert([{ review_id: data[0].review_id, wine_id: wineId, user_id, tag_text: tag }]);
-      //   if (error) console.error('태그', error);
-      //   else {
-      //     const pariringObject = pairing.map((p) => {
-      //       const [category, value] = Object.entries(p)[0];
-      //       const categoryen = pairingCategory[category];
-      //       return {
-      //         review_id: data[0].review_id,
-      //         user_id,
-      //         wine_id: wineId,
-      //         pairing_category: categoryen,
-      //         pairing_name: value,
-      //       };
-      //     });
-      //     const { error } = await supabase.from('pairings').upsert(pariringObject);
-      //     if (error) console.error(error);
-      //     else {
-      //       console.log(data);
-      //       reset();
-      //       closeModal();
-      //       refresh();
-      //       return data;
-      //     }
-      //   }
-      // }
+      // const { data, error } = await supabase
+      //   .rpc('insert_review_with_tags_and_pairings', {
+      //     ...review,
+      //     p_pairings: JSON.stringify(review.p_pairings),
+      //   })
+      //   .select();
+      // if (error) console.log(error);
+      // else console.log('성공', data);
+
+      const review = {
+        wine_id: wineId,
+        rating,
+        content,
+        user_id,
+        sweetness_score: sweetness,
+        acidity_score: acidic,
+        tannin_score: tannic,
+        body_score: body,
+      };
+
+      const { data, error } = await supabase.from('reviews').insert(review).select();
+      if (error) {
+        console.error('리뷰', error);
+        return;
+      } else {
+        const { error } = await supabase
+          .from('hashtags')
+          .upsert([{ review_id: data[0].review_id, wine_id: wineId, user_id, tag_text: tag }]);
+        if (error) console.error('태그', error);
+        else {
+          const pairingObject = pairing.map((p) => {
+            const [category, value] = Object.entries(p)[0];
+            const categoryen = pairingCategory[category];
+            return {
+              review_id: data[0].review_id,
+              user_id,
+              wine_id: wineId,
+              pairing_category: categoryen,
+              pairing_name: value,
+            };
+          });
+          const { error } = await supabase.from('pairings').upsert(pairingObject);
+          if (error) console.error(error);
+          else {
+            console.log(data);
+            reset();
+            closeModal();
+            refresh();
+            return data;
+          }
+        }
+      }
     }
   };
 
@@ -214,18 +238,30 @@ function ReviewModal({
                 className="w-5 h-5 bg-gray-300"
                 gap="gap-3"
               />
+            ) : isEditMode ? (
+              <TastingInfo
+                type="readonly"
+                tasting={{ sweetness, tannic, acidic, body }}
+                style="review"
+                className="w-5 h-5"
+                gap="gap-3"
+              />
             ) : (
               <TastingInfo type="select" style="review" className="w-5 h-5" />
             )}
           </div>
           <div className="flex flex-col justify-center relative">
-            <ReviewTagInput disabled={onlyReview} tagOptions={tagText} />
+            <ReviewTagInput disabled={onlyReview} isEditMode={isEditMode} tagOptions={tagText} />
             <hr className="text-gray-400 p-2" />
-            <ReviewPairingInput disabled={onlyReview} pairingOptions={pairingText} />
+            <ReviewPairingInput
+              disabled={onlyReview}
+              isEditMode={isEditMode}
+              pairingOptions={pairingText}
+            />
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <ReviewRatings type="select" w="w-8" h="h-8" />
+          <ReviewRatings type="select" w="w-8" h="h-8" rating={isEditMode ? rating! : undefined} />
           <label htmlFor="onlyReview" className="text-text-primary">
             <input
               type="checkbox"
@@ -240,6 +276,7 @@ function ReviewModal({
           <textarea
             className="w-full h-20 bg-white rounded-2xl resize-none p-3"
             onChange={(e) => setContent(e.target.value)}
+            onKeyDown={handleKeyDown}
           ></textarea>
           <Button fullWidth>작성완료</Button>
         </form>

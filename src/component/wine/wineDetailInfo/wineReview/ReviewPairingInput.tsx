@@ -4,9 +4,11 @@ import ReviewTagInput from './ReviewTagInput';
 function ReviewPairingInput({
   disabled,
   pairingOptions,
+  isEditMode,
 }: {
   disabled?: boolean;
   pairingOptions: string[];
+  isEditMode?: boolean;
 }) {
   const options: string[] = [
     '고기-소,돼지',
@@ -31,7 +33,7 @@ function ReviewPairingInput({
           value={disabled ? '' : selected}
           onChange={(e) => setSelected(e.target.value)}
           className="w-40 bg-white rounded-lg p-1 disabled:bg-gray-200"
-          disabled={disabled}
+          disabled={disabled || isEditMode}
         >
           <option value="" disabled hidden>
             카테고리
@@ -46,6 +48,7 @@ function ReviewPairingInput({
         type="페어링"
         category={selected}
         disabled={disabled}
+        isEditMode={isEditMode}
         pairingOptions={pairingOptions}
       />
     </div>
