@@ -121,3 +121,26 @@ export const bodyTasteInfo: Record<string, { rating: number[] }> = {
   중간: { rating: [3] },
   무거움: { rating: [4, 5] },
 };
+
+const basePairingCategory: Record<string, string> = {
+  '고기-소,돼지': 'redMeat',
+  '고기-닭': 'whiteMeat',
+  '햄,소세지': 'ham_sausage_bacon',
+  해산물: 'seafood',
+  '치즈,유제품': 'cheese',
+  채소: 'vegetable',
+  '파스타,피자': 'pasta_pizza',
+  디저트: 'dessert',
+  '빵,간단안주': 'bread_simple_pairing',
+  견과류: 'nuts',
+  기타: 'others',
+};
+
+export const pairingCategory: Record<string, string> = Object.entries(basePairingCategory).reduce(
+  (acc, [k, v]) => {
+    acc[k] = v; // forward
+    acc[v] = k; // reverse
+    return acc;
+  },
+  {} as Record<string, string>
+);

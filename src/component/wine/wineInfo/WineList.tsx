@@ -10,10 +10,8 @@ interface WineListProps {
 
 function WineList({ wines }: WineListProps) {
   const appliedFilters = useWineStore((s) => s.appliedFilters);
-
   const filteredWines: WineInfoType[] = wines.filter((wine) => {
     const alcoholPercentage = wine.abv ? parseFloat(wine.abv) : null;
-    console.log(appliedFilters.도수);
 
     const ranges = [
       [0, 20],
@@ -68,7 +66,7 @@ function WineList({ wines }: WineListProps) {
   return (
     <>
       {filteredWines.map((wine) => (
-        <Link key={wine.name} to={`/wines/detail/${wine.wine_id}`}>
+        <Link key={wine.name} to={`/wines/detail/${wine.wine_id}`} className="group">
           <WineInfo wineInfo={wine} />
         </Link>
       ))}
