@@ -6,6 +6,7 @@ import { wineLoader } from '@/pages/wine/Wines';
 import { wineDetailLoader } from '@/pages/wine/WineDetails';
 import CommunityMain from '@/pages/community/Main/CommunityMain';
 import { MainPageLoader } from '@/pages/MainPage/MainPage';
+
 /* Code Splitting */
 const Root = lazy(() => import('@/pages'));
 const MainPage = lazy(() => import('@/pages/MainPage/MainPage'));
@@ -45,6 +46,7 @@ export const routes = createBrowserRouter([
       {
         path: 'search',
         Component: SearchResult,
+
       },
       {
         path: 'account',
