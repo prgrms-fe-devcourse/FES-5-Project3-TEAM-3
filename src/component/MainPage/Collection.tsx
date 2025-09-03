@@ -4,17 +4,15 @@ import type { Swiper as SwiperType } from 'swiper';
 import { Pagination } from 'swiper/modules';
 import UserCollection from './UserCollection';
 import VerticalPagination from './MainPagination';
-
-type Item = {
-  id: number;
-  src: string;
-  icon: string;
-  title: string;
-  content: string;
-  price: string;
+import type { Tables } from '@/supabase/database.types';
+type Review = Tables<'reviews'>;
+type Wine = Tables<'wines'>;
+type Collection = Review & {
+  profile: Pick<Tables<'profile'>, 'nickname'> | null;
+  wines: Wine | null;
 };
 
-export default function Collection({ collection }: { collection: Item[] }) {
+export default function Collection({ collection }: { collection: Collection[] }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -88,11 +86,14 @@ export default function Collection({ collection }: { collection: Item[] }) {
       if (rafId.current) cancelAnimationFrame(rafId.current);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      target.current = 0;
+      current.current = 0;
     };
   }, []);
 
   const total = collection.length;
   const stickyDurationVH = total * 100;
+  const vip = collection.map((a) => a.profile?.nickname)[0] ?? 'Winepedia 회원';
 
   return (
     <section>
@@ -129,8 +130,7 @@ export default function Collection({ collection }: { collection: Item[] }) {
                   <img src="image/User Collection.png" alt="유저컬렉션" />
                 </h3>
                 <p className="mt-4">
-                  Winepedia의 멤버들이 엄선한 와인들을 구경해보세요 <br /> 당신의 와인생활이 더
-                  풍성해 질 수 있습니다
+                  {vip}님의 셀러가 전하는 영감, <br /> 당신의 순간을 더욱 특별하게.
                 </p>
               </div>
 
@@ -146,11 +146,19 @@ export default function Collection({ collection }: { collection: Item[] }) {
                   onSwiper={(sw) => (swiperRef.current = sw)}
                   className="h-full"
                 >
-                  {collection.map((item) => (
-                    <SwiperSlide key={item.id} className="h-full">
-                      <UserCollection {...item} />
-                    </SwiperSlide>
-                  ))}
+                  {collection &&
+                    collection.map((item, index) => (
+                      <SwiperSlide key={item.review_id} className="h-full">
+                        <UserCollection
+                          id={index}
+                          image={item.wines?.image_url ?? []}
+                          title={item.wines?.name ?? ''}
+                          content={item.content}
+                          icon={item.wines?.country_ko ?? ''}
+                          flavor={item.wines?.representative_flavor ?? []}
+                        />
+                      </SwiperSlide>
+                    ))}
                 </Swiper>
               </div>
             </div>

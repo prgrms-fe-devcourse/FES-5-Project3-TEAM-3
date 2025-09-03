@@ -1,12 +1,13 @@
-
 import { useAuth } from '@/store/@store';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { NavLink, useLocation } from 'react-router';
+import { Link, NavLink, useLocation } from 'react-router';
 import { useShallow } from 'zustand/shallow';
-import HeaderSearchSection from './HeaderSearchSection';
+import HeaderSearchSection from './search/HeaderSearchSection';
 import clsx from 'clsx';
+import supabase from '@/supabase/supabase';
+import ScrollToTop from '@/hook/ScrolToTop';
 
-function RealHeader() {
+function Header() {
   const { userId, signOut } = useAuth(
     useShallow((s) => ({
       userId: s.userId,
@@ -14,13 +15,15 @@ function RealHeader() {
     }))
   );
 
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
-
+  const [overlay, setOverlay] = useState(false);
+  const [userImage, setUserImage] = useState('');
   useLayoutEffect(() => {
     setSearchBar(false);
-  }, [pathname]);
+  }, [pathname, search]);
+  // 쿼리스트링의 keywordk변경마다 search바 닫힘
 
   useEffect(() => {
     if (pathname !== '/') return;
@@ -37,15 +40,31 @@ function RealHeader() {
     };
   }, [pathname]);
 
+  useEffect(() => {
+    if (!userId) return;
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from('profile')
+        .select('profile_image_url')
+        .eq('profile_id', userId)
+        .single();
+
+      if (error) console.log(error);
+      if (data) setUserImage(data.profile_image_url);
+    };
+    fetchData();
+  }, [userId]);
+
   const handleSearch = () => {
     setSearchBar(!searchBar);
+    setOverlay(true);
 
     if (window.scrollY <= 1) {
       setScrolled(!scrolled);
     }
   };
 
-  const base = ' h-17.5 w-full flex items-center justify-center fixed z-99 duration-400';
+  const base = ' h-13 w-screen flex items-center justify-center fixed z-99 duration-400 lg:h-17.5';
 
   const headerBgClass = clsx(
     base,
@@ -53,17 +72,15 @@ function RealHeader() {
   );
 
   return (
-
-
     <div className={pathname == '/' ? '' : 'h-17.5'}>
-      {searchBar && (
+      {overlay && (
         <div className="fixed inset-0 bg-black/40 z-90" onClick={() => setSearchBar(false)}></div>
       )}
 
       <div className={headerBgClass}>
-        <div className="w-360 flex justify-between items-center px-10 py-2">
+        <div className="w-160 lg:w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
-            <NavLink to="/">
+            <NavLink to="/" onClick={ScrollToTop}>
               <img src="/image/Logo.png" alt="winepedia" />
             </NavLink>
           </h1>
@@ -85,7 +102,7 @@ function RealHeader() {
             <NavLink to="wines" className="font-semibold text-secondary-50">
               Wine
             </NavLink>
-            <NavLink to="community/write" className="font-semibold text-secondary-50">
+            <NavLink to="community" className="font-semibold text-secondary-50">
               Community
             </NavLink>
 
@@ -98,9 +115,13 @@ function RealHeader() {
                 >
                   Logout
                 </button>
-                <div className="rounded-full w-10 h-10 flex">
-                  <img src="/image/github.png" alt="프로필이미지" />
-                </div>
+                <Link to="my-page">
+                  <img
+                    src={userImage ? userImage : '/image/defaultProfile.png'}
+                    alt="프로필이미지"
+                    className="rounded-full w-10 h-10 cursor-pointer"
+                  />
+                </Link>
               </div>
             ) : (
               <NavLink
@@ -112,46 +133,11 @@ function RealHeader() {
               </NavLink>
             )}
           </nav>
-          <HeaderSearchSection searchBar={searchBar} />
+          <HeaderSearchSection searchBar={searchBar} setOverlay={setOverlay} />
         </div>
       </div>
     </div>
   );
 }
 
-function SkeletonHeader() {
-  return (
-    <div
-      className="bg-secondary-100 h-17.5 w-full flex items-center justify-center"
-      aria-busy="true"
-    >
-      <div className="w-360 flex justify-between items-center px-10 py-2 animate-pulse">
-        {/* 로고 자리 */}
-        <div className="w-41.5 h-11.75 flex items-center pt-1">
-          <div className="h-10 w-32 rounded-md bg-primary-900/10" />
-        </div>
-
-        {/* 네비 자리 */}
-        <nav className="flex items-center gap-4">
-          <div className="h-6 w-6 rounded-full bg-primary-900/10" />
-          <div className="h-5 w-12 rounded bg-primary-900/10" />
-          <div className="h-5 w-24 rounded bg-primary-900/10" />
-          <div className="h-5 w-20 rounded bg-primary-900/10" />
-        </nav>
-      </div>
-    </div>
-  );
-}
-
-function Header() {
-  const [isLoading, setIsLoading] = useState(false);
-  console.log(setIsLoading)
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setIsLoading(true)
-  //   },2000)
-  // }, [])
-
-  return <>{isLoading ? <SkeletonHeader /> : <RealHeader />}</>;
-}
 export default Header;

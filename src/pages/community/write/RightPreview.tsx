@@ -24,19 +24,12 @@ function RightPreview() {
   const hasImages = Array.isArray(imageUrls) && imageUrls.length > 0;
   const mainSrc = hasImages ? imageUrls[previewIndex] : '';
 
-  const categoryMap: Record<string, string> = {
-    review: 'bg-[#27AE60]',
-    free: 'bg-primary-400',
-    question: 'bg-gray-700',
-  };
-  const badgeClass = categoryMap[category] ?? 'bg-gray-400';
-  const badgeLabel = category || '카테고리';
-
-  console.log(setPrimaryIdx);
-  console.log(previewIndex);
-
-  // 1. 이미지 슬라이드 ex 인스타 스타일.
-  // 태그 미리보기 없어도 괜찮아 보임.
+  const categoryStyle =
+    category === 'review'
+      ? { background: '#E6F7EE', color: '#0F9D58' }
+      : category === 'question'
+        ? { background: '#EEF2FF', color: '#2B6CB0' }
+        : { background: '#FFF1F0', color: '#B91C1C' };
 
   return (
     <aside className="col-span-6 lg:col-span-6">
@@ -90,9 +83,16 @@ function RightPreview() {
           <div className="p-5">
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
               <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium text-white ${badgeClass}`}
+                className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                style={categoryStyle}
               >
-                {badgeLabel}
+                {category === 'review'
+                  ? '리뷰'
+                  : category === 'question'
+                    ? '질문'
+                    : category === 'free'
+                      ? '자유'
+                      : '카테고리 없음'}
               </span>
               {title ? (
                 <h2 className="text-xl font-semibold text-gray-900">{title}</h2>

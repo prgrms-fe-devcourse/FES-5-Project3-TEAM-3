@@ -1,11 +1,12 @@
-import { NavLink } from 'react-router';
+import { Link } from 'react-router';
 
 function ShowMoreBtn() {
   return (
     <>
-      <NavLink
-        to=""
-        className="group relative rounded-full border-[0.1px] w-20 h-20 ml-17 cursor-pointer flex justify-center items-center transition-all duration-200"
+      <Link
+        to="/community"
+        className="group relative rounded-full border-[0.1px] w-20
+        p-2 h-15 ml-4 cursor-pointer flex justify-center items-center transition-all duration-200 translate-y-30"
       >
         <svg
           width="34"
@@ -24,7 +25,7 @@ function ShowMoreBtn() {
         <span className="transition-all duration-200 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 absolute">
           전체보기
         </span>
-      </NavLink>
+      </Link>
     </>
   );
 }

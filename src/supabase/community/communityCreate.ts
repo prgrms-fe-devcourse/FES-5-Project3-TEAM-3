@@ -3,7 +3,8 @@ import supabase from '@/supabase/supabase';
 export type CreatePostParams = {
   title: string;
   body: string;
-  primaryIdx?: number;
+  imageUrls?: string[]; // 업로드된 public URL 배열
+  primaryIdx?: number; // 대표 이미지 인덱스
   category?: string;
   tags?: string[] | null;
   userId?: string | null;
@@ -15,12 +16,15 @@ export async function createCommunityPost(params: CreatePostParams) {
   const {
     title,
     body,
+    imageUrls = [],
+    primaryIdx = 0,
     category = '',
     tags = null,
     userId = null,
   } = params;
 
-  const safeCategory = VALID_CATEGORIES.includes(category) ? category : '';
+  // 유효하지 않은 카테고리는 기본 'free' 사용
+  const safeCategory = VALID_CATEGORIES.includes(category) ? category : 'free';
 
   try {
     // 현재 로그인된 auth 유저 조회
@@ -45,13 +49,21 @@ export async function createCommunityPost(params: CreatePostParams) {
       } catch {}
     }
 
-    // 이미지 생략(추후 확장)
+    // payload에 image_url 배열 및 thumbnail_image(사용자가 선택한 인덱스 우선) 포함
     const payload: any = {
       title: (title || 'untitled').trim(),
       content: body || '',
       post_category: safeCategory,
       hashtag_list: tags && tags.length > 0 ? tags : null,
-      // image_url, thumbnail_image 등은 DB 기본값 사용 (생략)
+      ...(imageUrls && imageUrls.length > 0
+        ? {
+            image_url: imageUrls,
+            thumbnail_image:
+              typeof primaryIdx === 'number' && primaryIdx >= 0 && primaryIdx < imageUrls.length
+                ? imageUrls[primaryIdx]
+                : imageUrls[0],
+          }
+        : {}),
     };
     if (finalUserId) payload.user_id = finalUserId;
 

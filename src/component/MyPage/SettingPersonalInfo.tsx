@@ -1,42 +1,55 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Button from '../Button';
 import PhoneInput from './PhoneInput';
 import { formatPhoneNumber } from '@/utils/formatPhoneNumber';
-import { useProfileSettingError } from '@/hook/useProfileSettingError';
+import { useProfileSettingError } from '@/hook/profileSetting/useProfileSettingError';
 import { ErrorCode } from './profileErrorCodes';
 import { isValidPhone } from '@/utils/isValidPhone';
+import {
+  isNicknameAvailable,
+  isPhoneAvailable,
+  useProfileInfo,
+  useUpdateInfo,
+} from '@/hook/profileSetting/useProfileInfo';
+import { useAuth } from '@/store/@store';
+import { useConfirm } from '@/hook/useConfirm';
+import useToast from '@/hook/useToast';
+import Spinner from '../Spinner';
 
 interface InfoProps {
-  email?: string | null;
-  initialNickname?: string | null;
-  initialPhone?: string | null;
   maxNicknameLength?: number;
 }
 
-function SettingPersonalInfo({
-  email = 'user.Email',
-  initialNickname = '',
-  initialPhone = '',
-  maxNicknameLength = 20,
-}: InfoProps) {
+function SettingPersonalInfo({ maxNicknameLength = 20 }: InfoProps) {
   const fieldNick = 'nickname' as const;
   const fieldPhone = 'phone' as const;
 
   const { busy, setBusy, setError, clearError, getMessage } = useProfileSettingError();
+  const profileId = useAuth((s) => s.userId);
+  const isAuthLoading = useAuth((s) => s.isLoading);
+
+  const { data: personalInfo, isLoading: infoLoading } = useProfileInfo(profileId ?? undefined);
+  const updateInfo = useUpdateInfo();
+  const confirm = useConfirm();
+
+  const email = personalInfo?.email ?? '-';
+  const initialNickname = personalInfo?.nickname ?? '';
+  const initialPhone = personalInfo?.phone ?? '';
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [nickname, setNickname] = useState<string>(initialNickname ?? '');
-  const [phone, setPhone] = useState<string>(formatPhoneNumber(initialPhone ?? ''));
+  const [nickname, setNickname] = useState<string>(initialNickname);
+  const [phone, setPhone] = useState<string>(formatPhoneNumber(initialPhone));
 
   useEffect(() => {
     if (!isEditing) {
-      setNickname(initialNickname ?? '');
-      setPhone(formatPhoneNumber(initialPhone ?? ''));
+      setNickname(initialNickname);
+      setPhone(formatPhoneNumber(initialPhone));
     }
   }, [initialNickname, initialPhone, isEditing]);
 
-  const hasChanged =
-    (initialNickname ?? '') !== nickname || formatPhoneNumber(initialPhone ?? '') !== phone;
+  const hasChanged = useMemo(() => {
+    return (initialNickname ?? '') !== nickname || formatPhoneNumber(initialPhone ?? '') !== phone;
+  }, [initialNickname, initialPhone, nickname, phone]);
 
   const onChangeNickname = (value: string) => {
     setNickname(value);
@@ -56,10 +69,15 @@ function SettingPersonalInfo({
     clearError(fieldPhone);
   };
 
-  const saveInfo = () => {
+  const saveInfo = async () => {
     // 변경 없이 save 하면 종료하고 return
     if (!hasChanged) {
       setIsEditing(false);
+      return;
+    }
+
+    if (!profileId) {
+      setError(fieldNick, ErrorCode.LoginSessionExpired);
       return;
     }
 
@@ -71,7 +89,10 @@ function SettingPersonalInfo({
     if (nickname.length > maxNicknameLength) {
       setError(fieldNick, ErrorCode.NicknameTooLong);
       invalid = true;
+    } else if (nickname.trim().length === 0) {
+      setError(fieldNick, ErrorCode.NicknameRequired);
     }
+
     if (!isValidPhone(phone)) {
       setError(fieldPhone, ErrorCode.InvalidPhoneNumber);
       invalid = true;
@@ -79,29 +100,63 @@ function SettingPersonalInfo({
     if (invalid) return;
 
     setBusy('info', true);
+
+    // Server Validation: 중복 검사
     try {
-      // upsert fetch
-      console.log('saved!');
+      const normalizedPhone = phone.replace(/\D/g, '');
+      const [nickOk, phoneOk] = await Promise.all([
+        isNicknameAvailable(nickname.trim(), profileId),
+        isPhoneAvailable(normalizedPhone, profileId),
+      ]);
+
+      if (!nickOk) setError(fieldNick, ErrorCode.NicknameExists);
+      if (!phoneOk) setError(fieldPhone, ErrorCode.PhoneNumberExists);
+      if (!nickOk || !phoneOk) return;
+
+      // Upsert
+      await updateInfo.mutateAsync({
+        profileId,
+        nickname: nickname.trim(),
+        phone: normalizedPhone,
+      });
+
+      useToast('success', '변경 정보가 저장되었습니다.');
       setIsEditing(false);
     } catch (err) {
       console.error('failed:', err);
+      useToast('error', '정보 저장에 실패했습니다.');
+      setError(fieldNick, ErrorCode.Unexpected);
     } finally {
       setBusy('info', false);
     }
   };
 
-  const cancelEditInfo = () => {
+  const cancelEditInfo = async () => {
     if (hasChanged) {
-      const ok = confirm('수정된 내용이 저장되지 않습니다. 정말 취소하시겠습니까?');
+      const ok = await confirm({
+        title: '정보 변경을 취소하시겠습니까?',
+        description: <>변경 중인 사항은 저장되지 않습니다.</>,
+        confirmText: '취소하기',
+        cancelText: '돌아가기',
+        tone: 'danger',
+      });
       if (!ok) return;
     }
 
-    setNickname(initialNickname ?? 'username');
-    setPhone(formatPhoneNumber(initialPhone ?? ''));
+    setNickname(initialNickname);
+    setPhone(formatPhoneNumber(initialPhone));
     clearError(fieldNick);
     clearError(fieldPhone);
     setIsEditing(false);
   };
+
+  if (isAuthLoading || infoLoading || !profileId) {
+    return (
+      <section className="w-full p-8 rounded-lg bg-secondary-100 border border-gray-300 flex flex-col gap-6">
+        <Spinner />
+      </section>
+    );
+  }
 
   return (
     <section className="w-full p-8 rounded-lg bg-secondary-100 border border-gray-300 flex flex-col gap-6">
@@ -118,7 +173,11 @@ function SettingPersonalInfo({
                 hasIcon
                 onClick={saveInfo}
                 disabled={
-                  busy.info || !!getMessage(fieldNick) || !!getMessage(fieldPhone) || !hasChanged
+                  busy.info ||
+                  !!getMessage(fieldNick) ||
+                  !!getMessage(fieldPhone) ||
+                  !hasChanged ||
+                  updateInfo.isPending
                 }
               >
                 Save
@@ -130,7 +189,7 @@ function SettingPersonalInfo({
                 borderType="outline"
                 hasIcon
                 onClick={cancelEditInfo}
-                disabled={busy.info}
+                disabled={busy.info || updateInfo.isPending}
               >
                 Cancel
               </Button>
@@ -174,7 +233,7 @@ function SettingPersonalInfo({
                 value={nickname}
                 onChange={(e) => onChangeNickname(e.target.value)}
                 placeholder="닉네임을 입력해주세요."
-                disabled={busy.info}
+                disabled={busy.info || updateInfo.isPending}
                 aria-invalid={!!getMessage(fieldNick)}
                 aria-describedby="nickname-help nickname-error"
                 className="flex-1 bg-transparent outline-0"
@@ -210,7 +269,7 @@ function SettingPersonalInfo({
                 id="phoneInput"
                 value={phone}
                 onChange={onChangePhone}
-                disabled={busy.info}
+                disabled={busy.info || updateInfo.isPending}
                 aria-invalid={!!getMessage(fieldPhone)}
                 aria-describedby="phone-error"
               />

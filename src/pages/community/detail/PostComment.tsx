@@ -1,5 +1,5 @@
 import Button from '@/component/Button';
-import { usePost } from '@/hook/fetch';
+import { usePost } from '@/utils/supabase/fetch';
 import { useIsMine } from '@/hook/useIsMine';
 import { useAuth } from '@/store/@store';
 import type { Tables } from '@/supabase/database.types';
@@ -7,42 +7,49 @@ import supabase from '@/supabase/supabase';
 import { useEffect, useState } from 'react';
 import CommentReply from './CommentReply';
 import EditBtn from '../../../component/community/EditBtn';
+import { useTimer } from '@/hook/useTimer';
+import type { ReplyData } from '@/@types/global';
+import useToast from '@/hook/useToast';
+import { useKeyDown } from '@/hook/useKeyDown';
+import LikeButton from '@/component/LikeButton';
 
 interface Props {
   nickname: string;
   profileImage: string;
-  content: string;
   created_at: string;
   replyId: string;
   user_id: string | null;
   parent_id: string | null;
   likes: number;
+  content: string;
+  onDelete: () => void;
 }
 type Post = Tables<'posts'>;
-
-type ReplyRow = Tables<'reply'> & {
-  profile?: { nickname?: string | null; profile_image?: string | null } | null;
-};
 
 function PostComment({
   replyId,
   user_id,
   nickname,
   profileImage,
-  content,
   created_at,
   likes,
+  content,
+  onDelete,
 }: Props) {
   const { userId } = useAuth();
   const isMine = useIsMine(user_id ?? '');
+  const time = useTimer(created_at);
+
   const [comment, setComment] = useState('');
   const [editComment, setEditComment] = useState('');
-  const [renderComment,setRenderComment] = useState('')
+  const [renderComment, setRenderComment] = useState('');
+
+  const [likesCount, setLikesCount] = useState<number>(likes ?? 0);
   const [postData, setPostData] = useState<Post[]>([]);
   const [reply, setReply] = useState(false);
 
   const [edit, setEdit] = useState(false);
-  const [children, setChildren] = useState<ReplyRow[]>([]);
+  const [children, setChildren] = useState<ReplyData[]>([]);
   const childrenCount = children.length;
 
   // 답글버튼 누르면 댓글UI토글
@@ -51,8 +58,13 @@ function PostComment({
   };
 
   useEffect(() => {
-    setRenderComment(content)
-  },[content])
+    setRenderComment(content);
+  }, [content]);
+
+  // edit이 true가 될 때만 현재 본문을 수정 입력으로 복사
+  useEffect(() => {
+    if (edit) setEditComment(renderComment);
+  }, [edit, renderComment]);
 
   // 확인을 위헤 임시로 postId를뽑아썻습니다.
   useEffect(() => {
@@ -70,9 +82,9 @@ function PostComment({
     const fetchChild = async () => {
       const { data, error } = await supabase
         .from('reply')
-        .select('*')
+        .select('*,profile(profile_id,nickname,profile_image_url)')
         .eq('parent_id', replyId)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: false });
       if (error) {
         console.log(error);
         return;
@@ -84,30 +96,66 @@ function PostComment({
 
   // 수정 저장 기능
   const handleSave = async () => {
-
-    setRenderComment(editComment)
-    const { error } = await supabase
+    if (editComment.trim() === '') {
+      useToast('error', '최소 한글자 이상 입력해야합니다.');
+      return;
+    }
+    const { data, error } = await supabase
       .from('reply')
-      .update({ content: editComment })
-      .eq('reply_id', replyId).select('content').single()
+      .update({ content: editComment.trim() })
+      .eq('reply_id', replyId)
+      .select('reply_id,content')
+      .single();
     if (error) console.log(error);
-    setEdit(false);
-    setComment(editComment);
+    if (data) {
+      setRenderComment(data.content);
+      setEdit(false);
+    }
   };
 
   //삭제기능
   const handleDelete = async () => {
-    const confirmDelete = confirm('정말 삭제하시겠습니까?')
-    if (confirmDelete) {
-      try {
-        const { error } = await supabase.from('reply').delete().eq('reply_id', replyId)
-        if(error) console.error(error)
+    const ok = confirm('정말 삭제하시겠습니까?');
+    if (!ok) return;
+
+    try {
+      // 삭제 전 해당 댓글의 post_id를 조회
+      const { data: replyRow } = await supabase
+        .from('reply')
+        .select('post_id')
+        .eq('reply_id', replyId)
+        .maybeSingle();
+      const postId = (replyRow as any)?.post_id;
+
+      const { error } = await supabase.from('reply').delete().eq('reply_id', replyId);
+      if (error) {
+        console.error(error);
+        return;
       }
-      catch {
-        console.error()
+
+      // posts.reply_count 감소 (최소 0 보정)
+      if (postId) {
+        try {
+          const { data: postRow } = await supabase
+            .from('posts')
+            .select('reply_count')
+            .eq('post_id', postId)
+            .maybeSingle();
+          const current = (postRow as any)?.reply_count ?? 0;
+          await supabase
+            .from('posts')
+            .update({ reply_count: Math.max(0, current - 1) })
+            .eq('post_id', postId);
+        } catch (e) {
+          console.error('[PostComment] reply_count decrement error', e);
+        }
       }
+
+      onDelete();
+    } catch (e) {
+      console.error('[PostComment] delete error', e);
     }
-  }
+  };
 
   //대댓글삭제
   const handleDeleteChild = async (targetId: string) => {
@@ -126,26 +174,46 @@ function PostComment({
   // 댓글 기능
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    if (comment.trim() === '') {
+      useToast('error', '최소 한글자 이상 입력해야합니다.');
+      return;
+    }
     if (!postId) {
       console.log('postId가 없음');
       return;
     }
 
-    const { data, error } = await supabase.from('reply').insert({
-      post_id: postId,
-      user_id: userId,
-      content: comment,
-      parent_id: replyId,
-    });
+    const { data, error } = await supabase
+      .from('reply')
+      .insert({
+        post_id: postId,
+        user_id: userId,
+        content: comment.trim(),
+        parent_id: replyId,
+      })
+      .select(
+        `
+        reply_id,
+        content,
+        created_at,
+        user_id,
+        parent_id,
+        profile:profile(
+          nickname,
+          profile_image_url
+        )
+      `
+      )
+      .single();
 
-    if (error) console.log(error);
-
+    if (error) {
+      console.log(error);
+      return;
+    }
     if (data) {
-      setChildren((prev) => [...prev, data as ReplyRow]);
+      setChildren((prev) => [...prev, data]);
     }
     setComment('');
-    setReply(false);
   };
 
   return (
@@ -155,7 +223,7 @@ function PostComment({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="font-medium text-sm">{nickname}</span>
-            <span className="text-xs text-gray-400">{created_at}</span>
+            <span className="text-xs text-gray-400">{time}</span>
 
             {isMine && (
               <>
@@ -169,21 +237,30 @@ function PostComment({
         </div>
         {edit ? (
           <textarea
-            rows={2}
+            rows={3}
             value={editComment}
             autoFocus
-            className="resize-none w-1/4"
+            className="resize-none w-full border-text-secondary border-1"
             onChange={(e) => setEditComment(e.target.value)}
           />
         ) : (
-          <p className="mt-1 mb-1 text-sm text-gray-700">{renderComment}</p>
+          <p className="mt-1 mb-1 text-sm text-gray-700 whitespace-pre-line break-words">
+            {renderComment}
+          </p>
         )}
 
         <div className="flex gap-2">
-          <button className="flex gap-1 py-1 text-sm cursor-pointer">
-            <img src="/icon/like.svg" alt="좋아요" className="w-4 h-4 " />
-            <span>{likes}</span>
-          </button>
+          <LikeButton
+            itemId={replyId}
+            kind="reply"
+            initialLiked={false}
+            initialCount={likesCount}
+            ownerId={user_id}
+            className={`flex items-center gap-1`}
+            onToggle={(_liked, count) => {
+              setLikesCount(count);
+            }}
+          />
           <button className="flex gap-1 py-1 text-sm cursor-pointer" onClick={handleReply}>
             <img src="/icon/comment.svg" alt="답글" className="w-4 h-4 " />
             <span>{childrenCount}</span>
@@ -201,8 +278,10 @@ function PostComment({
               <textarea
                 name="reply"
                 className="w-5/6 rounded border border-gray-200 p-2 resize-none text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
-                rows={2}
+                rows={3}
+                value={comment}
                 placeholder="답글을 입력하세요."
+                onKeyDown={(e) => useKeyDown(e)}
                 onChange={(e) => setComment(e.target.value)}
               />
               <div className="flex gap-2">
@@ -214,24 +293,23 @@ function PostComment({
                 </Button>
               </div>
             </form>
-            {childrenCount > 0 && (
-              <ul className="mt-2 pl-10 space-y-2">
-                {children.map(({ reply_id, profile, created_at, content, user_id }) => (
-                  <CommentReply
-                    key={reply_id}
-                    setComment={setComment}
-                    replyId={reply_id}
-                    userId={user_id}
-                    profileImage={profile?.profile_image}
-                    nickname={profile?.nickname}
-                    created_at={created_at}
-                    content={content}
-                    onDelete={handleDeleteChild}
-                  />
-                ))}
-              </ul>
-            )}
           </>
+        )}
+        {childrenCount > 0 && (
+          <div className="mt-2 space-y-2">
+            {children.map((child) => (
+              <CommentReply
+                key={child.reply_id}
+                replyId={child.reply_id}
+                userId={child.user_id}
+                profileImage={child.profile?.profile_image_url}
+                nickname={child.profile?.nickname}
+                created_at={child.created_at}
+                content={child.content}
+                onDelete={handleDeleteChild}
+              />
+            ))}
+          </div>
         )}
       </div>
     </li>

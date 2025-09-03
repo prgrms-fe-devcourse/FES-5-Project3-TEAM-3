@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import FlavorIcon from './FlavorIcon';
 import { computeTaste } from '@/utils/convertTasteInfo';
 import truncateText from '@/utils/truncateText';
+import { countryInfo } from '../filterSearch/filterInfo';
 
 interface WineBasicInfoType {
   wineBasicInfo: WineInfoType;
@@ -12,17 +13,26 @@ interface WineBasicInfoType {
 
 function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
   const {
-    title: name,
-    country,
-    alcohol_content,
-    grapes,
-    taste,
-    wine_description,
+    name,
+    country_ko,
+    abv,
+    variety,
+    sweetness,
+    acidic,
+    tannic,
+    body,
+    description,
     category,
-    scent,
+    representative_flavor_ko,
+    representative_flavor,
   } = wineBasicInfo;
-  const computedTaste = computeTaste(taste);
-  const wineType = category.split(' ')[0].toLowerCase();
+  const computedTaste = computeTaste({ sweetness, acidic, tannic, body }) as {
+    sweetness: number;
+    acidic: number;
+    tannic: number;
+    body: number;
+  };
+  const wineType = category ? category.split(' ')[0].toLowerCase() : '';
   const wineTypeStyle: { [wineType]: string } = {
     red: 'bg-primary-300 text-white',
     white: 'bg-secondary-100',
@@ -35,16 +45,21 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
     <div
       className={clsx(
         'flex flex-col justify-between align-baseline gap-1 text-lg',
-        type === 'detail' && 'gap-2 w-1/3 px-10'
+        type === 'detail' && 'gap-2 w-3/4 md:w-1/3 min-w-60'
       )}
     >
       {/*와인정보  : 영어이름+한국이름?+도수+향미료+맛(당도, 산미, 탄닌, 바디감)*/}
-      <h3 className={clsx(' text-2xl mb-4 text-text-primary', type === 'detail' && 'text-3xl')}>
+      <h3
+        className={clsx(
+          ' text-2xl mb-4 text-text-primary',
+          type === 'detail' && 'text-3xl select-text'
+        )}
+      >
         {type === 'default' ? truncateText(name, 32) : name}
         {type === 'detail' && (
           <span
             className={clsx(
-              'w-fit px-3 text-text-primary shadow-sm rounded-xl text-lg ml-3',
+              'w-fit px-3 text-text-primary shadow-sm rounded-xl text-lg ml-3 select-none',
               wineTypeStyle[wineType]
             )}
           >
@@ -62,8 +77,10 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
         )}
       >
         <img
-          src={`/icon/country/${country}.svg`}
-          alt={country}
+          src={
+            country_ko ? `/icon/country/${countryInfo[country_ko]}.svg` : '/icon/country/others.svg'
+          }
+          alt={country_ko ?? '와인생산국가'}
           className="w-6 h-6"
           draggable="false"
           onError={(e) => {
@@ -71,9 +88,9 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
             e.currentTarget.src = '/icon/country/others.svg';
           }}
         />
-        {country}
+        {country_ko ?? '정보없음'}
         <img src="/icon/wine.svg" alt="도수" className="w-6 h-6" draggable="false" />
-        {alcohol_content ?? '정보없음'}
+        {abv ?? '정보없음'}
       </div>
 
       <div
@@ -84,23 +101,27 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
       >
         <img src="/icon/grape.svg" alt="포도종류아이콘" className="w-5 h-5" draggable="false" />
         {type === 'default'
-          ? grapes.length > 1
-            ? grapes[0] + ' +' + (grapes.length - 1)
-            : grapes
-          : grapes.join(' / ')}
+          ? variety.length > 1
+            ? variety[0] + ' +' + (variety.length - 1)
+            : variety
+          : variety.join(' / ')}
       </div>
       {type === 'default' ? (
         <TastingInfo tasting={computedTaste} style="info" />
       ) : (
         <>
-          <p className="self-center mb-3 text-text-secondary">
-            {wine_description === '' ? '설명없음' : wine_description}
+          <p className="mb-3 text-text-secondary">
+            {description === '' ? '설명없음' : description}
           </p>
           <p className="text-text-secondary">주요향미료</p>
-          <div className="grid grid-rows-1 grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 items-center justify-center group py-2">
-            {scent.map((s) => (
-              <FlavorIcon flavor={s} key={s} type="large" />
-            ))}
+          <div className="grid grid-cols-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 items-center justify-center group py-2">
+            {representative_flavor_ko && representative_flavor ? (
+              representative_flavor_ko.map((s, i) => (
+                <FlavorIcon flavor={s} key={s} flavoren={representative_flavor[i]} type="large" />
+              ))
+            ) : (
+              <p className="self-center">flavor 정보가 없습니다</p>
+            )}
           </div>
         </>
       )}

@@ -2,6 +2,10 @@ import { lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router';
 import CommunityWrite from '@/pages/community/write/CommunityWrite';
 import CommunityDetail from '@/pages/community/detail/CommunityDetail';
+import { wineLoader } from '@/pages/wine/Wines';
+import { wineDetailLoader } from '@/pages/wine/WineDetails';
+import CommunityMain from '@/pages/community/Main/CommunityMain';
+import { MainPageLoader } from '@/pages/MainPage/MainPage';
 
 /* Code Splitting */
 const Root = lazy(() => import('@/pages'));
@@ -16,13 +20,19 @@ const MyActivities = lazy(() => import('@/pages/MyPage/MyActivities'));
 const MyAchievement = lazy(() => import('@/pages/MyPage/MyAchievement'));
 const Settings = lazy(() => import('@/pages/MyPage/Settings'));
 
+// account 하위페이지
 const Login = lazy(() => import('@/pages/Login/Login'));
 const Register = lazy(() => import('@/pages/Login/Register'));
+const Findpassword = lazy(() => import('@/pages/Login/FindPassword'));
+const ResetPassword = lazy(() => import('@/pages/Login/ResetPassword'));
+const FindEmail = lazy(() => import('@/pages/Login/FindEmail'));
 
 const Wines = lazy(() => import('@/pages/wine/Wines'));
 
 const WineDetails = lazy(() => import('@/pages/wine/WineDetails'));
 const Page404 = lazy(() => import('@/pages/Page404'));
+const SearchResult = lazy(() => import('@/pages/SearchResult'));
+
 export const routes = createBrowserRouter([
   {
     path: '/',
@@ -31,6 +41,11 @@ export const routes = createBrowserRouter([
       {
         index: true,
         Component: MainPage,
+        loader: MainPageLoader,
+      },
+      {
+        path: 'search',
+        Component: SearchResult,
       },
       {
         path: 'account',
@@ -43,15 +58,31 @@ export const routes = createBrowserRouter([
             path: 'register',
             Component: Register,
           },
+          {
+            path: 'findpassword',
+            Component: Findpassword,
+          },
+          {
+            path: 'resetpassword',
+            Component: ResetPassword,
+          },
+          {
+            path: 'findemail',
+            Component: FindEmail,
+          },
         ],
+      },
+      {
+        path: 'community',
+        element: <CommunityMain />,
       },
       {
         path: 'community/write',
         element: <CommunityWrite />,
       },
       {
-        // path: 'community/:id', 나중에 연결
-        path: 'community/detail',
+        // path: 'community/:id'
+        path: 'community/detail/:postId',
         element: <CommunityDetail />,
       },
       // MyPage route
@@ -98,10 +129,12 @@ export const routes = createBrowserRouter([
       {
         path: 'wines',
         Component: Wines,
+        loader: wineLoader,
       },
       {
         path: 'wines/detail/:wineId',
         Component: WineDetails,
+        loader: wineDetailLoader,
       },
     ],
   },

@@ -1,25 +1,39 @@
-import { useProfileSettingError } from '@/hook/useProfileSettingError';
+import { useProfileSettingError } from '@/hook/profileSetting/useProfileSettingError';
 import Button from '../Button';
 import React, { useEffect, useState } from 'react';
 import { ErrorCode } from './profileErrorCodes';
+import { useAuth } from '@/store/@store';
+import { useProfileBio, useUpdateBio } from '@/hook/profileSetting/useProfileBio';
+import useToast from '@/hook/useToast';
+import Spinner from '../Spinner';
+import { useConfirm } from '@/hook/useConfirm';
 
 interface BioProps {
-  initialBio?: string | null;
   maxLength?: number;
 }
 
-function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
+function SettingBio({ maxLength = 300 }: BioProps) {
   const fieldKey = 'bio' as const;
   const { busy, setBusy, setError, clearError, getMessage } = useProfileSettingError();
 
+  const profileId = useAuth((s) => s.userId);
+  const isAuthLoading = useAuth((s) => s.isLoading);
+
+  const { data, isLoading: bioLoading } = useProfileBio(profileId ?? undefined);
+  const updateBio = useUpdateBio();
+
+  const serverBio = data?.bio ?? '';
+
   const [isEditing, setIsEditing] = useState(false);
-  const [bio, setBio] = useState(initialBio ?? '');
+  const [bio, setBio] = useState(serverBio ?? '');
+
+  const confirm = useConfirm();
 
   useEffect(() => {
-    if (!isEditing) setBio(initialBio ?? '');
-  }, [initialBio, isEditing]);
+    if (!isEditing) setBio(serverBio ?? '');
+  }, [serverBio, isEditing]);
 
-  const hasChanged = initialBio !== bio;
+  const hasChanged = (serverBio ?? '') !== (bio ?? '');
 
   const startEditBio = () => {
     setIsEditing(true);
@@ -52,7 +66,7 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
     return true;
   };
 
-  const saveBio = () => {
+  const saveBio = async () => {
     clearError(fieldKey);
 
     if (!hasChanged) {
@@ -60,29 +74,42 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
       return;
     }
 
+    if (!profileId) {
+      setError(fieldKey, ErrorCode.LoginSessionExpired);
+      return;
+    }
+
     if (!bio || !validateBio(bio)) return;
 
     setBusy('bio', true);
     try {
-      console.log('saved!');
-
-      // res.success
+      const normalized = bio.trim().replace(/\r\n/g, '\n');
+      await updateBio.mutateAsync({ profileId, bio: normalized });
+      useToast('success', '소개글이 저장되었습니다.');
       clearError(fieldKey);
       setIsEditing(false);
     } catch (err) {
       console.error('error');
+      useToast('error', '소개글 저장에 실패했습니다.');
+      setError(fieldKey, ErrorCode.Unexpected);
     } finally {
       setBusy('bio', false);
     }
   };
 
-  const cancelEditBio = () => {
+  const cancelEditBio = async () => {
     if (hasChanged) {
-      const ok = confirm('수정 중인 내용은 저장되지 않습니다. 정말 취소하시겠습니까?');
+      const ok = await confirm({
+        title: '소개글 변경을 취소하시겠습니까?',
+        description: <>변경 중인 사항은 저장되지 않습니다.</>,
+        confirmText: '취소하기',
+        cancelText: '돌아가기',
+        tone: 'danger',
+      });
       if (!ok) return;
     }
 
-    setBio(initialBio ?? '');
+    setBio(serverBio);
     clearError(fieldKey);
     setIsEditing(false);
   };
@@ -101,6 +128,14 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
     }
   };
 
+  if (isAuthLoading || bioLoading || !profileId) {
+    return (
+      <section className="w-full p-8 rounded-lg bg-secondary-100 border border-gray-300 flex flex-col gap-6">
+        <Spinner />
+      </section>
+    );
+  }
+
   return (
     <section className="w-full p-8 rounded-lg bg-secondary-100 border border-gray-300 flex flex-col gap-6">
       <div className="flex justify-between">
@@ -114,7 +149,7 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
                 color="primary"
                 borderType="solid"
                 hasIcon
-                disabled={!!getMessage(fieldKey)}
+                disabled={!!getMessage(fieldKey) || updateBio.isPending || busy.bio}
                 onClick={saveBio}
               >
                 Save
@@ -125,6 +160,7 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
                 color="primary"
                 borderType="outline"
                 hasIcon
+                disabled={updateBio.isPending || busy.bio}
                 onClick={cancelEditBio}
               >
                 Cancel
@@ -174,9 +210,9 @@ function SettingBio({ initialBio = '', maxLength = 300 }: BioProps) {
           )}
         </div>
       ) : (
-        <p>
-          {bio?.trim() ? (
-            bio
+        <p className="whitespace-pre-wrap break-words">
+          {serverBio?.trim() ? (
+            serverBio
           ) : (
             <span className="text-text-secondary/50">
               저장된 자기소개 글이 없습니다. 소개글을 입력해보세요!

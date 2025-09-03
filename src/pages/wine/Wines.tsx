@@ -1,3 +1,4 @@
+import Pagination from '@/component/Pagination';
 import {
   alcohol,
   bodyTasteInfo,
@@ -9,10 +10,37 @@ import {
 import SearchBar from '@/component/wine/filterSearch/SearchBar';
 import WinesSkeleton from '@/component/wine/skeleton/WineInfoSkeleton';
 import WineList from '@/component/wine/wineInfo/WineList';
-import wines from '@/data/data.json';
-import { useEffect, useState } from 'react';
+import { useAuth } from '@/store/@store';
+import { useWineStore } from '@/store/wineStore';
+import type { Json, Tables } from '@/supabase/database.types';
+// import wines from '@/data/data.json';
+import supabase from '@/supabase/supabase';
+import { Suspense, useEffect, useState } from 'react';
+import { Await, useLoaderData } from 'react-router';
 
-export type WineInfoType = (typeof wines)[number];
+export type WineInfoType = Tables<'wines'>;
+
+export const getWines = async (from: number, to: number, appliedFilters?: Json) => {
+  if (!appliedFilters) {
+    appliedFilters = {};
+  }
+  const { data, error } = await supabase
+    .rpc('filter_wines', {
+      p_filters: appliedFilters,
+    })
+    .range(from, to);
+  if (error) {
+    console.error(error);
+    return [];
+  }
+  console.log(appliedFilters);
+  console.log(data);
+  return data ?? [];
+};
+
+export async function wineLoader() {
+  return { wines: getWines(0, 8) };
+}
 
 function Wines() {
   // 적용된 필터(zustand+URLQuery) -> SearchBar에서 검색버튼 누르면 업데이트되도록
@@ -22,9 +50,9 @@ function Wines() {
   // Wines에서는 데이터(와인데이터, 필터데이터)만 관리
   // WineList에서 필터링+렌더링 관리
 
-  const [loading, setLoading] = useState(true);
-  const [winesData] = useState(wines);
-  console.log(wines);
+  // const [winesData] = useState(wines);
+  // console.log(wines);
+
   const filterOptions = {
     국가: Object.keys(countryInfo),
     품종: Object.keys(grapes),
@@ -36,16 +64,51 @@ function Wines() {
     바디: Object.keys(bodyTasteInfo),
   };
 
+  const data = useLoaderData() as { wines: Promise<WineInfoType[]> };
+  const [page, setPage] = useState(1);
+  const [winePromise, setWinePromise] = useState<Promise<WineInfoType[]>>(data.wines);
+  const appliedFilters = useWineStore((s) => s.appliedFilters);
+  const user = useAuth();
+  const resetFilters = useWineStore((s) => s.resetFilters);
+
   useEffect(() => {
-    setLoading(false);
+    // 필터가 바뀌면 페이지 1로 초기화
+    setPage(1);
+    const from = 0;
+    const to = 8;
+    // 필터 적용해서 새 Promise 가져오기
+    setWinePromise(getWines(from, to, appliedFilters));
+  }, [appliedFilters, user]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const winesDiv = document.getElementById('wines-container');
+      if (winesDiv && !winesDiv.contains(e.target as Node)) {
+        resetFilters();
+        setPage(1);
+      }
+    };
+
+    window.addEventListener('click', handleClickOutside);
+    return () => window.removeEventListener('click', handleClickOutside);
   }, []);
 
+  const pageChange = (newPage: number) => {
+    const from = (newPage - 1) * 9;
+    const to = newPage * 9 - 1;
+    setPage(newPage);
+    setWinePromise(getWines(from, to, appliedFilters));
+  };
+
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div id="wines-container" className="flex flex-col justify-center items-center">
       <SearchBar filterOptions={filterOptions} />
       <div className="w-full px-50 py-8 grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 justify-center">
-        {loading ? <WinesSkeleton /> : <WineList wines={winesData} />}
+        <Suspense fallback={<WinesSkeleton />}>
+          <Await resolve={winePromise}>{(wines) => <WineList filteredWines={wines} />}</Await>
+        </Suspense>
       </div>
+      <Pagination page={page} totalPages={10} onPageChange={pageChange} />
     </div>
   );
 }

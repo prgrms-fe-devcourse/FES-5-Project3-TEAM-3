@@ -1,14 +1,30 @@
 import Button from '@/component/Button';
 import VisibleBtn from '@/component/Login/VisibleBtn';
+import useToast from '@/hook/useToast';
+import { useAuth } from '@/store/@store';
 import supabase from '@/supabase/supabase';
-import { useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { useShallow } from 'zustand/shallow';
 
 function Login() {
+  const { userId, signOut } = useAuth(
+    useShallow((s) => ({
+      userId: s.userId,
+      signOut: s.signOut,
+    }))
+  );
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const pwRef = useRef<HTMLInputElement | null>(null);
+
+  useLayoutEffect(() => {
+    if (userId) {
+      (async () => await signOut())();
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,16 +37,17 @@ function Login() {
     const userNickName = data.user?.user_metadata.nickname;
     const userId = data.user?.id;
     const userEmail = data.user?.email ?? email;
+    const userPhone = data.user?.user_metadata.phone;
 
     if (error) {
-      console.error(error);
+      useToast('error', '로그인 정보를 다시 확인해주세요');
     } else {
       await supabase.from('profile').insert({
         profile_id: userId,
         nickname: userNickName,
         email: userEmail,
+        phone: userPhone,
       });
-
       navigate('/');
     }
   };
@@ -49,7 +66,7 @@ function Login() {
                 <img src="/icon/email.svg" alt="이메일 아이콘" />
               </label>
               <input
-                className="outline-none"
+                className="outline-none w-full"
                 value={email}
                 id="email"
                 autoComplete="email"
@@ -65,7 +82,7 @@ function Login() {
                   <img src="/icon/password.svg" alt="패스워드 아이콘" />
                 </label>
                 <input
-                  className="outline-none"
+                  className="outline-none w-full"
                   onChange={(e) => setPassword(e.target.value)}
                   id="password"
                   ref={pwRef}
@@ -76,9 +93,12 @@ function Login() {
               </div>
               <VisibleBtn ref={pwRef} />
             </div>
-            <a className="text-right text-primary-500 text-[12px] font-light">
+            <Link
+              to="../findpassword"
+              className="text-right text-primary-500 text-[12px] font-light"
+            >
               비밀번호를 잊어버리셨나요?
-            </a>
+            </Link>
             <div className="flex flex-col items-center gap-4">
               <Button type="submit" color="primary">
                 Sign In
@@ -89,6 +109,20 @@ function Login() {
                   회원가입 하러가기
                 </Link>
               </p>
+              <div className="flex gap-8">
+                <Link
+                  to="../findemail"
+                  className="text-right text-primary-500 text-[12px] font-light"
+                >
+                  이메일찾기
+                </Link>{' '}
+                <Link
+                  to="../findpassword"
+                  className="text-right text-primary-500 text-[12px] font-light"
+                >
+                  비밀번호찾기
+                </Link>
+              </div>
             </div>
           </form>
         </section>

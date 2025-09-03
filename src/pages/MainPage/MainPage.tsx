@@ -1,148 +1,125 @@
 import WineGrid from '@/component/MainPage/WineGrid';
-import { useState } from 'react';
 import ShowMoreBtn from '@/component/MainPage/ShowMoreBtn';
 import Collection from '@/component/MainPage/Collection';
+import { winesArr } from '@/assets/staticArr';
+import supabase from '@/supabase/supabase';
+import { Suspense } from 'react';
+import SkeletonMainPage from './skeleton/SkeletonMainPage';
+import { Await, useLoaderData } from 'react-router';
+import type { Tables } from '@/supabase/database.types';
+import Card from '../community/Main/Card';
+import AnimatedPost from '@/component/MainPage/AnimatedPost';
+import ScrollToTopButton from '@/component/community/ScrollToTopButton';
+
+type Review = Tables<'reviews'>;
+type Wine = Tables<'wines'>;
+type Post = Tables<'posts'>;
+type Collection = Review & {
+  profile: Pick<Tables<'profile'>, 'nickname'> | null;
+  wines: Wine | null;
+};
+type LoaderData = {
+  nickname: string | null | undefined;
+  postData: Post[];
+  collectionData: Collection[];
+};
+
+export const getUser = async () => {
+  const { data, error } = await supabase
+    .from('user_badge')
+    .select('profile(nickname)')
+    .contains('badge_type', ['Apprentice Sommelier']);
+  if (error) console.error(error);
+  const random = data?.map((a) => a.profile.nickname);
+  if (!random) return;
+  const index = Math.floor(Math.random() * random?.length);
+  return random[index];
+};
+
+export const getCollection = async (nickname: string): Promise<Collection[]> => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*,profile(nickname),wines(*)')
+    .eq('profile.nickname', nickname)
+    .limit(5);
+  if (error) console.error(error);
+  return data ?? [];
+};
+
+export const getPosts = async () => {
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*,profile(nickname)')
+    .limit(4)
+    .order('like_count', { ascending: false });
+  if (error) console.error(error);
+  return data ?? [];
+};
+
+export async function MainPageLoader(): Promise<LoaderData> {
+  const nickname = await getUser();
+  const [postData, collectionData] = await Promise.all([
+    getPosts(),
+    nickname ? getCollection(nickname) : Promise.resolve<Collection[]>([]),
+  ]);
+
+  return { nickname, postData, collectionData };
+}
 
 function MainPage() {
-  const winesArr = [
-    {
-      id: 0,
-      src: '/image/CS.png',
-      alt: '카베르네소비뇽',
-      title: 'Cabernet Sauvignon',
-      text: `진한 바디와 강렬한 탄닌,스테이크와 완벽한 조화`,
-    },
-    {
-      id: 1,
-      src: '/image/FranceWine.png',
-      alt: '프랑스와인',
-      title: 'France',
-      text: `고전 와인의 본 고장 지역별로 다른 매력을 발견하세요`,
-    },
-    {
-      id: 2,
-      src: '/image/melot.png',
-      alt: '멜롯',
-      title: 'Melot',
-      text: `부드럽고 과일향 가득, 누구나 즐기기 좋은 와인`,
-    },
-    {
-      id: 3,
-      src: '/image/italyWine.png',
-      alt: '이탈리아와인',
-      title: 'Italy',
-      text: `다채로운 품종과 음식 궁합,와인의 천국`,
-    },
-    {
-      id: 4,
-      src: '/image/pinotNoir.png',
-      alt: '피노누아',
-      title: 'Pinot Noir',
-      text: `가볍고 섬세한 향, 초보자에게 추천하는 레드 와인`,
-    },
-    {
-      id: 5,
-      src: '/image/spainWine.png',
-      alt: '스페인 와인',
-      title: 'Spain',
-      text: `합리적인 가격과 개성 강한 레드 와인의 보물창고`,
-    },
-
-    {
-      id: 6,
-      src: '/image/chardonay.png',
-      alt: '샤도네이',
-      title: 'Chardonnay',
-      text: `버터리하거나 상큼하거나, 스타일이 다양한 화이트 와인`,
-    },
-    {
-      id: 7,
-      src: '/image/usaWine.png',
-      alt: '미국와인',
-      title: 'USA',
-      text: `혁신과 전통이 공존하는, 세계가 주목하는 와인 산지`,
-    },
-    {
-      id: 8,
-      src: '/image/shauvignonBlanc.png',
-      alt: '소비뇽 블랑',
-      title: 'Sauvignon Blanc',
-      text: `상쾌한 산미와 허브향, 여름에 딱 맞는 화이트 와인`,
-    },
-  ];
-
-  const [wines] = useState(winesArr);
-
-  const collection = [
-    {
-      id: 1,
-      title: 'Château Haut-Brion 1986',
-      content: 'GOAT... 무슨 말이 더 필요할까요 가격이 만만치 않지만 죽기 전 꼭 먹어봐야합니다.',
-      price: '3,800,000',
-      src: 'image/winebottle.png',
-      icon: 'image/FR.png',
-    },
-    {
-      id: 2,
-      title: 'Château Haut-Brion 1987',
-      content: 'GOAT... 무슨 말이 더 필요할까요 가격이 만만치 않지만 죽기 전 꼭 먹어봐야합니다.',
-      price: '3,800,000',
-      src: 'image/winebottle.png',
-      icon: 'image/FR.png',
-    },
-    {
-      id: 3,
-      title: 'Château Haut-Brion 1988',
-      content: 'GOAT... 무슨 말이 더 필요할까요 가격이 만만치 않지만 죽기 전 꼭 먹어봐야합니다.',
-      price: '3,800,000',
-      src: 'image/winebottle.png',
-      icon: 'image/FR.png',
-    },
-    {
-      id: 4,
-      title: 'Château Haut-Brion 1989',
-      content: 'GOAT... 무슨 말이 더 필요할까요 가격이 만만치 않지만 죽기 전 꼭 먹어봐야합니다.',
-      price: '3,800,000',
-      src: 'image/winebottle.png',
-      icon: 'image/FR.png',
-    },
-  ];
+  const wines = winesArr;
+  const { nickname, postData, collectionData } = useLoaderData() as LoaderData;
 
   return (
     <main>
       <section className="relative">
-        <img
-          className="block w-screen h-screen"
-          src="/image/HeroImg.png"
-          alt=",와인과 석류 이미지"
-        />
-        <h2 className="absolute left-85.5 bottom-38 text-primary-100 text-[108px]">
-          <img src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
+        <picture>
+          <source media="(min-width:1024px)" srcSet="/image/HeroImg.png" />
+
+          <img
+            src="/image/mobileHeroImg.png"
+            alt="와인과 석류 이미지"
+            className="w-full h-100 object-cover lg:w-screen lg:h-screen"
+          />
+        </picture>
+        <h2 className="absolute left-5 bottom-10 lg:left-20 lg:bottom-38  xl:absolute xl:left-85.5 xl:bottom-38 text-primary-100 text-[108px]">
+          <img className="w-150" src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
         </h2>
       </section>
+      <Suspense fallback={<SkeletonMainPage />}>
+        <Await resolve={Promise.all([nickname, postData, collectionData])}>
+          <section className="bg-radial from-background-base from-60% to-secondary-300 to-100% flex justify-center">
+            <div className="grid grid-rows-3 grid-cols-3  gap-5  py-34.75">
+              {wines &&
+                wines.map(({ id, src, alt, title, text }) => (
+                  <WineGrid key={id} src={src} alt={alt} title={title} text={text} />
+                ))}
+            </div>
+          </section>
 
-      <section className="bg-radial from-background-base from-60% to-secondary-300/40 to-100% flex justify-center">
-        <div className="grid grid-rows-3 grid-cols-3 gap-5 py-34.75">
-          {wines &&
-            wines.map(({ id, src, alt, title, text }) => (
-              <WineGrid key={id} src={src} alt={alt} title={title} text={text} />
-            ))}
-        </div>
-      </section>
+          <section>
+            <Collection collection={collectionData} />
+          </section>
 
-      <section>
-        <Collection collection={collection} />
-      </section>
+          <section className="h-200 mt-35 flex flex-col items-center gap-8">
+            <h3>
+              <img src="image/Trending posts.png" alt="trending posts" />
+            </h3>
 
-      <section className="h-200 mt-35 flex flex-col items-center">
-        <h3 className="text-[108px]">
-          <img src="image/Trending posts.png" alt="trending posts" />
-        </h3>
-        <div className="mt-13 flex items-center">
-          <div className="rounded-2xl w-70 h-90 bg-gray-600"></div>
-          <ShowMoreBtn />
-        </div>
-      </section>
+            <div className="flex gap-3 w-full justify-center">
+              <AnimatedPost>
+                {postData.map((post) => (
+                  <div key={post.post_id} className="post-card will-change-transform  w-90">
+                    <Card post={post} />
+                  </div>
+                ))}
+                <ShowMoreBtn />
+              </AnimatedPost>
+            </div>
+          </section>
+          <ScrollToTopButton className="cursor-pointer right-0 lg:mr-23" />
+        </Await>
+      </Suspense>
     </main>
   );
 }

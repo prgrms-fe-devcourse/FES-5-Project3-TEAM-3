@@ -1,4 +1,10 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -62,6 +68,13 @@ export type Database = {
             referencedColumns: ['profile_id'];
           },
           {
+            foreignKeyName: 'hashtags_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
+          },
+          {
             foreignKeyName: 'hashtags_wine_id_fkey';
             columns: ['wine_id'];
             isOneToOne: false;
@@ -117,6 +130,13 @@ export type Database = {
             referencedColumns: ['profile_id'];
           },
           {
+            foreignKeyName: 'pairings_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
+          },
+          {
             foreignKeyName: 'pairings_wine_id_fkey';
             columns: ['wine_id'];
             isOneToOne: false;
@@ -162,6 +182,13 @@ export type Database = {
             referencedRelation: 'profile';
             referencedColumns: ['profile_id'];
           },
+          {
+            foreignKeyName: 'post_like_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
+          },
         ];
       };
       posts: {
@@ -170,12 +197,11 @@ export type Database = {
           created_at: string;
           hashtag_list: string[] | null;
           image_url: string[] | null;
-          thumbnail_image: string | null;
           like_count: number;
           post_category: Database['public']['Enums']['post_category'];
           post_id: string;
-          primary_idx: number;
           reply_count: number;
+          thumbnail_image: string;
           title: string;
           updated_at: string;
           user_id: string | null;
@@ -188,8 +214,8 @@ export type Database = {
           like_count?: number;
           post_category: Database['public']['Enums']['post_category'];
           post_id?: string;
-          primary_idx?: number;
           reply_count?: number;
+          thumbnail_image?: string;
           title: string;
           updated_at?: string;
           user_id?: string | null;
@@ -202,8 +228,8 @@ export type Database = {
           like_count?: number;
           post_category?: Database['public']['Enums']['post_category'];
           post_id?: string;
-          primary_idx?: number;
           reply_count?: number;
+          thumbnail_image?: string;
           title?: string;
           updated_at?: string;
           user_id?: string | null;
@@ -216,6 +242,13 @@ export type Database = {
             referencedRelation: 'profile';
             referencedColumns: ['profile_id'];
           },
+          {
+            foreignKeyName: 'posts_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
+          },
         ];
       };
       profile: {
@@ -226,6 +259,7 @@ export type Database = {
           email: string;
           is_deleted: boolean;
           nickname: string;
+          phone: string | null;
           profile_id: string;
           profile_image_url: string;
           updated_at: string | null;
@@ -237,6 +271,7 @@ export type Database = {
           email: string;
           is_deleted?: boolean;
           nickname: string;
+          phone?: string | null;
           profile_id?: string;
           profile_image_url?: string;
           updated_at?: string | null;
@@ -248,6 +283,7 @@ export type Database = {
           email?: string;
           is_deleted?: boolean;
           nickname?: string;
+          phone?: string | null;
           profile_id?: string;
           profile_image_url?: string;
           updated_at?: string | null;
@@ -300,6 +336,13 @@ export type Database = {
             referencedRelation: 'profile';
             referencedColumns: ['profile_id'];
           },
+          {
+            foreignKeyName: 'reply_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
+          },
         ];
       };
       reply_like: {
@@ -339,6 +382,13 @@ export type Database = {
             referencedRelation: 'profile';
             referencedColumns: ['profile_id'];
           },
+          {
+            foreignKeyName: 'reply_like_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
+          },
         ];
       };
       review_like: {
@@ -376,6 +426,13 @@ export type Database = {
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
+          },
+          {
+            foreignKeyName: 'review_like_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
             referencedColumns: ['profile_id'];
           },
         ];
@@ -432,6 +489,13 @@ export type Database = {
             referencedColumns: ['profile_id'];
           },
           {
+            foreignKeyName: 'reviews_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
+          },
+          {
             foreignKeyName: 'reviews_wine_id_fkey';
             columns: ['wine_id'];
             isOneToOne: false;
@@ -466,59 +530,87 @@ export type Database = {
           {
             foreignKeyName: 'user_badge_user_id_fkey';
             columns: ['user_id'];
-            isOneToOne: false;
+            isOneToOne: true;
             referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
+          },
+          {
+            foreignKeyName: 'user_badge_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profile_public';
             referencedColumns: ['profile_id'];
           },
         ];
       };
       wines: {
         Row: {
-          abv: number | null;
-          acidity_score: number | null;
-          body_score: number | null;
+          abv: string | null;
+          acidic: number | null;
+          body: number | null;
           category: Database['public']['Enums']['wine_category'] | null;
+          category_ko: string | null;
           country: string | null;
+          country_ko: string | null;
           created_at: string;
           description: string | null;
-          image_url: string | null;
+          description_ko: string | null;
+          image_url: string[];
           name: string;
+          name_ko: string | null;
+          pronunciations: Json | null;
           representative_flavor: string[] | null;
-          sweetness_score: number | null;
-          tannin_score: number | null;
-          variety: string | null;
+          representative_flavor_ko: string[] | null;
+          sweetness: number | null;
+          tannic: number | null;
+          variety: string[];
+          variety_ko: string[] | null;
           wine_id: string;
         };
         Insert: {
-          abv?: number | null;
-          acidity_score?: number | null;
-          body_score?: number | null;
+          abv?: string | null;
+          acidic?: number | null;
+          body?: number | null;
           category?: Database['public']['Enums']['wine_category'] | null;
+          category_ko?: string | null;
           country?: string | null;
+          country_ko?: string | null;
           created_at?: string;
           description?: string | null;
-          image_url?: string | null;
+          description_ko?: string | null;
+          image_url?: string[];
           name: string;
+          name_ko?: string | null;
+          pronunciations?: Json | null;
           representative_flavor?: string[] | null;
-          sweetness_score?: number | null;
-          tannin_score?: number | null;
-          variety?: string | null;
+          representative_flavor_ko?: string[] | null;
+          sweetness?: number | null;
+          tannic?: number | null;
+          variety?: string[];
+          variety_ko?: string[] | null;
           wine_id?: string;
         };
         Update: {
-          abv?: number | null;
-          acidity_score?: number | null;
-          body_score?: number | null;
+          abv?: string | null;
+          acidic?: number | null;
+          body?: number | null;
           category?: Database['public']['Enums']['wine_category'] | null;
+          category_ko?: string | null;
           country?: string | null;
+          country_ko?: string | null;
           created_at?: string;
           description?: string | null;
-          image_url?: string | null;
+          description_ko?: string | null;
+          image_url?: string[];
           name?: string;
+          name_ko?: string | null;
+          pronunciations?: Json | null;
           representative_flavor?: string[] | null;
-          sweetness_score?: number | null;
-          tannin_score?: number | null;
-          variety?: string | null;
+          representative_flavor_ko?: string[] | null;
+          sweetness?: number | null;
+          tannic?: number | null;
+          variety?: string[];
+          variety_ko?: string[] | null;
           wine_id?: string;
         };
         Relationships: [];
@@ -557,6 +649,13 @@ export type Database = {
             referencedColumns: ['profile_id'];
           },
           {
+            foreignKeyName: 'wishlists_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
+          },
+          {
             foreignKeyName: 'wishlists_wine_id_fkey';
             columns: ['wine_id'];
             isOneToOne: false;
@@ -567,14 +666,135 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      hashtag_counts: {
+        Row: {
+          post_ids: string[] | null;
+          tag_count: number | null;
+          tag_text: string | null;
+          wine_ids: string[] | null;
+        };
+        Relationships: [];
+      };
+      profile_public: {
+        Row: {
+          bio: string | null;
+          nickname: string | null;
+          profile_id: string | null;
+          profile_image_url: string | null;
+        };
+        Insert: {
+          bio?: string | null;
+          nickname?: string | null;
+          profile_id?: string | null;
+          profile_image_url?: string | null;
+        };
+        Update: {
+          bio?: string | null;
+          nickname?: string | null;
+          profile_id?: string | null;
+          profile_image_url?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
-      [_ in never]: never;
+      compute_and_upsert_user_badges: {
+        Args: { p_user_id: string };
+        Returns: {
+          badge: string;
+        }[];
+      };
+      filter_wines: {
+        Args: { p_filters: Json };
+        Returns: {
+          abv: string | null;
+          acidic: number | null;
+          body: number | null;
+          category: Database['public']['Enums']['wine_category'] | null;
+          category_ko: string | null;
+          country: string | null;
+          country_ko: string | null;
+          created_at: string;
+          description: string | null;
+          description_ko: string | null;
+          image_url: string[];
+          name: string;
+          name_ko: string | null;
+          pronunciations: Json | null;
+          representative_flavor: string[] | null;
+          representative_flavor_ko: string[] | null;
+          sweetness: number | null;
+          tannic: number | null;
+          variety: string[];
+          variety_ko: string[] | null;
+          wine_id: string;
+        }[];
+      };
+      get_my_profile: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          bio: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          email: string;
+          is_deleted: boolean;
+          nickname: string;
+          phone: string | null;
+          profile_id: string;
+          profile_image_url: string;
+          updated_at: string | null;
+        };
+      };
+      insert_review_with_tags_and_pairings: {
+        Args: {
+          p_acidity: number;
+          p_body: number;
+          p_content: string;
+          p_pairings: Json;
+          p_rating: number;
+          p_sweetness: number;
+          p_tags: string[];
+          p_tannin: number;
+          p_user_id: string;
+          p_wine_id: string;
+        };
+        Returns: {
+          review_id: string;
+        }[];
+      };
+      is_phone_available: {
+        Args: { p_phone: string; p_self: string };
+        Returns: boolean;
+      };
+      recompute_badges_for_user: {
+        Args: { p_user_id: string };
+        Returns: undefined;
+      };
+      toggle_post_like: {
+        Args: { p_post_id: string; p_user_id: string };
+        Returns: {
+          action: string;
+          like_count: number;
+        }[];
+      };
+      toggle_reply_like: {
+        Args: { r_reply_id: string; r_user_id: string };
+        Returns: {
+          action: string;
+          like_count: number;
+        }[];
+      };
+      toggle_review_like: {
+        Args: { p_review_id: string; p_user_id: string };
+        Returns: {
+          action: string;
+          count: number;
+        }[];
+      };
     };
     Enums: {
       post_category: 'free' | 'question' | 'review';
-      wine_category: 'red' | 'white' | 'rose' | 'sparkling' | 'dessert';
+      wine_category: 'Red wine' | 'White wine' | 'Rose wine' | 'Sparkling wine' | 'Dessert wine';
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -582,126 +802,134 @@ export type Database = {
   };
 };
 
-type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>;
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>];
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
-      Row: infer R;
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
-    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R;
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
       }
       ? R
       : never
-    : never;
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
-      Insert: infer I;
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I;
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
       }
       ? I
       : never
-    : never;
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
-      Update: infer U;
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U;
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
       }
       ? U
       : never
-    : never;
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema['Enums']
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
-    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
-    : never;
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema['CompositeTypes']
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals;
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
+  schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
-    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
-    : never;
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
   public: {
     Enums: {
-      post_category: ['free', 'question', 'review'],
-      wine_category: ['red', 'white', 'rose', 'sparkling', 'dessert'],
+      post_category: ["free", "question", "review"],
+      wine_category: [
+        "Red wine",
+        "White wine",
+        "Rose wine",
+        "Sparkling wine",
+        "Dessert wine",
+      ],
     },
   },
-} as const;
+} as const
