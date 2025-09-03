@@ -3,11 +3,12 @@ import ShowMoreBtn from '@/component/MainPage/ShowMoreBtn';
 import Collection from '@/component/MainPage/Collection';
 import { winesArr } from '@/assets/staticArr';
 import supabase from '@/supabase/supabase';
-import { Suspense } from 'react';
+import { Suspense} from 'react';
 import SkeletonMainPage from './skeleton/SkeletonMainPage';
 import { Await, useLoaderData } from 'react-router';
 import type { Tables } from '@/supabase/database.types';
 import Card from '../community/Main/Card';
+import AnimatedPost from '@/component/MainPage/AnimatedPost';
 
 type Review = Tables<'reviews'>;
 type Wine = Tables<'wines'>;
@@ -69,6 +70,7 @@ function MainPage() {
   const { nickname, postData, collectionData } = useLoaderData() as LoaderData;
 
 
+
   return (
     <main>
       <section className="relative">
@@ -101,11 +103,15 @@ function MainPage() {
               <img src="image/Trending posts.png" alt="trending posts" />
             </h3>
 
-            <div className="mx-90 w-310 h-90 flex gap-3">
-              {postData.map((post) => (
-                <Card post={post} key={post.post_id} />
-              ))}
-              <ShowMoreBtn />
+            <div className="flex gap-3 w-full justify-center">
+              <AnimatedPost>
+                {postData.map((post) => (
+                  <div key={post.post_id} className="post-card will-change-transform w-90">
+                    <Card post={post}/>
+                  </div>
+                ))}
+                <ShowMoreBtn />
+              </AnimatedPost>
             </div>
           </section>
         </Await>
