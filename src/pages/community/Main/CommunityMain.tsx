@@ -129,7 +129,7 @@ function CommunityMain() {
                       <button
                         key={t}
                         type="button"
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary-400 text-sm text-primary-400 bg-white shadow-sm"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary-400 text-sm text-primary-400 bg-white shadow-sm cursor-pointer"
                         onClick={() => handleTagClick(t)}
                       >
                         # {t}

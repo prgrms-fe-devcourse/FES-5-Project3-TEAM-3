@@ -10,187 +10,187 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.4"
-  }
+    PostgrestVersion: '13.0.4';
+  };
   public: {
     Tables: {
       hashtags: {
         Row: {
-          created_at: string
-          hashtag_id: string
-          post_id: string | null
-          review_id: string | null
-          tag_text: string[]
-          updated_at: string
-          user_id: string | null
-          wine_id: string | null
-        }
+          created_at: string;
+          hashtag_id: string;
+          post_id: string | null;
+          review_id: string | null;
+          tag_text: string[];
+          updated_at: string;
+          user_id: string | null;
+          wine_id: string | null;
+        };
         Insert: {
-          created_at?: string
-          hashtag_id?: string
-          post_id?: string | null
-          review_id?: string | null
-          tag_text: string[]
-          updated_at?: string
-          user_id?: string | null
-          wine_id?: string | null
-        }
+          created_at?: string;
+          hashtag_id?: string;
+          post_id?: string | null;
+          review_id?: string | null;
+          tag_text: string[];
+          updated_at?: string;
+          user_id?: string | null;
+          wine_id?: string | null;
+        };
         Update: {
-          created_at?: string
-          hashtag_id?: string
-          post_id?: string | null
-          review_id?: string | null
-          tag_text?: string[]
-          updated_at?: string
-          user_id?: string | null
-          wine_id?: string | null
-        }
+          created_at?: string;
+          hashtag_id?: string;
+          post_id?: string | null;
+          review_id?: string | null;
+          tag_text?: string[];
+          updated_at?: string;
+          user_id?: string | null;
+          wine_id?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "hashtags_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["post_id"]
+            foreignKeyName: 'hashtags_post_id_fkey';
+            columns: ['post_id'];
+            isOneToOne: false;
+            referencedRelation: 'posts';
+            referencedColumns: ['post_id'];
           },
           {
-            foreignKeyName: "hashtags_review_id_fkey"
-            columns: ["review_id"]
-            isOneToOne: false
-            referencedRelation: "reviews"
-            referencedColumns: ["review_id"]
+            foreignKeyName: 'hashtags_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews';
+            referencedColumns: ['review_id'];
           },
           {
-            foreignKeyName: "hashtags_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'hashtags_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "hashtags_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile_public"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'hashtags_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "hashtags_wine_id_fkey"
-            columns: ["wine_id"]
-            isOneToOne: false
-            referencedRelation: "wines"
-            referencedColumns: ["wine_id"]
+            foreignKeyName: 'hashtags_wine_id_fkey';
+            columns: ['wine_id'];
+            isOneToOne: false;
+            referencedRelation: 'wines';
+            referencedColumns: ['wine_id'];
           },
-        ]
-      }
+        ];
+      };
       pairings: {
         Row: {
-          created_at: string
-          pairing_category: string | null
-          pairing_id: string
-          pairing_name: string
-          review_id: string
-          updated_at: string
-          user_id: string | null
-          wine_id: string
-        }
+          created_at: string;
+          pairing_category: string | null;
+          pairing_id: string;
+          pairing_name: string;
+          review_id: string;
+          updated_at: string;
+          user_id: string | null;
+          wine_id: string;
+        };
         Insert: {
-          created_at?: string
-          pairing_category?: string | null
-          pairing_id?: string
-          pairing_name?: string
-          review_id: string
-          updated_at?: string
-          user_id?: string | null
-          wine_id: string
-        }
+          created_at?: string;
+          pairing_category?: string | null;
+          pairing_id?: string;
+          pairing_name?: string;
+          review_id: string;
+          updated_at?: string;
+          user_id?: string | null;
+          wine_id: string;
+        };
         Update: {
-          created_at?: string
-          pairing_category?: string | null
-          pairing_id?: string
-          pairing_name?: string
-          review_id?: string
-          updated_at?: string
-          user_id?: string | null
-          wine_id?: string
-        }
+          created_at?: string;
+          pairing_category?: string | null;
+          pairing_id?: string;
+          pairing_name?: string;
+          review_id?: string;
+          updated_at?: string;
+          user_id?: string | null;
+          wine_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "pairings_review_id_fkey"
-            columns: ["review_id"]
-            isOneToOne: false
-            referencedRelation: "reviews"
-            referencedColumns: ["review_id"]
+            foreignKeyName: 'pairings_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews';
+            referencedColumns: ['review_id'];
           },
           {
-            foreignKeyName: "pairings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'pairings_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "pairings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile_public"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'pairings_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "pairings_wine_id_fkey"
-            columns: ["wine_id"]
-            isOneToOne: false
-            referencedRelation: "wines"
-            referencedColumns: ["wine_id"]
+            foreignKeyName: 'pairings_wine_id_fkey';
+            columns: ['wine_id'];
+            isOneToOne: false;
+            referencedRelation: 'wines';
+            referencedColumns: ['wine_id'];
           },
-        ]
-      }
+        ];
+      };
       post_like: {
         Row: {
-          created_at: string
-          likes: boolean
-          post_id: string
-          post_like_id: string
-          user_id: string | null
-        }
+          created_at: string;
+          likes: boolean;
+          post_id: string;
+          post_like_id: string;
+          user_id: string | null;
+        };
         Insert: {
-          created_at?: string
-          likes?: boolean
-          post_id: string
-          post_like_id?: string
-          user_id?: string | null
-        }
+          created_at?: string;
+          likes?: boolean;
+          post_id: string;
+          post_like_id?: string;
+          user_id?: string | null;
+        };
         Update: {
-          created_at?: string
-          likes?: boolean
-          post_id?: string
-          post_like_id?: string
-          user_id?: string | null
-        }
+          created_at?: string;
+          likes?: boolean;
+          post_id?: string;
+          post_like_id?: string;
+          user_id?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "post_like_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["post_id"]
+            foreignKeyName: 'post_like_post_id_fkey';
+            columns: ['post_id'];
+            isOneToOne: false;
+            referencedRelation: 'posts';
+            referencedColumns: ['post_id'];
           },
           {
-            foreignKeyName: "post_like_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'post_like_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "post_like_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile_public"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'post_like_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
           },
-        ]
-      }
+        ];
+      };
       posts: {
         Row: {
           content: string;
@@ -208,527 +208,529 @@ export type Database = {
           user_id: string | null;
         };
         Insert: {
-          content: string
-          created_at?: string
-          hashtag_list?: string[] | null
-          image_url?: string[] | null
-          like_count?: number
-          post_category: Database["public"]["Enums"]["post_category"]
-          post_id?: string
-          reply_count?: number
-          thumbnail_image?: string
-          title: string
-          updated_at?: string
-          user_id?: string | null
-        }
+          content: string;
+          created_at?: string;
+          hashtag_list?: string[] | null;
+          image_url?: string[] | null;
+          like_count?: number;
+          post_category: Database['public']['Enums']['post_category'];
+          post_id?: string;
+          reply_count?: number;
+          thumbnail_image?: string;
+          title: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
         Update: {
-          content?: string
-          created_at?: string
-          hashtag_list?: string[] | null
-          image_url?: string[] | null
-          like_count?: number
-          post_category?: Database["public"]["Enums"]["post_category"]
-          post_id?: string
-          reply_count?: number
-          thumbnail_image?: string
-          title?: string
-          updated_at?: string
-          user_id?: string | null
-        }
+          content?: string;
+          created_at?: string;
+          hashtag_list?: string[] | null;
+          image_url?: string[] | null;
+          like_count?: number;
+          post_category?: Database['public']['Enums']['post_category'];
+          post_id?: string;
+          reply_count?: number;
+          thumbnail_image?: string;
+          title?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'posts_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile_public"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'posts_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
           },
-        ]
-      }
+        ];
+      };
       profile: {
         Row: {
-          bio: string | null
-          created_at: string
-          deleted_at: string | null
-          email: string
-          is_deleted: boolean
-          nickname: string
-          phone: string | null
-          profile_id: string
-          profile_image_url: string
-          updated_at: string | null
-        }
+          bio: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          email: string;
+          is_deleted: boolean;
+          nickname: string;
+          phone: string | null;
+          profile_id: string;
+          profile_image_url: string;
+          updated_at: string | null;
+        };
         Insert: {
-          bio?: string | null
-          created_at?: string
-          deleted_at?: string | null
-          email: string
-          is_deleted?: boolean
-          nickname: string
-          phone?: string | null
-          profile_id?: string
-          profile_image_url?: string
-          updated_at?: string | null
-        }
+          bio?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          email: string;
+          is_deleted?: boolean;
+          nickname: string;
+          phone?: string | null;
+          profile_id?: string;
+          profile_image_url?: string;
+          updated_at?: string | null;
+        };
         Update: {
-          bio?: string | null
-          created_at?: string
-          deleted_at?: string | null
-          email?: string
-          is_deleted?: boolean
-          nickname?: string
-          phone?: string | null
-          profile_id?: string
-          profile_image_url?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
+          bio?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          email?: string;
+          is_deleted?: boolean;
+          nickname?: string;
+          phone?: string | null;
+          profile_id?: string;
+          profile_image_url?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       reply: {
         Row: {
-          content: string
-          created_at: string
-          like_count: number
-          parent_id: string | null
-          post_id: string
-          reply_id: string
-          updated_at: string
-          user_id: string | null
-        }
+          content: string;
+          created_at: string;
+          like_count: number;
+          parent_id: string | null;
+          post_id: string;
+          reply_id: string;
+          updated_at: string;
+          user_id: string | null;
+        };
         Insert: {
-          content: string
-          created_at?: string
-          like_count?: number
-          parent_id?: string | null
-          post_id: string
-          reply_id?: string
-          updated_at?: string
-          user_id?: string | null
-        }
+          content: string;
+          created_at?: string;
+          like_count?: number;
+          parent_id?: string | null;
+          post_id: string;
+          reply_id?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
         Update: {
-          content?: string
-          created_at?: string
-          like_count?: number
-          parent_id?: string | null
-          post_id?: string
-          reply_id?: string
-          updated_at?: string
-          user_id?: string | null
-        }
+          content?: string;
+          created_at?: string;
+          like_count?: number;
+          parent_id?: string | null;
+          post_id?: string;
+          reply_id?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "reply_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["post_id"]
+            foreignKeyName: 'reply_post_id_fkey';
+            columns: ['post_id'];
+            isOneToOne: false;
+            referencedRelation: 'posts';
+            referencedColumns: ['post_id'];
           },
           {
-            foreignKeyName: "reply_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'reply_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "reply_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile_public"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'reply_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
           },
-        ]
-      }
+        ];
+      };
       reply_like: {
         Row: {
-          created_at: string
-          likes: boolean
-          reply_id: string
-          reply_like_id: string
-          user_id: string | null
-        }
+          created_at: string;
+          likes: boolean;
+          reply_id: string;
+          reply_like_id: string;
+          user_id: string | null;
+        };
         Insert: {
-          created_at?: string
-          likes?: boolean
-          reply_id: string
-          reply_like_id?: string
-          user_id?: string | null
-        }
+          created_at?: string;
+          likes?: boolean;
+          reply_id: string;
+          reply_like_id?: string;
+          user_id?: string | null;
+        };
         Update: {
-          created_at?: string
-          likes?: boolean
-          reply_id?: string
-          reply_like_id?: string
-          user_id?: string | null
-        }
+          created_at?: string;
+          likes?: boolean;
+          reply_id?: string;
+          reply_like_id?: string;
+          user_id?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "reply_like_reply_id_fkey"
-            columns: ["reply_id"]
-            isOneToOne: false
-            referencedRelation: "reply"
-            referencedColumns: ["reply_id"]
+            foreignKeyName: 'reply_like_reply_id_fkey';
+            columns: ['reply_id'];
+            isOneToOne: false;
+            referencedRelation: 'reply';
+            referencedColumns: ['reply_id'];
           },
           {
-            foreignKeyName: "reply_like_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'reply_like_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "reply_like_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile_public"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'reply_like_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
           },
-        ]
-      }
+        ];
+      };
       review_like: {
         Row: {
-          created_at: string
-          likes: boolean
-          review_id: string
-          review_like_id: string
-          user_id: string | null
-        }
+          created_at: string;
+          likes: boolean;
+          review_id: string;
+          review_like_id: string;
+          user_id: string | null;
+        };
         Insert: {
-          created_at?: string
-          likes?: boolean
-          review_id: string
-          review_like_id?: string
-          user_id?: string | null
-        }
+          created_at?: string;
+          likes?: boolean;
+          review_id: string;
+          review_like_id?: string;
+          user_id?: string | null;
+        };
         Update: {
-          created_at?: string
-          likes?: boolean
-          review_id?: string
-          review_like_id?: string
-          user_id?: string | null
-        }
+          created_at?: string;
+          likes?: boolean;
+          review_id?: string;
+          review_like_id?: string;
+          user_id?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "review_like_review_id_fkey"
-            columns: ["review_id"]
-            isOneToOne: false
-            referencedRelation: "reviews"
-            referencedColumns: ["review_id"]
+            foreignKeyName: 'review_like_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews';
+            referencedColumns: ['review_id'];
           },
           {
-            foreignKeyName: "review_like_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'review_like_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "review_like_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile_public"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'review_like_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
           },
-        ]
-      }
+        ];
+      };
       reviews: {
         Row: {
-          acidity_score: number | null
-          body_score: number | null
-          content: string
-          created_at: string
-          likes: number
-          rating: number
-          review_id: string
-          sweetness_score: number | null
-          tannin_score: number | null
-          updated_at: string
-          user_id: string | null
-          wine_id: string
-        }
+          acidity_score: number | null;
+          body_score: number | null;
+          content: string;
+          created_at: string;
+          likes: number;
+          rating: number;
+          review_id: string;
+          sweetness_score: number | null;
+          tannin_score: number | null;
+          updated_at: string;
+          user_id: string | null;
+          wine_id: string;
+        };
         Insert: {
-          acidity_score?: number | null
-          body_score?: number | null
-          content: string
-          created_at?: string
-          likes?: number
-          rating: number
-          review_id?: string
-          sweetness_score?: number | null
-          tannin_score?: number | null
-          updated_at?: string
-          user_id?: string | null
-          wine_id: string
-        }
+          acidity_score?: number | null;
+          body_score?: number | null;
+          content: string;
+          created_at?: string;
+          likes?: number;
+          rating: number;
+          review_id?: string;
+          sweetness_score?: number | null;
+          tannin_score?: number | null;
+          updated_at?: string;
+          user_id?: string | null;
+          wine_id: string;
+        };
         Update: {
-          acidity_score?: number | null
-          body_score?: number | null
-          content?: string
-          created_at?: string
-          likes?: number
-          rating?: number
-          review_id?: string
-          sweetness_score?: number | null
-          tannin_score?: number | null
-          updated_at?: string
-          user_id?: string | null
-          wine_id?: string
-        }
+          acidity_score?: number | null;
+          body_score?: number | null;
+          content?: string;
+          created_at?: string;
+          likes?: number;
+          rating?: number;
+          review_id?: string;
+          sweetness_score?: number | null;
+          tannin_score?: number | null;
+          updated_at?: string;
+          user_id?: string | null;
+          wine_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "reviews_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'reviews_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "reviews_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile_public"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'reviews_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "reviews_wine_id_fkey"
-            columns: ["wine_id"]
-            isOneToOne: false
-            referencedRelation: "wines"
-            referencedColumns: ["wine_id"]
+            foreignKeyName: 'reviews_wine_id_fkey';
+            columns: ['wine_id'];
+            isOneToOne: false;
+            referencedRelation: 'wines';
+            referencedColumns: ['wine_id'];
           },
-        ]
-      }
+        ];
+      };
       user_badge: {
         Row: {
-          activity_id: string
-          badge_type: string[]
-          created_at: string
-          updated_at: string
-          user_id: string
-        }
+          activity_id: string;
+          badge_type: string[];
+          created_at: string;
+          updated_at: string;
+          user_id: string;
+        };
         Insert: {
-          activity_id?: string
-          badge_type: string[]
-          created_at?: string
-          updated_at?: string
-          user_id: string
-        }
+          activity_id?: string;
+          badge_type: string[];
+          created_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
         Update: {
-          activity_id?: string
-          badge_type?: string[]
-          created_at?: string
-          updated_at?: string
-          user_id?: string
-        }
+          activity_id?: string;
+          badge_type?: string[];
+          created_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "user_badge_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profile"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'user_badge_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "user_badge_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profile_public"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'user_badge_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
           },
-        ]
-      }
+        ];
+      };
       wines: {
         Row: {
-          abv: string | null
-          acidic: number | null
-          body: number | null
-          category: Database["public"]["Enums"]["wine_category"] | null
-          country: string | null
-          created_at: string
-          description: string | null
-          image_url: string[]
-          name: string
-          representative_flavor: string[] | null
-          sweetness: number | null
-          tannic: number | null
-          variety: string[]
-          wine_id: string
-        }
+          abv: string | null;
+          acidic: number | null;
+          body: number | null;
+          category: Database['public']['Enums']['wine_category'] | null;
+          country: string | null;
+          created_at: string;
+          description: string | null;
+          image_url: string[];
+          name: string;
+          representative_flavor: string[] | null;
+          sweetness: number | null;
+          tannic: number | null;
+          variety: string[];
+          wine_id: string;
+        };
         Insert: {
-          abv?: string | null
-          acidic?: number | null
-          body?: number | null
-          category?: Database["public"]["Enums"]["wine_category"] | null
-          country?: string | null
-          created_at?: string
-          description?: string | null
-          image_url?: string[]
-          name: string
-          representative_flavor?: string[] | null
-          sweetness?: number | null
-          tannic?: number | null
-          variety?: string[]
-          wine_id?: string
-        }
+          abv?: string | null;
+          acidic?: number | null;
+          body?: number | null;
+          category?: Database['public']['Enums']['wine_category'] | null;
+          country?: string | null;
+          created_at?: string;
+          description?: string | null;
+          image_url?: string[];
+          name: string;
+          representative_flavor?: string[] | null;
+          sweetness?: number | null;
+          tannic?: number | null;
+          variety?: string[];
+          wine_id?: string;
+        };
         Update: {
-          abv?: string | null
-          acidic?: number | null
-          body?: number | null
-          category?: Database["public"]["Enums"]["wine_category"] | null
-          country?: string | null
-          created_at?: string
-          description?: string | null
-          image_url?: string[]
-          name?: string
-          representative_flavor?: string[] | null
-          sweetness?: number | null
-          tannic?: number | null
-          variety?: string[]
-          wine_id?: string
-        }
-        Relationships: []
-      }
+          abv?: string | null;
+          acidic?: number | null;
+          body?: number | null;
+          category?: Database['public']['Enums']['wine_category'] | null;
+          country?: string | null;
+          created_at?: string;
+          description?: string | null;
+          image_url?: string[];
+          name?: string;
+          representative_flavor?: string[] | null;
+          sweetness?: number | null;
+          tannic?: number | null;
+          variety?: string[];
+          wine_id?: string;
+        };
+        Relationships: [];
+      };
       wishlists: {
         Row: {
-          bookmark: boolean
-          created_at: string
-          updated_at: string
-          user_id: string
-          wine_id: string
-          wishlist_id: string
-        }
+          bookmark: boolean;
+          created_at: string;
+          updated_at: string;
+          user_id: string;
+          wine_id: string;
+          wishlist_id: string;
+        };
         Insert: {
-          bookmark?: boolean
-          created_at?: string
-          updated_at?: string
-          user_id: string
-          wine_id: string
-          wishlist_id?: string
-        }
+          bookmark?: boolean;
+          created_at?: string;
+          updated_at?: string;
+          user_id: string;
+          wine_id: string;
+          wishlist_id?: string;
+        };
         Update: {
-          bookmark?: boolean
-          created_at?: string
-          updated_at?: string
-          user_id?: string
-          wine_id?: string
-          wishlist_id?: string
-        }
+          bookmark?: boolean;
+          created_at?: string;
+          updated_at?: string;
+          user_id?: string;
+          wine_id?: string;
+          wishlist_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "wishlists_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'wishlists_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "wishlists_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile_public"
-            referencedColumns: ["profile_id"]
+            foreignKeyName: 'wishlists_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile_public';
+            referencedColumns: ['profile_id'];
           },
           {
-            foreignKeyName: "wishlists_wine_id_fkey"
-            columns: ["wine_id"]
-            isOneToOne: false
-            referencedRelation: "wines"
-            referencedColumns: ["wine_id"]
+            foreignKeyName: 'wishlists_wine_id_fkey';
+            columns: ['wine_id'];
+            isOneToOne: false;
+            referencedRelation: 'wines';
+            referencedColumns: ['wine_id'];
           },
-        ]
-      }
-    }
+        ];
+      };
+    };
     Views: {
       hashtag_counts: {
         Row: {
-          post_ids: string[] | null
-          tag_count: number | null
-          tag_text: string | null
-          wine_ids: string[] | null
-        }
-        Relationships: []
-      }
+          post_ids: string[] | null;
+          tag_count: number | null;
+          tag_text: string | null;
+          wine_ids: string[] | null;
+        };
+        Relationships: [];
+      };
       profile_public: {
         Row: {
-          bio: string | null
-          nickname: string | null
-          profile_id: string | null
-          profile_image_url: string | null
-        }
+          bio: string | null;
+          nickname: string | null;
+          profile_id: string | null;
+          profile_image_url: string | null;
+        };
         Insert: {
-          bio?: string | null
-          nickname?: string | null
-          profile_id?: string | null
-          profile_image_url?: string | null
-        }
+          bio?: string | null;
+          nickname?: string | null;
+          profile_id?: string | null;
+          profile_image_url?: string | null;
+        };
         Update: {
-          bio?: string | null
-          nickname?: string | null
-          profile_id?: string | null
-          profile_image_url?: string | null
-        }
-        Relationships: []
-      }
-    }
+          bio?: string | null;
+          nickname?: string | null;
+          profile_id?: string | null;
+          profile_image_url?: string | null;
+        };
+        Relationships: [];
+      };
+    };
     Functions: {
       compute_and_upsert_user_badges: {
-        Args: { p_user_id: string }
+        Args: { p_user_id: string };
         Returns: {
-          badge: string
-        }[]
-      }
+          badge: string;
+        }[];
+      };
       get_my_profile: {
-        Args: Record<PropertyKey, never>
+        Args: Record<PropertyKey, never>;
         Returns: {
-          bio: string | null
-          created_at: string
-          deleted_at: string | null
-          email: string
-          is_deleted: boolean
-          nickname: string
-          phone: string | null
-          profile_id: string
-          profile_image_url: string
-          updated_at: string | null
-        }
-      }
+          bio: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          email: string;
+          is_deleted: boolean;
+          nickname: string;
+          phone: string | null;
+          profile_id: string;
+          profile_image_url: string;
+          updated_at: string | null;
+        };
+      };
       is_phone_available: {
-        Args: { p_phone: string; p_self: string }
-        Returns: boolean
-      }
+        Args: { p_phone: string; p_self: string };
+        Returns: boolean;
+      };
       recompute_badges_for_user: {
-        Args: { p_user_id: string }
-        Returns: undefined
-      }
+        Args: { p_user_id: string };
+        Returns: undefined;
+      };
       toggle_post_like: {
-        Args: { p_post_id: string; p_user_id: string }
+        Args: { p_post_id: string; p_user_id: string };
         Returns: {
-          action: string
-          like_count: number
-        }[]
-      }
-    }
+          action: string;
+          like_count: number;
+        }[];
+      };
+      toggle_reply_like: {
+        Args: { r_reply_id: string; r_user_id: string };
+        Returns: {
+          action: string;
+          like_count: number;
+        }[];
+      };
+    };
     Enums: {
-      post_category: "free" | "question" | "review"
-      wine_category:
-        | "Red wine"
-        | "White wine"
-        | "Rose wine"
-        | "Sparkling wine"
-        | "Dessert wine"
-    }
+      post_category: 'free' | 'question' | 'review';
+      wine_category: 'Red wine' | 'White wine' | 'Rose wine' | 'Sparkling wine' | 'Dessert wine';
+    };
     CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-}
+      [_ in never]: never;
+    };
+  };
+};
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 

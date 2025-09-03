@@ -11,6 +11,7 @@ import { useTimer } from '@/hook/useTimer';
 import type { ReplyData } from '@/@types/global';
 import useToast from '@/hook/useToast';
 import { useKeyDown } from '@/hook/useKeyDown';
+import LikeButton from '@/component/LikeButton';
 
 interface Props {
   nickname: string;
@@ -42,6 +43,8 @@ function PostComment({
   const [comment, setComment] = useState('');
   const [editComment, setEditComment] = useState('');
   const [renderComment, setRenderComment] = useState('');
+
+  const [likesCount, setLikesCount] = useState<number>(likes ?? 0);
   const [postData, setPostData] = useState<Post[]>([]);
   const [reply, setReply] = useState(false);
 
@@ -115,9 +118,37 @@ function PostComment({
     const ok = confirm('정말 삭제하시겠습니까?');
     if (!ok) return;
 
-    const { error } = await supabase.from('reply').delete().eq('reply_id', replyId);
-    if (!error) onDelete();
-    if (error) console.error(error);
+    try {
+      // 삭제 전 해당 댓글의 post_id를 조회
+      const { data: replyRow } = await supabase
+        .from('reply')
+        .select('post_id')
+        .eq('reply_id', replyId)
+        .maybeSingle();
+      const postId = (replyRow as any)?.post_id;
+
+
+      const { error } = await supabase.from('reply').delete().eq('reply_id', replyId);
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      // posts.reply_count 감소 (최소 0 보정)
+      if (postId) {
+        try {
+          const { data: postRow } = await supabase.from('posts').select('reply_count').eq('post_id', postId).maybeSingle();
+          const current = (postRow as any)?.reply_count ?? 0;
+          await supabase.from('posts').update({ reply_count: Math.max(0, current - 1) }).eq('post_id', postId);
+        } catch (e) {
+          console.error('[PostComment] reply_count decrement error', e);
+        }
+      }
+
+      onDelete();
+    } catch (e) {
+      console.error('[PostComment] delete error', e);
+    }
   };
 
   //대댓글삭제
@@ -137,7 +168,7 @@ function PostComment({
   // 댓글 기능
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (editComment.trim() === '') {
+    if (comment.trim() === '') {
       useToast('error', '최소 한글자 이상 입력해야합니다.');
       return;
     }
@@ -156,16 +187,16 @@ function PostComment({
       })
       .select(
         `
-       reply_id,
-       content,
-       created_at,
-       user_id,
-       parent_id,
-       profile:profile(
-         nickname,
-         profile_image_url
-       )
-     `
+        reply_id,
+        content,
+        created_at,
+        user_id,
+        parent_id,
+        profile:profile(
+          nickname,
+          profile_image_url
+        )
+      `
       )
       .single();
 
@@ -213,10 +244,17 @@ function PostComment({
         )}
 
         <div className="flex gap-2">
-          <button className="flex gap-1 py-1 text-sm cursor-pointer">
-            <img src="/icon/like.svg" alt="좋아요" className="w-4 h-4 " />
-            <span>{likes}</span>
-          </button>
+          <LikeButton
+            itemId={replyId}
+            kind="reply"
+            initialLiked={false}
+            initialCount={likesCount}
+            ownerId={user_id}
+            className={`flex items-center gap-1`}
+            onToggle={(_liked, count) => {
+              setLikesCount(count);
+            }}
+          />
           <button className="flex gap-1 py-1 text-sm cursor-pointer" onClick={handleReply}>
             <img src="/icon/comment.svg" alt="답글" className="w-4 h-4 " />
             <span>{childrenCount}</span>

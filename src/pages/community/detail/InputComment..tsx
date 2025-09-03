@@ -1,35 +1,20 @@
 import Button from '@/component/Button';
-import { usePost } from '@/utils/supabase/fetch';
 import { useAuth } from '@/store/@store';
-import type { Tables } from '@/supabase/database.types';
 import supabase from '@/supabase/supabase';
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import type { ReplyData } from '@/@types/global';
 import useToast from '@/hook/useToast';
 import { useKeyDown } from '@/hook/useKeyDown';
 
-type Post = Tables<'posts'>;
 
 interface Props {
   setReplies: Dispatch<SetStateAction<ReplyData[]>>;
+  postId: string;
 }
 
-function InputComment({ setReplies }: Props) {
+function InputComment({ setReplies, postId }: Props) {
   const { userId } = useAuth();
-  const [postData, setPostData] = useState<Post[]>([]);
-  // post_id 넣은 state
   const [comment, setComment] = useState('');
-
-  /* 기능 확인을 위해 임시적으로 postId를 뽑아썻습니다 postId를 내려주었다면 지워주세요 */
-  useEffect(() => {
-    const fetchData = async () => {
-      const post = await usePost();
-      if (post) setPostData(post);
-    };
-    fetchData();
-  }, []);
-
-  const postId = postData.find((x) => x.post_id)?.post_id;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,27 +22,77 @@ function InputComment({ setReplies }: Props) {
       useToast('error', '로그인 후 이용해주세요');
       return;
     }
+    if (!postId) {
+      console.error('InputComment: missing postId');
+      useToast('error', '게시글 정보를 찾을 수 없습니다.');
+      return;
+    }
     if (comment.trim() === '') {
-      useToast('warn', '최소 한글자 이상 작성해야합니다');
+      useToast('warn', '최소 한글자 이상 작성해야합니다.');
       return;
     }
 
-    const { error } = await supabase.from('reply').insert({
-      user_id: userId,
-      post_id: postId ?? '',
-      content: comment.trim(),
-    });
+    const { data: inserted, error: insertError } = await supabase
+      .from('reply')
+      .insert({
+        user_id: userId,
+        post_id: postId,
+        content: comment.trim(),
+      })
+      .select(
+        `
+       reply_id,
+       content,
+       created_at,
+       user_id,
+       parent_id,
+       profile:profile(
+         nickname,
+         profile_image_url
+       )
+     `
+      )
+      .single();
 
-    if (error) console.error(error);
-    if (!error) setComment('');
+    if (insertError) {
+      console.error('insert reply error', insertError);
+      useToast('error', '댓글 등록에 실패했습니다.');
+      return;
+    }
 
-    const { data } = await supabase
+    // 댓글 카운트 증가 동기화 (posts.reply_count += 1)
+    try {
+      if (inserted && postId) {
+        const { data: postRow } = await supabase.from('posts').select('reply_count').eq('post_id', postId).maybeSingle();
+        const current = (postRow as any)?.reply_count ?? 0;
+        await supabase.from('posts').update({ reply_count: current + 1 }).eq('post_id', postId);
+      }
+    } catch (e) {
+      console.error('[InputComment] reply_count increment error', e);
+    }
+
+    // 해당 게시글의 최상위 댓글만 다시 로드 (postId 필터 적용)
+    const { data, error } = await supabase
       .from('reply')
       .select('*,profile(profile_id,nickname,profile_image_url)')
+      .eq('post_id', postId)
       .is('parent_id', null)
       .order('created_at', { ascending: false });
 
-    if (data) setReplies(data);
+    if (error) {
+      console.error('fetch replies error', error);
+      // 성공적으로 insert는 되었으니 화면에 바로 반영 (prepend) 처리
+      if (inserted) {
+        setReplies((prev) => [inserted as ReplyData, ...prev]);
+        setComment('');
+      }
+      return;
+    }
+
+    if (data) {
+      setReplies(data as ReplyData[]);
+      setComment('');
+    }
   };
 
   return (
@@ -78,8 +113,6 @@ function InputComment({ setReplies }: Props) {
           disabled
           className="block w-5/6 rounded border border-gray-800 p-3 resize-none focus:outline-none focus:ring-2 focus:ring-primary-400"
           placeholder="로그인 후 이용해주세요."
-          onChange={(e) => setComment(e.target.value)}
-          onKeyDown={(e) => useKeyDown(e)}
           value={comment}
           rows={1}
         />

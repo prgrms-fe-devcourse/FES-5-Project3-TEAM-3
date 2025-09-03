@@ -1,8 +1,9 @@
 import TextEditor from '@/component/community/TextEditor';
 import TagInput from '@/component/TagInput';
 import { useCommunityForm } from '@/hook/community/useCommunityForm';
+import { useNavigate } from 'react-router';
 
-function LeftContent() {
+function LeftContent({ onSave }: { onSave?: () => Promise<void> | void }) {
   const {
     // form state / actions
     category,
@@ -24,6 +25,8 @@ function LeftContent() {
     handleSave,
     preventFormSubmit,
   } = useCommunityForm();
+
+  const navigate = useNavigate();
 
   return (
     <div className="col-span-12 lg:col-span-6 gap-10">
@@ -81,7 +84,14 @@ function LeftContent() {
         </button>
         <button
           type="button"
-          onClick={handleSave}
+          onClick={async () => {
+            if (typeof onSave === 'function') {
+              await onSave();
+              return;
+            }
+            await handleSave();
+            navigate('/community');
+          }}
           disabled={isSaving}
           className="px-6 py-2 rounded-xl bg-primary-400 text-white text-sm shadow-sm hover:bg-primary-600 disabled:opacity-60"
         >

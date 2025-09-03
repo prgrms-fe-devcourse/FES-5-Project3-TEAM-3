@@ -1,36 +1,92 @@
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router';
 import InputComment from './InputComment.';
 import PostComment from './PostComment';
-import { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 import type { ReplyData } from '@/@types/global';
+import type { PostWithProfile } from '@/supabase/community/communityService';
+import LikeButton from '@/component/LikeButton';
+import { useTimer } from '@/hook/useTimer';
+import useToast from '@/hook/useToast';
+import { useIsMine } from '@/hook/useIsMine';
 
 function CommunityDetail() {
+  const { postId } = useParams<{ postId: string }>();
+  const navigate = useNavigate();
+  const [post, setPost] = useState<PostWithProfile | null>(null);
   const [replies, setReplies] = useState<ReplyData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const time = useTimer(post?.created_at ?? '');
+  const isMine = useIsMine(post?.user_id ?? '');
+  const category = post?.post_category ?? 'free';
+
+  // 포스트 좋아요 카운트 로컬 상태
+  const [likesCount, setLikesCount] = useState<number>(post?.like_count ?? 0);
+
+  // post가 변경되면 likesCount 동기화
+  useEffect(() => {
+    setLikesCount(post?.like_count ?? 0);
+  }, [post?.like_count]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { data, error } = await supabase
-        .from('reply')
-        .select('*,profile(profile_id,nickname,profile_image_url)')
-        .is('parent_id', null)
-        .order('created_at', { ascending: false });
-      if (error) {
-        console.log(error);
-        return;
-      }
-      if (data) setReplies(data);
-    };
-    fetchData();
-  }, []);
+    if (!postId) return;
+    let mounted = true;
 
-  /* 
-    - post_id eq로 붙여야합니다
-    - 의존성배열에 post_id로 붙여야합니다
-  */
+    const fetchPostAndReplies = async () => {
+      setLoading(true);
+      try {
+        // 게시글 상세 조회 (작성자 프로필 포함)
+        const { data: postData, error: postError } = await supabase
+          .from('posts')
+          .select('*, profile(nickname, profile_image_url)')
+          .eq('post_id', postId)
+          .maybeSingle();
+
+        if (postError) {
+          console.error('fetch post error', postError);
+        } else if (mounted) {
+          setPost(postData as PostWithProfile | null);
+        }
+
+        // 댓글 조회: 해당 post_id의 최상위 댓글만(대댓글은 PostComment 내부에서 처리)
+        const { data: replyData, error: replyError } = await supabase
+          .from('reply')
+          .select('*, profile(profile_id,nickname,profile_image_url)')
+          .eq('post_id', postId)
+          .is('parent_id', null)
+          .order('created_at', { ascending: false });
+
+        if (replyError) {
+          console.error('fetch replies error', replyError);
+        } else if (mounted) {
+          setReplies((replyData ?? []) as ReplyData[]);
+        }
+      } catch (err) {
+        console.error('fetch detail caught', err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchPostAndReplies();
+    return () => {
+      mounted = false;
+    };
+  }, [postId]);
 
   const handleDelete = (targetId: string) => {
     setReplies((prev) => prev.filter((c) => c.reply_id !== targetId));
   };
+
+  if (!postId) return;
+
+    const categoryStyle =
+      category === 'review'
+        ? { background: '#E6F7EE', color: '#0F9D58' }
+        : category === 'question'
+          ? { background: '#EEF2FF', color: '#2B6CB0' }
+          : { background: '#FFF1F0', color: '#B91C1C' };
+
 
   return (
     <div className="min-h-full">
@@ -38,91 +94,152 @@ function CommunityDetail() {
         <div className="space-y-6">
           <article className="bg-white p-6 rounded-lg shadow-sm">
             <header className="mb-4">
-              {/* 게시글 제목 */}
-              <h1 className="text-2xl font-semibold text-gray-900">게시글 제목 예시</h1>
+              <div className="flex items-center justify-between">
+                <div className='flex gap-3'>
+                  <h1 className="text-2xl font-semibold text-gray-900">
+                    {loading ? '로딩 중...' : (post?.title ?? '제목 없음')}
+                  </h1>
+                  <span className='px-2 py-1 rounded-md text-[16px] font-medium' style={categoryStyle}>
+                    {category === 'review' ? '리뷰' : category === 'question' ? '질문' : '자유'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate('/community')}
+                  className="ml-4 px-3 py-1 rounded-md border text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                >
+                  목록으로
+                </button>
+              </div>
               <div className="mt-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  {/* 작성자 정보 */}
                   <img
-                    src="/images/avatar-placeholder.png"
+                    src={post?.profile?.profile_image_url ?? '/images/avatar-placeholder.png'}
                     alt="작성자"
                     className="w-10 h-10 rounded-full object-cover"
                   />
-                  <div className="text-sm">
-                    <p className="font-medium text-gray-800">이순신</p>
-                    <p className="text-xs text-gray-400">2025-08-28 · 좋아요 10</p>
+                  <div className="flex gap-2 text-sm">
+                    <p className="font-medium text-gray-800">
+                      {post?.profile?.nickname ?? '작성자'}
+                    </p>
+                    <p className="text-gray-500">{time}</p>
                   </div>
-                </div>
 
-                {/*
-                  <div className="flex items-center gap-2">
-                    <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
-                      수정
-                    </button>
-                    <button className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700">
-                      삭제
-                    </button>
-                  </div> */}
+                  {/* 작성자일 경우 수정/삭제 버튼 */}
+                  {isMine && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // edit 모드로 CommunityWrite 이동, post 전체를 state로 전달
+                          navigate('/community/write', { state: { mode: 'edit', post } });
+                        }}
+                      >
+                        <img
+                          src="/icon/modify.svg"
+                          alt="수정하기"
+                          className="w-5 h-5 cursor-pointer"
+                        />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (!postId) return;
+                          const ok = confirm('정말 게시글을 삭제하시겠습니까?');
+                          if (!ok) return;
+                          try {
+                            const { error } = await supabase
+                              .from('posts')
+                              .delete()
+                              .eq('post_id', postId);
+                            if (error) throw error;
+                            useToast('success', '삭제되었습니다.');
+                            navigate('/community');
+                          } catch (e) {
+                            console.error('[CommunityDetail] delete error', e);
+                            useToast('error', '삭제에 실패했습니다.');
+                          }
+                        }}
+                      >
+                        <img
+                          src="/icon/delete.svg"
+                          alt="삭제하기"
+                          className="w-5 h-5 cursor-pointer"
+                        />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </header>
 
-            {/* 게시글 본문 */}
             <div className="px-13 max-w-none text-gray-800">
-              <p>여기에는 게시글 본문이 들어갑니다. 텍스트, 이미지 등</p>
-              <figure>
-                <img
-                  src="/images/content-placeholder.jpg"
-                  alt="대충 이미지 들어갈 자리"
-                  className="rounded"
+              {/* 본문(이미 HTML로 저장된 경우) */}
+              {post?.content ? (
+                <div
+                  className="prose max-w-none"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
                 />
-              </figure>
+              ) : (
+                <p>본문이 없습니다.</p>
+              )}
             </div>
-            {/* 게시글 태그 및 좋아요(하단) */}
+
             <footer className="px-12 mt-4 flex items-center justify-between">
               <div className="flex gap-2">
-                <span className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary-400 text-sm text-primary-400 bg-white shadow-sm">
-                  와인 최고
-                </span>
-
-                <span className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary-400 text-sm text-primary-400 bg-white shadow-sm">
-                  대충 와인 좋다고 하는 태그
-                </span>
+                {Array.isArray((post as any)?.hashtag_list) &&
+                  (post as any).hashtag_list.map((t: string) => (
+                    <span
+                      key={t}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary-400 text-sm text-primary-400 bg-white shadow-sm"
+                    >
+                      # {t}
+                    </span>
+                  ))}
               </div>
-              <button className="flex gap-2 py-1 text-sm cursor-pointer">
-                <img src="/icon/like.svg" alt="좋아요" />
-                <span className="mt-2">10</span>
-              </button>
+
+              <LikeButton
+                itemId={postId ?? ''}
+                kind="post"
+                initialLiked={false}
+                initialCount={likesCount}
+                ownerId={post?.user_id ?? null}
+                className="flex items-center gap-1 cursor-pointer"
+                onToggle={(_liked, count) => {
+                  setLikesCount(count);
+                  // 로컬 post 객체에도 동기화
+                  setPost((p) => (p ? { ...p, like_count: count } : p));
+                }}
+              />
             </footer>
           </article>
 
           {/* 댓글 작성 폼 */}
           <section className="bg-white p-6 rounded-lg shadow-sm">
             <div className="mb-6">
-              <InputComment setReplies={setReplies} />
+              <InputComment setReplies={setReplies} postId={postId} />
             </div>
 
             {/* 댓글 목록 */}
             <ul className="space-y-4">
-              {replies.map(
-                ({ parent_id, user_id, reply_id, profile, content, created_at, like_count }) => {
-                  const nickname = profile.nickname;
-                  const avatar = profile.profile_image_url;
-                  return (
-                    <PostComment
-                      key={reply_id}
-                      content={content}
-                      likes={like_count}
-                      replyId={reply_id}
-                      user_id={user_id}
-                      parent_id={parent_id}
-                      nickname={nickname}
-                      profileImage={avatar}
-                      created_at={created_at}
-                      onDelete={() => handleDelete(reply_id)}
-                    />
-                  );
-                }
-              )}
+              {replies.map((r) => {
+                const nickname = r.profile?.nickname;
+                const avatar = r.profile?.profile_image_url;
+                return (
+                  <PostComment
+                    key={r.reply_id}
+                    content={r.content}
+                    likes={r.like_count}
+                    replyId={r.reply_id}
+                    user_id={r.user_id}
+                    parent_id={r.parent_id}
+                    nickname={nickname}
+                    profileImage={avatar}
+                    created_at={r.created_at}
+                    onDelete={() => handleDelete(r.reply_id)}
+                  />
+                );
+              })}
             </ul>
           </section>
         </div>
