@@ -6,7 +6,6 @@ import type { ReplyData } from '@/@types/global';
 import useToast from '@/hook/useToast';
 import { useKeyDown } from '@/hook/useKeyDown';
 
-
 interface Props {
   setReplies: Dispatch<SetStateAction<ReplyData[]>>;
   postId: string;
@@ -63,9 +62,16 @@ function InputComment({ setReplies, postId }: Props) {
     // 댓글 카운트 증가 동기화 (posts.reply_count += 1)
     try {
       if (inserted && postId) {
-        const { data: postRow } = await supabase.from('posts').select('reply_count').eq('post_id', postId).maybeSingle();
+        const { data: postRow } = await supabase
+          .from('posts')
+          .select('reply_count')
+          .eq('post_id', postId)
+          .maybeSingle();
         const current = (postRow as any)?.reply_count ?? 0;
-        await supabase.from('posts').update({ reply_count: current + 1 }).eq('post_id', postId);
+        await supabase
+          .from('posts')
+          .update({ reply_count: current + 1 })
+          .eq('post_id', postId);
       }
     } catch (e) {
       console.error('[InputComment] reply_count increment error', e);

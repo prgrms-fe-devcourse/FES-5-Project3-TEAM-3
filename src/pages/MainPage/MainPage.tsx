@@ -8,6 +8,8 @@ import SkeletonMainPage from './skeleton/SkeletonMainPage';
 import { Await, useLoaderData } from 'react-router';
 import type { Tables } from '@/supabase/database.types';
 import Card from '../community/Main/Card';
+import AnimatedPost from '@/component/MainPage/AnimatedPost';
+import ScrollToTopButton from '@/component/community/ScrollToTopButton';
 
 type Review = Tables<'reviews'>;
 type Wine = Tables<'wines'>;
@@ -68,23 +70,26 @@ function MainPage() {
   const wines = winesArr;
   const { nickname, postData, collectionData } = useLoaderData() as LoaderData;
 
-
   return (
     <main>
       <section className="relative">
-        <img
-          className="block w-screen h-screen"
-          src="/image/HeroImg.png"
-          alt="와인과 석류 이미지"
-        />
-        <h2 className="absolute left-85.5 bottom-38 text-primary-100 text-[108px]">
-          <img src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
+        <picture>
+          <source media="(min-width:1024px)" srcSet="/image/HeroImg.png" />
+
+          <img
+            src="/image/mobileHeroImg.png"
+            alt="와인과 석류 이미지"
+            className="w-full h-100 object-cover lg:w-screen lg:h-screen"
+          />
+        </picture>
+        <h2 className="absolute left-5 bottom-10 lg:left-20 lg:bottom-38  xl:absolute xl:left-85.5 xl:bottom-38 text-primary-100 text-[108px]">
+          <img className="w-150" src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
         </h2>
       </section>
       <Suspense fallback={<SkeletonMainPage />}>
         <Await resolve={Promise.all([nickname, postData, collectionData])}>
           <section className="bg-radial from-background-base from-60% to-secondary-300 to-100% flex justify-center">
-            <div className="grid grid-rows-3 grid-cols-3 gap-5 py-34.75">
+            <div className="grid grid-rows-3 grid-cols-3  gap-5  py-34.75">
               {wines &&
                 wines.map(({ id, src, alt, title, text }) => (
                   <WineGrid key={id} src={src} alt={alt} title={title} text={text} />
@@ -101,13 +106,18 @@ function MainPage() {
               <img src="image/Trending posts.png" alt="trending posts" />
             </h3>
 
-            <div className="mx-90 w-310 h-90 flex gap-3">
-              {postData.map((post) => (
-                <Card post={post} key={post.post_id} />
-              ))}
-              <ShowMoreBtn />
+            <div className="flex gap-3 w-full justify-center">
+              <AnimatedPost>
+                {postData.map((post) => (
+                  <div key={post.post_id} className="post-card will-change-transform  w-90">
+                    <Card post={post} />
+                  </div>
+                ))}
+                <ShowMoreBtn />
+              </AnimatedPost>
             </div>
           </section>
+          <ScrollToTopButton className="cursor-pointer right-0 lg:mr-23" />
         </Await>
       </Suspense>
     </main>

@@ -22,9 +22,17 @@ export default function useEditPost() {
         title: editPost.title ?? '',
         body: editPost.content ?? '',
         tagInput: '',
-        tags: Array.isArray(editPost.hashtag_list) ? editPost.hashtag_list : (editPost.hashtag_list ? editPost.hashtag_list : []),
+        tags: Array.isArray(editPost.hashtag_list)
+          ? editPost.hashtag_list
+          : editPost.hashtag_list
+            ? editPost.hashtag_list
+            : [],
         imageFiles: [],
-        imageUrls: Array.isArray(editPost.image_url) ? editPost.image_url : (editPost.image_url ? [editPost.image_url] : []),
+        imageUrls: Array.isArray(editPost.image_url)
+          ? editPost.image_url
+          : editPost.image_url
+            ? [editPost.image_url]
+            : [],
         imageNames: [],
         primaryIdx: 0,
         previewIndex: 0,
@@ -49,7 +57,12 @@ export default function useEditPost() {
         payload.thumbnail_image = store.imageUrls[store.primaryIdx ?? 0] ?? store.imageUrls[0];
       }
 
-      const { error } = await supabase.from('posts').update(payload).eq('post_id', editPost.post_id).select().single();
+      const { error } = await supabase
+        .from('posts')
+        .update(payload)
+        .eq('post_id', editPost.post_id)
+        .select()
+        .single();
       if (error) {
         console.error('[useEditPost] update error', error);
         toast('error', '수정에 실패했습니다.');

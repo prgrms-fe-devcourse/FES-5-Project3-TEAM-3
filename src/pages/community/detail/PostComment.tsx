@@ -127,7 +127,6 @@ function PostComment({
         .maybeSingle();
       const postId = (replyRow as any)?.post_id;
 
-
       const { error } = await supabase.from('reply').delete().eq('reply_id', replyId);
       if (error) {
         console.error(error);
@@ -137,9 +136,16 @@ function PostComment({
       // posts.reply_count 감소 (최소 0 보정)
       if (postId) {
         try {
-          const { data: postRow } = await supabase.from('posts').select('reply_count').eq('post_id', postId).maybeSingle();
+          const { data: postRow } = await supabase
+            .from('posts')
+            .select('reply_count')
+            .eq('post_id', postId)
+            .maybeSingle();
           const current = (postRow as any)?.reply_count ?? 0;
-          await supabase.from('posts').update({ reply_count: Math.max(0, current - 1) }).eq('post_id', postId);
+          await supabase
+            .from('posts')
+            .update({ reply_count: Math.max(0, current - 1) })
+            .eq('post_id', postId);
         } catch (e) {
           console.error('[PostComment] reply_count decrement error', e);
         }

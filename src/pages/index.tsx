@@ -5,7 +5,7 @@ import { Outlet } from 'react-router';
 
 function Root() {
   return (
-    <div className="flex flex-col max-w-screen h-screen">
+    <div className="flex flex-col max-w-screen max-h-screen">
       <ScrollToTop />
       <header>
         <Header />

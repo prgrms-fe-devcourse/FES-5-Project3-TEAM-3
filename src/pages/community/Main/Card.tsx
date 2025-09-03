@@ -11,7 +11,8 @@ export type ProfileJoined = {
 export type PostWithProfile = PostRow & { profile?: ProfileJoined | null };
 
 export default function Card({ post }: { post?: PostWithProfile }) {
-  const rawImg = post?.thumbnail_image ?? (Array.isArray(post?.image_url) ? post?.image_url?.[0] : undefined);
+  const rawImg =
+    post?.thumbnail_image ?? (Array.isArray(post?.image_url) ? post?.image_url?.[0] : undefined);
   const img = typeof rawImg === 'string' && rawImg.trim() !== '' ? rawImg : null;
   const category = post?.post_category ?? 'free';
   const replies = post?.reply_count ?? 0;
@@ -31,7 +32,7 @@ export default function Card({ post }: { post?: PostWithProfile }) {
   const avatarUrl = post?.profile?.profile_image_url ?? null;
 
   return (
-    <article className="bg-white flex-1 rounded-2xl shadow-md overflow-hidden flex flex-col">
+    <article className="bg-white flex-1 rounded-2xl h-90 shadow-md overflow-hidden flex flex-col">
       <Link to={`/community/detail/${post?.post_id ?? ''}`} className="flex flex-col h-full">
         <div className="w-full h-44 bg-gray-100 overflow-hidden">
           {img ? (

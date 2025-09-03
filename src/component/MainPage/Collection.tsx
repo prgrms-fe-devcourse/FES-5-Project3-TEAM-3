@@ -93,8 +93,8 @@ export default function Collection({ collection }: { collection: Collection[] })
 
   const total = collection.length;
   const stickyDurationVH = total * 100;
-  const vip = collection.map((a) => a.profile?.nickname)[0] ?? 'Winepedia 회원'
- 
+  const vip = collection.map((a) => a.profile?.nickname)[0] ?? 'Winepedia 회원';
+
   return (
     <section>
       <div ref={wrapperRef} className="relative" style={{ height: `calc(${stickyDurationVH}vh)` }}>
@@ -123,16 +123,15 @@ export default function Collection({ collection }: { collection: Collection[] })
               alt="유저의 와인셀러"
               className="absolute inset-0 w-full h-full object-cover -z-10"
             />
-            
+
             <div className="absolute inset-0 z-10 grid grid-cols-2 gap-94 max-w-6xl mx-auto px-6 py-8">
               <div className="text-white flex flex-col mt-30">
                 <h3 className="text-[108px] leading-none">
                   <img src="image/User Collection.png" alt="유저컬렉션" />
                 </h3>
                 <p className="mt-4">
-                  {vip}님의 와인셀러를 구경해보세요 <br /> 당신의 와인생활이 더 풍성해 질 수 있습니다
+                  {vip}님의 셀러가 전하는 영감, <br /> 당신의 순간을 더욱 특별하게.
                 </p>
-                
               </div>
 
               <div className="h-full min-h-0 will-change-transform">
