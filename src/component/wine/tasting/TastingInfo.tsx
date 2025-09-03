@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import TastingGraph from './TastingGraph';
 
 interface TastingInfoProps {
@@ -10,6 +11,7 @@ interface TastingInfoProps {
   style: 'review' | 'info';
   type?: 'readonly' | 'select';
   className?: string;
+  gap?: string;
 }
 
 function TastingInfo({
@@ -17,11 +19,15 @@ function TastingInfo({
   style,
   type = 'readonly',
   className,
+  gap,
 }: TastingInfoProps) {
   const { sweetness, acidic, tannic, body } = tasting;
   return (
     <ul
-      className={`flex flex-col ${type === 'select' ? 'gap-3' : 'gap-1'} mb-4 font-normal text-text-secondary`}
+      className={clsx(
+        `flex flex-col ${type === 'select' ? 'gap-3' : 'gap-1'} mb-4 font-normal text-text-secondary`,
+        gap
+      )}
     >
       <TastingGraph
         name="당도"
