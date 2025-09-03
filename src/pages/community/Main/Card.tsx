@@ -32,7 +32,7 @@ export default function Card({ post }: { post?: PostWithProfile }) {
   const avatarUrl = post?.profile?.profile_image_url ?? null;
 
   return (
-    <article className="bg-white flex-1 rounded-2xl shadow-md overflow-hidden flex flex-col">
+    <article className="bg-white flex-1 rounded-2xl h-90 shadow-md overflow-hidden flex flex-col">
       <Link to={`/community/detail/${post?.post_id ?? ''}`} className="flex flex-col h-full">
         <div className="w-full h-44 bg-gray-100 overflow-hidden">
           {img ? (

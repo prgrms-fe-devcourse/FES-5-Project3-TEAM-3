@@ -89,7 +89,7 @@ function MainPage() {
       <Suspense fallback={<SkeletonMainPage />}>
         <Await resolve={Promise.all([nickname, postData, collectionData])}>
           <section className="bg-radial from-background-base from-60% to-secondary-300 to-100% flex justify-center">
-            <div className="grid grid-rows-3 grid-cols-3 gap-5 py-34.75">
+            <div className="grid grid-rows-3 grid-cols-3  gap-5  py-34.75">
               {wines &&
                 wines.map(({ id, src, alt, title, text }) => (
                   <WineGrid key={id} src={src} alt={alt} title={title} text={text} />
@@ -109,7 +109,7 @@ function MainPage() {
             <div className="flex gap-3 w-full justify-center">
               <AnimatedPost>
                 {postData.map((post) => (
-                  <div key={post.post_id} className="post-card will-change-transform w-90">
+                  <div key={post.post_id} className="post-card will-change-transform  w-90">
                     <Card post={post} />
                   </div>
                 ))}
