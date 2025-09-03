@@ -10,7 +10,12 @@ function SearchResult() {
   const keyword = params.get('keyword');
   const filterWine = filtered(keyword ?? '');
   const [page, _setPage] = useState(1);
-
+  const cardPerPage = 20
+  const maxPage = Math.ceil(filterWine.length / cardPerPage);
+  const startIndex = (page - 1) * cardPerPage;
+  const endIndex = (startIndex + cardPerPage)
+  const pagenatedItem = filterWine.slice(startIndex,endIndex)
+  
   return (
     <div className="min-h-screen w-249 mx-auto mt-8  items-center flex flex-col flex-1">
       <MainSearchBar />
@@ -21,7 +26,7 @@ function SearchResult() {
         <div className="flex flex-col gap-10">
           <section className="mt-8 grid grid-cols-4 gap-8">
             {filterWine.length > 0 ? (
-              filterWine.map((item) => (
+              pagenatedItem.map((item) => (
                 <Items
                   key={item.wine_id}
                   image={item.image_url[0]}
@@ -36,7 +41,7 @@ function SearchResult() {
               </div>
             )}
           </section>
-          <Pagination page={page} totalPages={5} size="md" />
+          <Pagination page={page} totalPages={maxPage} size="md" />
         </div>
       </div>
     </div>

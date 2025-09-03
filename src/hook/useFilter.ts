@@ -49,7 +49,6 @@ export const filtered = (keyword: string) => {
 
   const matchTags = hash.filter((a) => a.tag_text.includes(k)).map((a) => a.wines)
 
-  console.log(matchTags)
 
   const pairingCategory = foods.filter((a) => a.pairing_category?.toLowerCase().includes(k)).map((a) => a.wines)
 

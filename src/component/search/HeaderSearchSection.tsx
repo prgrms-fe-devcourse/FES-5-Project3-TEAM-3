@@ -103,7 +103,6 @@ function HeaderSearchSection({ searchBar, setOverlay }: Props) {
       >
         <div className="h-124 flex flex-col mx-auto mt-8 gap-7 w-249">
           <MainSearchBar setReseach={setRecentSearch} />
-          {/* 검색 value를 어떻게 전달하지? */}
           <div className="flex flex-col gap-7 items-start">
             <div className="flex flex-col flex-wrap gap-4">
               <h2>#최근 검색어</h2>
