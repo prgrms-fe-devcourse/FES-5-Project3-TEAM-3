@@ -5,7 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 type Props = {
-  children: React.ReactNode; 
+  children: React.ReactNode;
 };
 
 export default function AnimatedPost({ children }: Props) {
@@ -16,12 +16,10 @@ export default function AnimatedPost({ children }: Props) {
     if (!el) return;
 
     const ctx = gsap.context(() => {
-      
       const cards = gsap.utils.toArray<HTMLElement>('.post-card');
 
       if (!cards.length) return;
 
-     
       cards.sort((a, b) => a.offsetLeft - b.offsetLeft);
 
       gsap.fromTo(
@@ -38,8 +36,7 @@ export default function AnimatedPost({ children }: Props) {
             trigger: el,
             start: 'top 80%',
             end: 'bottom 40%',
-            once: true, 
-          
+            once: true,
           },
         }
       );
@@ -48,7 +45,7 @@ export default function AnimatedPost({ children }: Props) {
     }, wrapRef);
 
     return () => ctx.revert();
-  }, [children]); 
+  }, [children]);
 
   return (
     <div ref={wrapRef} className="mx-90 w-310 h-90 flex gap-3">

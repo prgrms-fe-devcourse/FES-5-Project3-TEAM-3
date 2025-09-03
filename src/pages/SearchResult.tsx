@@ -1,28 +1,22 @@
 import Items from '@/component/search/Items';
 import MainSearchBar from '@/component/MainPage/MainSearchBar';
-import {  useSearchParams} from 'react-router';
+import { useSearchParams } from 'react-router';
 import { filtered } from '@/hook/useFilter';
-import {  useState } from 'react';
+import { useState } from 'react';
 import Pagination from '@/component/Pagination';
 import SkeletonItem from '@/component/search/skeleton/SkeletonItem';
-
-
-
 
 function SearchResult() {
   const [params] = useSearchParams();
   const keyword = params.get('keyword');
   const filterWine = filtered(keyword ?? '');
   const [page, setPage] = useState(1);
-  const cardPerPage = 16
+  const cardPerPage = 16;
   const maxPage = Math.ceil(filterWine.length / cardPerPage);
   const startIndex = (page - 1) * cardPerPage;
-  const endIndex = (startIndex + cardPerPage)
-  const pagenatedItem = filterWine.slice(startIndex, endIndex)
+  const endIndex = startIndex + cardPerPage;
+  const pagenatedItem = filterWine.slice(startIndex, endIndex);
 
-
-
-  
   return (
     <div className="min-h-screen w-249 mx-auto mt-8  items-center flex flex-col flex-1">
       <MainSearchBar />
@@ -57,4 +51,3 @@ function SearchResult() {
   );
 }
 export default SearchResult;
-

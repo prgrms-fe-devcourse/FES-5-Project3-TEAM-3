@@ -80,13 +80,12 @@ function CommunityDetail() {
 
   if (!postId) return;
 
-    const categoryStyle =
-      category === 'review'
-        ? { background: '#E6F7EE', color: '#0F9D58' }
-        : category === 'question'
-          ? { background: '#EEF2FF', color: '#2B6CB0' }
-          : { background: '#FFF1F0', color: '#B91C1C' };
-
+  const categoryStyle =
+    category === 'review'
+      ? { background: '#E6F7EE', color: '#0F9D58' }
+      : category === 'question'
+        ? { background: '#EEF2FF', color: '#2B6CB0' }
+        : { background: '#FFF1F0', color: '#B91C1C' };
 
   return (
     <div className="min-h-full">
@@ -95,11 +94,14 @@ function CommunityDetail() {
           <article className="bg-white p-6 rounded-lg shadow-sm">
             <header className="mb-4">
               <div className="flex items-center justify-between">
-                <div className='flex gap-3'>
+                <div className="flex gap-3">
                   <h1 className="text-2xl font-semibold text-gray-900">
                     {loading ? '로딩 중...' : (post?.title ?? '제목 없음')}
                   </h1>
-                  <span className='px-2 py-1 rounded-md text-[16px] font-medium' style={categoryStyle}>
+                  <span
+                    className="px-2 py-1 rounded-md text-[16px] font-medium"
+                    style={categoryStyle}
+                  >
                     {category === 'review' ? '리뷰' : category === 'question' ? '질문' : '자유'}
                   </span>
                 </div>

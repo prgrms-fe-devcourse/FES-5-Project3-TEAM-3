@@ -12,7 +12,6 @@ export default function SearchResultSkeleton() {
       aria-busy="true"
       aria-live="polite"
     >
-
       <div className="w-300 flex flex-col mt-10">
         {/* 상단 카운트 바 */}
         <div className="w-full border-b pb-3">
@@ -26,7 +25,6 @@ export default function SearchResultSkeleton() {
               <SkeletonItem key={i} />
             ))}
           </section>
-
         </div>
       </div>
     </div>

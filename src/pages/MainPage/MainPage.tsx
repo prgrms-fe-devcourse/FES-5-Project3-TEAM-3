@@ -3,7 +3,7 @@ import ShowMoreBtn from '@/component/MainPage/ShowMoreBtn';
 import Collection from '@/component/MainPage/Collection';
 import { winesArr } from '@/assets/staticArr';
 import supabase from '@/supabase/supabase';
-import { Suspense} from 'react';
+import { Suspense } from 'react';
 import SkeletonMainPage from './skeleton/SkeletonMainPage';
 import { Await, useLoaderData } from 'react-router';
 import type { Tables } from '@/supabase/database.types';
@@ -69,8 +69,6 @@ function MainPage() {
   const wines = winesArr;
   const { nickname, postData, collectionData } = useLoaderData() as LoaderData;
 
-
-
   return (
     <main>
       <section className="relative">
@@ -107,7 +105,7 @@ function MainPage() {
               <AnimatedPost>
                 {postData.map((post) => (
                   <div key={post.post_id} className="post-card will-change-transform w-90">
-                    <Card post={post}/>
+                    <Card post={post} />
                   </div>
                 ))}
                 <ShowMoreBtn />

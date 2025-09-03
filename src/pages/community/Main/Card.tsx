@@ -11,7 +11,8 @@ type ProfileJoined = {
 type PostWithProfile = PostRow & { profile?: ProfileJoined | null };
 
 export default function Card({ post }: { post?: PostWithProfile }) {
-  const rawImg = post?.thumbnail_image ?? (Array.isArray(post?.image_url) ? post?.image_url?.[0] : undefined);
+  const rawImg =
+    post?.thumbnail_image ?? (Array.isArray(post?.image_url) ? post?.image_url?.[0] : undefined);
   const img = typeof rawImg === 'string' && rawImg.trim() !== '' ? rawImg : null;
   const category = post?.post_category ?? 'free';
   const replies = post?.reply_count ?? 0;
