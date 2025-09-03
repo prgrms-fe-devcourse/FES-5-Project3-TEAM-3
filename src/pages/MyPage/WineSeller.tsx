@@ -19,11 +19,12 @@ function WineSeller() {
   const [page, setPage] = useState(1);
   const { data, loading, error, totalPages } = useMyReviews(page, PAGE_SIZE, true);
 
-  const subtitle = profileLoading
-    ? '불러오는 중...'
-    : data.length > 0
-      ? `${displayName} 님께서 기록하신 와인 리스트입니다.`
-      : '아직 작성한 리뷰가 없습니다.';
+  const subtitle =
+    profileLoading || loading
+      ? '불러오는 중...'
+      : !loading && data.length > 0
+        ? `${displayName} 님께서 기록하신 와인 리스트입니다.`
+        : '아직 작성한 리뷰가 없습니다.';
 
   const isLastPage = page === totalPages;
   const showAddCard = !loading && isLastPage;
@@ -69,7 +70,7 @@ function WineSeller() {
         <h3 className="w-full inline-flex flex-col justify-start items-start font-light text-text-secondary">
           {subtitle}
         </h3>
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{cards}</div>
+        <div className="grid px-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{cards}</div>
         <Pagination
           page={page}
           onPageChange={setPage}
