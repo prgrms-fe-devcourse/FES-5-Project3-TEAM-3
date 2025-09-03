@@ -746,6 +746,13 @@ export type Database = {
         }[];
       };
       toggle_review_like: {
+        Args: { p_review_id: string; p_user_id: string };
+        Returns: {
+          action: string;
+          count: number;
+        }[];
+      };
+      toggle_reply_like: {
         Args: { r_reply_id: string; r_user_id: string };
         Returns: {
           action: string;
