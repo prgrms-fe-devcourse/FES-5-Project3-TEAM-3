@@ -4,17 +4,15 @@ import type { Swiper as SwiperType } from 'swiper';
 import { Pagination } from 'swiper/modules';
 import UserCollection from './UserCollection';
 import VerticalPagination from './MainPagination';
-
-type Item = {
-  id: number;
-  src: string;
-  icon: string;
-  title: string;
-  content: string;
-  price: string;
+import type { Tables } from '@/supabase/database.types';
+type Review = Tables<'reviews'>;
+type Wine = Tables<'wines'>;
+type Collection = Review & {
+  profile: Pick<Tables<'profile'>, 'nickname'> | null;
+  wines: Wine | null;
 };
 
-export default function Collection({ collection }: { collection: Item[] }) {
+export default function Collection({ collection }: { collection: Collection[] }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -95,7 +93,8 @@ export default function Collection({ collection }: { collection: Item[] }) {
 
   const total = collection.length;
   const stickyDurationVH = total * 100;
-
+  const vip = collection.map((a) => a.profile?.nickname)[0] ?? 'Winepedia 회원'
+ 
   return (
     <section>
       <div ref={wrapperRef} className="relative" style={{ height: `calc(${stickyDurationVH}vh)` }}>
@@ -124,16 +123,16 @@ export default function Collection({ collection }: { collection: Item[] }) {
               alt="유저의 와인셀러"
               className="absolute inset-0 w-full h-full object-cover -z-10"
             />
-
+            
             <div className="absolute inset-0 z-10 grid grid-cols-2 gap-94 max-w-6xl mx-auto px-6 py-8">
               <div className="text-white flex flex-col mt-30">
                 <h3 className="text-[108px] leading-none">
                   <img src="image/User Collection.png" alt="유저컬렉션" />
                 </h3>
                 <p className="mt-4">
-                  Winepedia의 멤버들이 엄선한 와인들을 구경해보세요 <br /> 당신의 와인생활이 더
-                  풍성해 질 수 있습니다
+                  {vip}님의 와인셀러를 구경해보세요 <br /> 당신의 와인생활이 더 풍성해 질 수 있습니다
                 </p>
+                
               </div>
 
               <div className="h-full min-h-0 will-change-transform">
@@ -148,11 +147,19 @@ export default function Collection({ collection }: { collection: Item[] }) {
                   onSwiper={(sw) => (swiperRef.current = sw)}
                   className="h-full"
                 >
-                  {collection.map((item) => (
-                    <SwiperSlide key={item.id} className="h-full">
-                      <UserCollection {...item} />
-                    </SwiperSlide>
-                  ))}
+                  {collection &&
+                    collection.map((item, index) => (
+                      <SwiperSlide key={item.review_id} className="h-full">
+                        <UserCollection
+                          id={index}
+                          image={item.wines?.image_url ?? []}
+                          title={item.wines?.name ?? ''}
+                          content={item.content}
+                          icon={item.wines?.country_ko ?? ''}
+                          flavor={item.wines?.representative_flavor ?? []}
+                        />
+                      </SwiperSlide>
+                    ))}
                 </Swiper>
               </div>
             </div>
