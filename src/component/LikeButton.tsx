@@ -92,12 +92,17 @@ export default function LikeButton({
 
       try {
         if (kind === 'post') {
-          const { data, error } = await supabase.rpc('toggle_post_like', { p_post_id: itemId, p_user_id: uid });
+          const { data, error } = await supabase.rpc('toggle_post_like', {
+            p_post_id: itemId,
+            p_user_id: uid,
+          });
           if (!error && data) {
             const res = Array.isArray(data) ? (data[0] as any) : (data as any);
             if (res) {
               const newLiked = res.action === 'liked';
-              const newCount = Number(res.like_count ?? (newLiked ? count + 1 : Math.max(0, count - 1)));
+              const newCount = Number(
+                res.like_count ?? (newLiked ? count + 1 : Math.max(0, count - 1))
+              );
               setLiked(newLiked);
               setCount(newCount);
               onToggle?.(newLiked, newCount);
@@ -106,12 +111,17 @@ export default function LikeButton({
             }
           }
         } else {
-          const { data, error } = await supabase.rpc('toggle_reply_like', { r_reply_id: itemId, r_user_id: uid });
+          const { data, error } = await supabase.rpc('toggle_reply_like', {
+            r_reply_id: itemId,
+            r_user_id: uid,
+          });
           if (!error && data) {
             const res = Array.isArray(data) ? (data[0] as any) : (data as any);
             if (res) {
               const newLiked = res.action === 'liked';
-              const newCount = Number(res.like_count ?? (newLiked ? count + 1 : Math.max(0, count - 1)));
+              const newCount = Number(
+                res.like_count ?? (newLiked ? count + 1 : Math.max(0, count - 1))
+              );
               setLiked(newLiked);
               setCount(newCount);
               onToggle?.(newLiked, newCount);
@@ -120,8 +130,7 @@ export default function LikeButton({
             }
           }
         }
-      } catch {
-      }
+      } catch {}
 
       // 페일백 테이블 처리 (post_like / reply_like)
       const table = kind === 'post' ? 'post_like' : 'reply_like';
@@ -137,7 +146,10 @@ export default function LikeButton({
 
       if (!exErr && exist) {
         // 삭제 (match로 안전하게 삭제)
-        const { error: delErr } = await supabase.from(table).delete().match({ [idCol]: itemId, user_id: uid });
+        const { error: delErr } = await supabase
+          .from(table)
+          .delete()
+          .match({ [idCol]: itemId, user_id: uid });
         if (!delErr) {
           setLiked(false);
           setCount((c) => Math.max(0, c - 1));
@@ -183,7 +195,11 @@ export default function LikeButton({
       aria-pressed={liked}
       aria-busy={busy}
     >
-      <img src={liked ? '/icon/like_true.svg' : '/icon/like.svg'} alt="좋아요" className={`w-4 h-4 ${busy ? 'opacity-60' : ''}`} />
+      <img
+        src={liked ? '/icon/like_true.svg' : '/icon/like.svg'}
+        alt="좋아요"
+        className={`w-4 h-4 ${busy ? 'opacity-60' : ''}`}
+      />
       <span className="ml-1">{count}</span>
     </button>
   );

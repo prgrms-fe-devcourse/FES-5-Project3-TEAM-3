@@ -114,49 +114,72 @@ function ReviewModal({
         useToast('error', '페어링을 입력해주세요');
         return;
       }
+
       const review = {
-        wine_id: wineId,
-        rating,
-        content,
-        user_id,
-        sweetness_score: sweetness,
-        acidity_score: acidic,
-        tannin_score: tannic,
-        body_score: body,
+        p_wine_id: wineId,
+        p_rating: rating,
+        p_content: content,
+        p_user_id: user_id,
+        p_sweetness: sweetness,
+        p_acidity: acidic,
+        p_tannin: tannic,
+        p_body: body,
+        p_pairings: pairing,
+        p_tags: tag,
       };
 
-      const { data, error } = await supabase.from('reviews').insert(review).select();
-      if (error) {
-        console.error('리뷰', error);
-        return;
-      } else {
-        const { error } = await supabase
-          .from('hashtags')
-          .upsert([{ review_id: data[0].review_id, wine_id: wineId, user_id, tag_text: tag }]);
-        if (error) console.error('태그', error);
-        else {
-          const pariringObject = pairing.map((p) => {
-            const [category, value] = Object.entries(p)[0];
-            const categoryen = pairingCategory[category];
-            return {
-              review_id: data[0].review_id,
-              user_id,
-              wine_id: wineId,
-              pairing_category: categoryen,
-              pairing_name: value,
-            };
-          });
-          const { error } = await supabase.from('pairings').upsert(pariringObject);
-          if (error) console.error(error);
-          else {
-            console.log(data);
-            reset();
-            closeModal();
-            refresh();
-            return data;
-          }
-        }
-      }
+      const { data, error } = await supabase
+        .rpc('insert_review_with_tags_and_pairings', {
+          ...review,
+          p_pairings: JSON.stringify(review.p_pairings),
+        })
+        .select();
+      if (error) console.log(error);
+      else console.log('성공', data);
+
+      // const review = {
+      //   wine_id: wineId,
+      //   rating,
+      //   content,
+      //   user_id,
+      //   sweetness_score: sweetness,
+      //   acidity_score: acidic,
+      //   tannin_score: tannic,
+      //   body_score: body,
+      // };
+
+      // const { data, error } = await supabase.from('reviews').insert(review).select();
+      // if (error) {
+      //   console.error('리뷰', error);
+      //   return;
+      // } else {
+      //   const { error } = await supabase
+      //     .from('hashtags')
+      //     .upsert([{ review_id: data[0].review_id, wine_id: wineId, user_id, tag_text: tag }]);
+      //   if (error) console.error('태그', error);
+      //   else {
+      //     const pariringObject = pairing.map((p) => {
+      //       const [category, value] = Object.entries(p)[0];
+      //       const categoryen = pairingCategory[category];
+      //       return {
+      //         review_id: data[0].review_id,
+      //         user_id,
+      //         wine_id: wineId,
+      //         pairing_category: categoryen,
+      //         pairing_name: value,
+      //       };
+      //     });
+      //     const { error } = await supabase.from('pairings').upsert(pariringObject);
+      //     if (error) console.error(error);
+      //     else {
+      //       console.log(data);
+      //       reset();
+      //       closeModal();
+      //       refresh();
+      //       return data;
+      //     }
+      //   }
+      // }
     }
   };
 
