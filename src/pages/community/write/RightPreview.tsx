@@ -28,8 +28,8 @@ function RightPreview() {
     category === 'review'
       ? { background: '#E6F7EE', color: '#0F9D58' }
       : category === 'question'
-      ? { background: '#EEF2FF', color: '#2B6CB0' }
-      : { background: '#FFF1F0', color: '#B91C1C' };
+        ? { background: '#EEF2FF', color: '#2B6CB0' }
+        : { background: '#FFF1F0', color: '#B91C1C' };
 
   return (
     <aside className="col-span-6 lg:col-span-6">
@@ -86,7 +86,13 @@ function RightPreview() {
                 className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
                 style={categoryStyle}
               >
-                {category === 'review' ? '리뷰' : category === 'question' ? '질문' : category === 'free' ? '자유' : '카테고리 없음'}
+                {category === 'review'
+                  ? '리뷰'
+                  : category === 'question'
+                    ? '질문'
+                    : category === 'free'
+                      ? '자유'
+                      : '카테고리 없음'}
               </span>
               {title ? (
                 <h2 className="text-xl font-semibold text-gray-900">{title}</h2>

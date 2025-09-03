@@ -82,6 +82,15 @@ function HeaderSearchSection({ searchBar, setOverlay }: Props) {
     parseArray(localStorage.getItem('recntly-search'))
   );
 
+  const handleClick = (keyword: string) => {
+    const k = keyword.toLowerCase().trim();
+    setRecentSearch?.((prev) => {
+      const next = [k, ...prev.filter((x: string) => x !== k)].slice(0, 5);
+      localStorage.setItem('recently-search', JSON.stringify(next));
+      return next;
+    });
+  };
+
   useEffect(() => {
     setRecentSearch(parseArray(localStorage.getItem('recently-search')));
   }, []);
@@ -104,6 +113,7 @@ function HeaderSearchSection({ searchBar, setOverlay }: Props) {
                     to={`/search?keyword=${encodeURIComponent(keyword)}`}
                     className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"
                     key={i}
+                    onClick={() => handleClick(keyword)}
                   >
                     <p className="text-secondary-700">{keyword}</p>
                   </Link>

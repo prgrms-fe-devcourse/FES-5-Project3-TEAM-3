@@ -11,11 +11,11 @@ export default function ScrollToTop() {
     window.scrollTo(0, 0);
     html.style.scrollBehavior = prev;
   }, [pathname, search, hash]);
-  
-useLayoutEffect(() => {
-  if ('scrollRestoration' in window.history) {
-    window.history.scrollRestoration = 'manual';
-  }
-}, []);
+
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, []);
   return null;
 }

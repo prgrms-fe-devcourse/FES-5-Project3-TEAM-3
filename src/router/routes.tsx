@@ -5,7 +5,7 @@ import CommunityDetail from '@/pages/community/detail/CommunityDetail';
 import { wineLoader } from '@/pages/wine/Wines';
 import { wineDetailLoader } from '@/pages/wine/WineDetails';
 import CommunityMain from '@/pages/community/Main/CommunityMain';
-
+import { MainPageLoader } from '@/pages/MainPage/MainPage';
 /* Code Splitting */
 const Root = lazy(() => import('@/pages'));
 const MainPage = lazy(() => import('@/pages/MainPage/MainPage'));
@@ -23,6 +23,8 @@ const Settings = lazy(() => import('@/pages/MyPage/Settings'));
 const Login = lazy(() => import('@/pages/Login/Login'));
 const Register = lazy(() => import('@/pages/Login/Register'));
 const Findpassword = lazy(() => import('@/pages/Login/FindPassword'));
+const ResetPassword = lazy(() => import('@/pages/Login/ResetPassword'));
+const FindEmail = lazy(() => import('@/pages/Login/FindEmail'));
 
 const Wines = lazy(() => import('@/pages/wine/Wines'));
 
@@ -38,11 +40,11 @@ export const routes = createBrowserRouter([
       {
         index: true,
         Component: MainPage,
+        loader: MainPageLoader,
       },
       {
         path: 'search',
         Component: SearchResult,
-        handle: { title: '검색결과' },
       },
       {
         path: 'account',
@@ -58,6 +60,14 @@ export const routes = createBrowserRouter([
           {
             path: 'findpassword',
             Component: Findpassword,
+          },
+          {
+            path: 'resetpassword',
+            Component: ResetPassword,
+          },
+          {
+            path: 'findemail',
+            Component: FindEmail,
           },
         ],
       },
