@@ -88,7 +88,7 @@ function FilterList({ name, filter, moreInfo }: FilterListProps) {
           onClick={toggleCountryOpened}
           hasIcon
         >
-          <img src="icon/add.svg" alt="필터 더보기" className="w-4 h-4" />
+          <img src="icon/add.svg" alt="국가 필터 더보기" className="w-4 h-4" />
           더보기
         </Button>
       ) : null}
