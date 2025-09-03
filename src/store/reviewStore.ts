@@ -24,7 +24,21 @@ interface ReviewStore {
   addPairing: (value: Record<string, string>) => void;
   deletePairing: (value: Record<string, string>) => void;
   setContent: (value: string) => void;
+  reset: () => void;
 }
+
+const initialState = {
+  isOpen: false,
+  rating: null,
+  sweetness: null,
+  acidic: null,
+  tannic: null,
+  body: null,
+  onlyReview: false,
+  content: '',
+  tag: [] as string[],
+  pairing: [] as Record<string, string>[],
+};
 
 export const useReviewStore = create<ReviewStore>((set, _get) => ({
   isOpen: false,
@@ -51,4 +65,5 @@ export const useReviewStore = create<ReviewStore>((set, _get) => ({
   deletePairing: (pairing) =>
     set((state) => ({ pairing: state.pairing.filter((p) => p !== pairing) })),
   setContent: (content) => set({ content }),
+  reset: () => set(initialState),
 }));

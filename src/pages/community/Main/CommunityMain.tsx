@@ -7,10 +7,10 @@ import PopularLike from '@/pages/community/Main/PopularLike';
 import { usePosts } from '@/hook/usePosts';
 import { usePopularTags } from '@/hook/useTags';
 
-
 function CommunityMain() {
   // 분리된 훅 사용
-  const { posts, search, setSearch, fetchPosts, placeholders, debounceRef, sortBy,setSortBy } = usePosts();
+  const { posts, search, setSearch, fetchPosts, placeholders, debounceRef, sortBy, setSortBy } =
+    usePosts();
   const { popular, globalTags, handleTagClick } = usePopularTags();
 
   return (
@@ -35,12 +35,12 @@ function CommunityMain() {
                   <option value="likes">인기순</option>
                 </select>
               </div>
-                <Link to="/community/write">
-                  <Button type="button" size="sm" borderType="solid">
-                    글쓰기
-                  </Button>
-                </Link>
-              </div>
+              <Link to="/community/write">
+                <Button type="button" size="sm" borderType="solid">
+                  글쓰기
+                </Button>
+              </Link>
+            </div>
           </div>
 
           <div className="flex gap-8">

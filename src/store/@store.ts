@@ -6,6 +6,7 @@ import { create } from 'zustand';
 type AuthState = {
   userId: string | null;
   userEmail: string | null;
+  userPhone: string | null;
   isLoading: boolean;
 };
 
@@ -13,6 +14,7 @@ type AuthAction = {
   fetch: () => Promise<void>;
   subscribe: () => void;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 };
 
 type ConfirmState = {
@@ -28,6 +30,7 @@ type ConfirmState = {
 export const useAuth = create<AuthState & AuthAction>((set) => ({
   userId: null,
   userEmail: null,
+  userPhone: null,
   isLoading: true,
 
   fetch: async () => {
@@ -37,14 +40,15 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
     set({
       userId: session?.user.id,
       userEmail: session?.user?.email ?? null,
+      userPhone: session?.user.phone ?? null,
       isLoading: false,
     });
   },
 
   signOut: async () => {
     const { error } = await supabase.auth.signOut();
-    if (!error) useToast('success','로그아웃 하셨습니다')
-    set({ userId: null, userEmail: null });
+    if (!error) useToast('success', '로그아웃 하셨습니다');
+    set({ userId: null, userEmail: null, userPhone: null });
   },
 
   subscribe: () => {
@@ -52,11 +56,24 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
       set({
         userId: session?.user.id,
         userEmail: session?.user.email,
+        userPhone: session?.user.phone,
         isLoading: false,
       });
     });
 
     return () => listener.subscription.unsubscribe();
+  },
+
+  resetPassword: async (userEmail) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
+      redirectTo: `${window.location.origin}/account/resetpassword`,
+    });
+    if (error) {
+      useToast('error', '이메일을 다시 확인해주세요');
+      return;
+    } else {
+      useToast('success', '인증메일을 확인해주세요');
+    }
   },
 }));
 

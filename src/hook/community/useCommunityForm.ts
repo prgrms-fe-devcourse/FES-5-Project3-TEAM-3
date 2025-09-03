@@ -45,51 +45,62 @@ export function useCommunityForm() {
   const form = useCommunityStore(useShallow(selectCommunityForm));
 
   const {
-    category, setCategory,
-    title, setTitle,
-    body, setBody,
+    category,
+    setCategory,
+    title,
+    setTitle,
+    body,
+    setBody,
     setTagInput,
-    tags, removeTag,
+    tags,
+    removeTag,
     addImages,
-    clearImages, removeImageAt,
+    clearImages,
+    removeImageAt,
   } = form;
 
   const [isSaving, setIsSaving] = useState(false);
 
   const getStoreState = () => useCommunityStore.getState();
 
-  const handleEditorChange = useCallback((html: string) => {
-    setBody(html);
+  const handleEditorChange = useCallback(
+    (html: string) => {
+      setBody(html);
 
-    let doc: Document | null = null;
-    try {
-      doc = new DOMParser().parseFromString(html || '', 'text/html');
-    } catch {
-      doc = null;
-    }
-    const presentSrcs = doc
-      ? Array.from(doc.querySelectorAll('img')).map((img) => img.getAttribute('src') || '')
-      : [];
+      let doc: Document | null = null;
+      try {
+        doc = new DOMParser().parseFromString(html || '', 'text/html');
+      } catch {
+        doc = null;
+      }
+      const presentSrcs = doc
+        ? Array.from(doc.querySelectorAll('img')).map((img) => img.getAttribute('src') || '')
+        : [];
 
-    const storeUrls = getStoreState().imageUrls || [];
-    const toRemove = storeUrls
-      .map((u: string, i: number) => ({ u, i }))
-      .filter(({ u }) => u && !presentSrcs.includes(u))
-      .map(({ i }) => i)
-      .sort((a, b) => b - a);
+      const storeUrls = getStoreState().imageUrls || [];
+      const toRemove = storeUrls
+        .map((u: string, i: number) => ({ u, i }))
+        .filter(({ u }) => u && !presentSrcs.includes(u))
+        .map(({ i }) => i)
+        .sort((a, b) => b - a);
 
-    toRemove.forEach((idx) => {
-      if (typeof removeImageAt === 'function') removeImageAt(idx);
-    });
-  }, [setBody, removeImageAt]);
+      toRemove.forEach((idx) => {
+        if (typeof removeImageAt === 'function') removeImageAt(idx);
+      });
+    },
+    [setBody, removeImageAt]
+  );
 
-  const handleInsertImages = useCallback(async (files: File[]) => {
-    const before = getStoreState().imageUrls.length;
-    addImages(files, 5);
-    const all = getStoreState().imageUrls || [];
-    const added = all.slice(before);
-    return added;
-  }, [addImages]);
+  const handleInsertImages = useCallback(
+    async (files: File[]) => {
+      const before = getStoreState().imageUrls.length;
+      addImages(files, 5);
+      const all = getStoreState().imageUrls || [];
+      const added = all.slice(before);
+      return added;
+    },
+    [addImages]
+  );
 
   const handleSave = useCallback(async () => {
     setIsSaving(true);
@@ -107,7 +118,8 @@ export function useCommunityForm() {
       const blobs: string[] = store.imageUrls ?? [];
       const primaryIdx = typeof store.primaryIdx === 'number' ? store.primaryIdx : 0;
 
-      const STORAGE_BUCKET = (import.meta.env.VITE_SUPABASE_STORAGE_BUCKET as string) ?? 'post_images';
+      const STORAGE_BUCKET =
+        (import.meta.env.VITE_SUPABASE_STORAGE_BUCKET as string) ?? 'post_images';
       let publicUrls: string[] = [];
       if (files.length > 0) {
         const res = await uploadFilesToBucket(files, STORAGE_BUCKET);
@@ -146,7 +158,18 @@ export function useCommunityForm() {
     } finally {
       setIsSaving(false);
     }
-  }, [body, title, category, tags, clearImages, removeTag, setBody, setTitle, setTagInput, setCategory]);
+  }, [
+    body,
+    title,
+    category,
+    tags,
+    clearImages,
+    removeTag,
+    setBody,
+    setTitle,
+    setTagInput,
+    setCategory,
+  ]);
 
   const preventFormSubmit = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') e.preventDefault();

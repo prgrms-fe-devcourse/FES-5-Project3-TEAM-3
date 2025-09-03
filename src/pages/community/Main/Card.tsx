@@ -23,15 +23,15 @@ export default function Card({ post }: { post?: PostWithProfile }) {
     category === 'review'
       ? { background: '#E6F7EE', color: '#0F9D58' }
       : category === 'question'
-      ? { background: '#EEF2FF', color: '#2B6CB0' }
-      : { background: '#FFF1F0', color: '#B91C1C' };
+        ? { background: '#EEF2FF', color: '#2B6CB0' }
+        : { background: '#FFF1F0', color: '#B91C1C' };
 
   // profile 우선 사용: nickname / profile_image_url
   const nickname = post?.profile?.nickname ?? post?.user_id ?? '익명';
   const avatarUrl = post?.profile?.profile_image_url ?? null;
 
   return (
-    <article className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col">
+    <article className="bg-white flex-1 rounded-2xl shadow-md overflow-hidden flex flex-col">
       <Link to={`/community/detail/${post?.post_id ?? ''}`} className="flex flex-col h-full">
         <div className="w-full h-44 bg-gray-100 overflow-hidden">
           {img ? (

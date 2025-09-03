@@ -3,7 +3,7 @@ import TastingReviewChart from '@/component/wine/wineDetailInfo/TastingReviewCha
 import WineBasicInfo from '@/component/wine/wineInfo/WineBasicInfo';
 import supabase from '@/supabase/supabase';
 import { computeTaste } from '@/utils/convertTasteInfo';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Await, Link, useLoaderData, useParams, type LoaderFunctionArgs } from 'react-router';
 import type { WineInfoType } from './Wines';
 import type { Tables } from '@/supabase/database.types';
@@ -29,8 +29,7 @@ export const getWineTag = async (id: string) => {
     .from('hashtag_counts')
     .select()
     .contains('wine_ids', [id])
-    .order('tag_count', { ascending: false })
-    .limit(5);
+    .order('tag_count', { ascending: false });
 
   if (error) {
     console.error(error);
@@ -50,8 +49,8 @@ export const getPairings = async (id: string) => {
   return data;
 };
 
-export const getWineReview = async (id: string) => {
-  const { data, error } = await supabase.from('reviews').select().eq('wine_id', id);
+export const getWineReview = async (wineId: string) => {
+  const { data, error } = await supabase.from('reviews').select().eq('wine_id', wineId);
   if (error) {
     console.error(error);
     return null;
@@ -63,57 +62,15 @@ export async function wineDetailLoader({ params }: LoaderFunctionArgs) {
   const { wineId } = params;
   if (!wineId) throw new Error('wineId가 없습니다');
   const wineData = getWineDetails(wineId);
-  const tagData = getWineTag(wineId);
-  const pairingData = getPairings(wineId);
+  const tagData = await getWineTag(wineId);
+  const pairingData = await getPairings(wineId);
   const reviewData = await getWineReview(wineId);
-  const reviewRating = [0, 0, 0, 0, 0];
-  const tasteRating = { sweetness: 0, acidic: 0, tannic: 0, body: 0 };
-  let total = 0;
-  let validTasteCount = 0;
-  reviewData?.forEach((r) => {
-    const rating = r.rating;
-
-    total += rating;
-
-    const sweetness = r.sweetness_score ?? 0;
-    const acidic = r.acidity_score ?? 0;
-    const tannic = r.tannin_score ?? 0;
-    const body = r.body_score ?? 0;
-
-    if (sweetness || acidic || tannic || body) validTasteCount++;
-
-    tasteRating.sweetness += sweetness;
-    tasteRating.acidic += acidic;
-    tasteRating.tannic += tannic;
-    tasteRating.body += body;
-
-    if (rating > 4) reviewRating[0]++;
-    else if (rating > 3) reviewRating[1]++;
-    else if (rating > 2) reviewRating[2]++;
-    else if (rating > 1) reviewRating[3]++;
-    else if (rating > 0) reviewRating[4]++;
-  });
-  const averageRating = reviewData && reviewData.length > 0 ? total / reviewData.length : 0;
-  const averageTaste =
-    validTasteCount > 0
-      ? {
-          sweetness: tasteRating.sweetness / validTasteCount,
-          acidic: tasteRating.acidic / validTasteCount,
-          tannic: tasteRating.tannic / validTasteCount,
-          body: tasteRating.body / validTasteCount,
-        }
-      : { sweetness: 0, acidic: 0, tannic: 0, body: 0 };
-  const reviewers = reviewData?.length ?? 0;
 
   return {
     wines: wineData,
     tags: tagData,
     pairings: pairingData,
     reviews: reviewData,
-    reviewRating,
-    averageRating,
-    averageTaste,
-    reviewers,
   };
 }
 
@@ -121,20 +78,80 @@ function WineDetails() {
   // 데이터 fetch -> props로 못 받음 : supabase에 올려서 디테일정보 가져오기, 주소도 와인인덱스말고 id로 하기
   const data = useLoaderData() as {
     wines: Promise<WineInfoType[]>;
-    tags: Promise<Tables<'hashtag_counts'>[]>;
-    pairings: Promise<Tables<'pairings'>[]>;
+    tags: Tables<'hashtag_counts'>[];
+    pairings: Tables<'pairings'>[];
     reviews: Tables<'reviews'>[];
-    reviewRating: number[];
-    averageRating: number;
-    averageTaste: { sweetness: 0; acidic: 0; tannic: 0; body: 0 };
-    reviewers: number;
   };
 
   const { wineId } = useParams();
-  const [rating] = useState(data.averageRating); // supabase에서 가져오기
   const openModal = useReviewStore((state) => state.openModal);
 
+  const [reviews, setReviews] = useState(data.reviews);
+
+  const [reviewRating, setReviewRating] = useState([0, 0, 0, 0, 0]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [averageTaste, setAverageTaste] = useState({ sweetness: 0, acidic: 0, tannic: 0, body: 0 });
+  const [reviewers, setReviewers] = useState(0);
+  const [rating] = useState(averageRating); // supabase에서 가져오기
+
+  useEffect(() => {
+    if (!reviews || reviews.length === 0) {
+      setReviewRating([0, 0, 0, 0, 0]);
+      setAverageRating(0);
+      setAverageTaste({ sweetness: 0, acidic: 0, tannic: 0, body: 0 });
+      setReviewers(0);
+      return;
+    }
+
+    const newReviewRating = [0, 0, 0, 0, 0];
+    const newTasteRating = { sweetness: 0, acidic: 0, tannic: 0, body: 0 };
+    let total = 0;
+    let validTasteCount = 0;
+
+    reviews.forEach((r) => {
+      const rating = r.rating ?? 0;
+      total += rating;
+
+      const sweetness = r.sweetness_score ?? 0;
+      const acidic = r.acidity_score ?? 0;
+      const tannic = r.tannin_score ?? 0;
+      const body = r.body_score ?? 0;
+
+      if (sweetness || acidic || tannic || body) validTasteCount++;
+
+      newTasteRating.sweetness += sweetness;
+      newTasteRating.acidic += acidic;
+      newTasteRating.tannic += tannic;
+      newTasteRating.body += body;
+
+      if (rating > 4) newReviewRating[0]++;
+      else if (rating > 3) newReviewRating[1]++;
+      else if (rating > 2) newReviewRating[2]++;
+      else if (rating > 1) newReviewRating[3]++;
+      else if (rating > 0) newReviewRating[4]++;
+    });
+
+    setReviewRating(newReviewRating);
+    setAverageRating(Number((total / reviews.length).toFixed(1)));
+    setAverageTaste(
+      validTasteCount > 0
+        ? {
+            sweetness: newTasteRating.sweetness / validTasteCount,
+            acidic: newTasteRating.acidic / validTasteCount,
+            tannic: newTasteRating.tannic / validTasteCount,
+            body: newTasteRating.body / validTasteCount,
+          }
+        : { sweetness: 0, acidic: 0, tannic: 0, body: 0 }
+    );
+    setReviewers(reviews.length);
+  }, [reviews]);
+
   if (!wineId) return;
+
+  const refreshReviews = async () => {
+    const newReviews = await getWineReview(wineId);
+    setReviews(newReviews ?? []);
+  };
 
   return (
     <>
@@ -192,10 +209,10 @@ function WineDetails() {
                             (computeTaste(w.body) as number) ?? 0,
                           ]}
                           reviewData={[
-                            data.averageTaste.sweetness,
-                            data.averageTaste.acidic,
-                            data.averageTaste.tannic,
-                            data.averageTaste.body,
+                            averageTaste.sweetness,
+                            averageTaste.acidic,
+                            averageTaste.tannic,
+                            averageTaste.body,
                           ]}
                         />
                       </div>
@@ -207,7 +224,7 @@ function WineDetails() {
                     </div>
                   </div>
                   <Await resolve={data.tags}>
-                    {(tags) => <ItemsContainer items={tags} type="tags" />}
+                    {(tags) => <ItemsContainer items={tags.slice(0, 5)} type="tags" />}
                   </Await>
                   <Await resolve={data.pairings}>
                     {(pairings) => <ItemsContainer items={pairings} type="pairings" />}
@@ -215,21 +232,30 @@ function WineDetails() {
                   <h3 className="text-xl">이 와인 드셔보셨나요 ? 리뷰를 작성해주세요</h3>
                   <Button
                     type="button"
-                    className="bg-secondary-800 self-center enabled:hover:bg-secondary-700 text-lg mb-10"
+                    className="bg-secondary-800 self-center enabled:hover:bg-secondary-700 text-lg mb-5"
                     onClick={openModal}
                   >
                     리뷰작성하기
                   </Button>
-                  <div className="w-full flex items-center justify-center flex-wrap gap-20">
+                  <div className="w-full flex items-center justify-center flex-wrap gap-20 py-5">
                     <RatingSummary
-                      rating={data.averageRating}
-                      reviewerCount={data.reviewers}
-                      ratingChartData={data.reviewRating}
+                      rating={averageRating}
+                      reviewerCount={reviewers}
+                      ratingChartData={reviewRating}
                     />
-                    <ReviewContainer reviews={data.reviews} />
+                    <ReviewContainer reviews={reviews} refresh={refreshReviews} />
                   </div>
                 </div>
-                {<ReviewModal wineImage={w.image_url} wineName={w.name} />}
+                {
+                  <ReviewModal
+                    wineId={w.wine_id}
+                    wineImage={w.image_url}
+                    wineName={w.name}
+                    pairings={data.pairings}
+                    tags={data.tags}
+                    refresh={refreshReviews}
+                  />
+                }
               </>
             );
           }}
