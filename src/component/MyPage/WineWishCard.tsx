@@ -1,6 +1,7 @@
 import ReviewRatings from '../wine/wineDetailInfo/wineReview/ReviewRatings';
 import { useEffect, useMemo, useState } from 'react';
 import tw from '@/utils/tw';
+import { Link } from 'react-router';
 
 const FALLBACK_IMG = '/image/wineImage.svg';
 
@@ -29,6 +30,7 @@ function WineWishCard({
   const bookmarkTrue = '/icon/bookmarkFilled.svg';
 
   const imageSrc = imageUrl ?? FALLBACK_IMG;
+  const to = `/wines/detail/${wine_id}`;
 
   const [isOverflow, setIsOverflow] = useState(false);
   const [hover, setHover] = useState(false);
@@ -48,7 +50,16 @@ function WineWishCard({
   }, [name]);
 
   return (
-    <div className="w-42 bg-secondary-100 border border-secondary-500 rounded-lg shadow-md flex flex-col gap-4 items-center px-4 py-5 relative overflow-hidden">
+    <Link
+      to={to}
+      className={[
+        'w-42 bg-secondary-100 border border-secondary-500 rounded-lg shadow-md flex flex-col gap-4 items-center px-4 py-5 relative overflow-hidden',
+        'transition-all duration-200 ease-out',
+        'hover:bg-secondary-200/70 hover:shadow-lg',
+        'motion-safe:hover:translate-y-0.5 motion-safe:hover:scale-[1.01]',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary-700/80',
+      ].join(' ')}
+    >
       {/* bookmark button */}
       <button
         type="button"
@@ -91,7 +102,7 @@ function WineWishCard({
         {country ?? 'Country : -'} | {abv ?? 'ABV : -'}
       </p>
       <ReviewRatings rating={rating} type="readonly" w="w-5" h="h-5" />
-    </div>
+    </Link>
   );
 }
 export default WineWishCard;

@@ -173,7 +173,7 @@ function Pagination({
               disabled={disabled || !!item.disabled || !isButton}
               onClick={() => isButton && item.page && setPage(item.page)}
               className={tw(
-                'inline-flex items-center justify-center rounded-xl border',
+                'inline-flex items-center justify-center rounded-xl border cursor-pointer',
                 // 'transition-colors duration-150',
                 'select-none whitespace-nowrap',
                 sizeClasses[size],

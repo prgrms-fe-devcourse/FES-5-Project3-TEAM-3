@@ -2,8 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { matchFlavor } from './matchFlavor';
 import clsx from 'clsx';
 
-function FlavorIcon({ flavor, type = 'default' }: { flavor: string; type?: 'default' | 'large' }) {
-  const flavorCategory = matchFlavor(flavor);
+function FlavorIcon({
+  flavor,
+  flavoren,
+  type = 'default',
+}: {
+  flavor: string;
+  flavoren: string;
+  type?: 'default' | 'large';
+}) {
+  const flavorCategory = matchFlavor(flavoren);
   const textRef = useRef<HTMLParagraphElement>(null);
   const [isOverflow, setIsOverflow] = useState(false);
 
