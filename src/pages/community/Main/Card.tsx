@@ -3,12 +3,12 @@ import { Link } from 'react-router';
 import type { Database } from '@/supabase/database.types';
 import LikeButton from '@/component/LikeButton';
 
-type PostRow = Database['public']['Tables']['posts']['Row'];
-type ProfileJoined = {
+export type PostRow = Database['public']['Tables']['posts']['Row'];
+export type ProfileJoined = {
   nickname?: string | null;
   profile_image_url?: string | null;
 };
-type PostWithProfile = PostRow & { profile?: ProfileJoined | null };
+export type PostWithProfile = PostRow & { profile?: ProfileJoined | null };
 
 export default function Card({ post }: { post?: PostWithProfile }) {
   const rawImg = post?.thumbnail_image ?? (Array.isArray(post?.image_url) ? post?.image_url?.[0] : undefined);

@@ -99,9 +99,8 @@ function WineAnalysisPie({ data, title = '국가별 취향', loading }: PieChart
               const color = pie.datasets[0].backgroundColor[idx];
 
               return (
-                <li>
+                <li key={`${label}-${idx}`}>
                   <Button
-                    key={label}
                     type="button"
                     size="sm"
                     color="secondary"
