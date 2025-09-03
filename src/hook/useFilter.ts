@@ -1,37 +1,98 @@
-import wines from '@/data/data.json';
+import type { Tables } from '@/supabase/database.types';
+import supabase from '@/supabase/supabase';
+import { useEffect, useState } from 'react';
 
+
+type Wines = Tables<'wines'>;
+// type Food = Pick<Tables<'pairings'>, 'pairing_category' | 'pairing_name'|'wine_id'> 
+type Food = Pick<Tables<'pairings'>,'pairing_category' | 'pairing_name' >& {
+  wines: Pick<Tables<'wines'>,'wine_id'|'image_url'|'name'|'description_ko'>
+}
 export const filtered = (keyword: string) => {
   const k = keyword.toLowerCase().trim();
+  const [wines, setWines] = useState<Wines[]>([]);
+  const [foods,setFoods] = useState<Food[]>([])
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data, error } = await supabase.from('wines').select('*');
+      if (error) console.log(error);
+      if (data) setWines(data);
+    };
+    fetchData();
+  }, [keyword]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data, error } = await supabase.from('pairings').select('pairing_category, pairing_name, wines(wine_id,image_url,name,description_ko)')
+      if (error) console.log(error)
+      if (data) setFoods(data)
+    }
+    fetchData()
+  }, [keyword])
+
+
+  const pairingCategory = foods.filter((a) => a.pairing_category?.includes(k)).map((a) => a.wines)
+
+  const pairingName = foods.filter((a) => a.pairing_name.includes(k)).map((a)=>a.wines)
+ 
   return wines.filter((wine) => {
-    const title = wine.title.toLowerCase();
-    const region = wine.region
+  
+    const title = wine.name.toLowerCase()
+    const titleKo = wine.name_ko?.toLowerCase();
+
+    const country = wine.country?.toLowerCase();
+    const countryKo = wine.country_ko?.toLowerCase();
+
+    const grapes = wine.variety
       .map((a) => a)
       .join('')
       .toLowerCase();
-    const grapes = wine.grapes
-      .map((a) => a)
-      .join('')
-      .toLowerCase();
-    const countries = wine.country.toLowerCase();
-    const contents = wine.wine_description.toLowerCase();
-    const foods = wine.food
-      .map((a) => a)
-      .join('')
-      .toLowerCase();
-    const scent = wine.scent
-      .map((a) => a)
+    const grapesKo = wine.variety_ko
+      ?.map((a) => a)
       .join('')
       .toLowerCase();
 
+    const category = wine.category?.toLowerCase();
+    const categoryKo = wine.category_ko?.toLowerCase();
+
+    const contents = wine.description_ko?.toLowerCase();
+
+    const scent = wine.representative_flavor
+      ?.map((a) => a)
+      .join('')
+      .toLowerCase();
+    const scentKo = wine.representative_flavor_ko
+      ?.map((a) => a)
+      .join('')
+      .toLowerCase();
+
+    const pronunciations = JSON.stringify(wine.pronunciations).toLowerCase();
+
+    /*
+     키워드에 아이템이랑 카테고리가 겹치면 걸리는거에 해당하는 와인데이터를 보내야하는데 필요한것 이미지,타이틀,아이디,콘텐츠
+      1. 먼저 문자열 정렬해야함 
+      2. 정렬한결과에서 k가 포함되는지 도출후 리턴 
+      3. 리턴된결과에는 필요한것이 내보내져야함
+    */
+
+  
     return (
-      region.includes(k) ||
+      pairingName.some(a => a.wine_id == wine.wine_id) || 
+      pairingCategory.some(a => a.wine_id === wine.wine_id) ||
+      (country && country.includes(k)) ||
       title.includes(k) ||
       grapes.includes(k) ||
-      countries.includes(k) ||
-      contents.includes(k) ||
-      foods.includes(k) ||
-      scent.includes(k)
+      (contents && contents.includes(k)) ||
+      (scent && scent.includes(k)) ||
+      category?.includes(k) ||
+      titleKo?.includes(k) ||
+      countryKo?.includes(k) ||
+      grapesKo?.includes(k) ||
+      categoryKo?.includes(k) ||
+      scentKo?.includes(k) ||
+      pronunciations.includes(k) ||
+      category?.includes(k)
     );
   });
 };

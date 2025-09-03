@@ -34,7 +34,11 @@ export default function TagInput({
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">태그</span>
         {onClear && tags.length > 0 && (
-          <button type="button" className="text-xs text-gray-500 cursor-pointer" onClick={() => onClear()}>
+          <button
+            type="button"
+            className="text-xs text-gray-500 cursor-pointer"
+            onClick={() => onClear()}
+          >
             전체삭제
           </button>
         )}
@@ -53,7 +57,7 @@ export default function TagInput({
 
         <Button
           size="md"
-          type='button'
+          type="button"
           borderType="outline"
           onClick={() => onAdd()}
           disabled={tags.length >= max}
