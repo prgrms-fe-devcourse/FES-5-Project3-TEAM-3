@@ -3,7 +3,7 @@ import FlavorIcon from './FlavorIcon';
 import WineBasicInfo from './WineBasicInfo';
 
 function WineInfo({ wineInfo }: { wineInfo: WineInfoType }) {
-  const { name, image_url, representative_flavor } = wineInfo;
+  const { name, image_url, representative_flavor_ko, representative_flavor } = wineInfo;
 
   return (
     <div className="min-w-90 w-100 h-120 flex flex-col gap-2 px-12 py-8 m-8 items-stretch justify-between mx-auto rounded-xl bg-secondary-50 shadow-sm group-hover:shadow-2xl group-hover:bg-secondary-100 transition-transform duration-300 select-none">
@@ -19,10 +19,12 @@ function WineInfo({ wineInfo }: { wineInfo: WineInfoType }) {
         <WineBasicInfo wineBasicInfo={wineInfo} />
       </div>
       <div className="grid grid-rows-1 grid-cols-5 items-center justify-center group pt-2 mb-2">
-        {representative_flavor ? (
-          representative_flavor.map((s) => <FlavorIcon flavor={s} key={s} />)
+        {representative_flavor_ko && representative_flavor ? (
+          representative_flavor_ko.map((s, i) => (
+            <FlavorIcon flavor={s} flavoren={representative_flavor[i]} key={s} />
+          ))
         ) : (
-          <p className="self-center">정보가 없습니다</p>
+          <p className="col-span-full text-center">정보가 없습니다</p>
         )}
       </div>
     </div>

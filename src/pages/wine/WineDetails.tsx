@@ -14,6 +14,8 @@ import ReviewContainer from '@/component/wine/wineDetailInfo/wineReview/ReviewCo
 import ReviewModal from '@/component/wine/wineDetailInfo/wineReview/ReviewModal';
 import Spinner from '@/component/Spinner';
 import { useReviewStore } from '@/store/reviewStore';
+import useToast from '@/hook/useToast';
+import { useAuth } from '@/store/@store';
 
 export const getWineDetails = async (id: string) => {
   const { data, error } = await supabase.from('wines').select().eq('wine_id', id);
@@ -93,6 +95,7 @@ function WineDetails() {
   const [averageTaste, setAverageTaste] = useState({ sweetness: 0, acidic: 0, tannic: 0, body: 0 });
   const [reviewers, setReviewers] = useState(0);
   const [rating] = useState(averageRating); // supabase에서 가져오기
+  const user = useAuth().userId;
 
   useEffect(() => {
     if (!reviews || reviews.length === 0) {
@@ -145,6 +148,11 @@ function WineDetails() {
     );
     setReviewers(reviews.length);
   }, [reviews]);
+
+  const openReviewModal = () => {
+    if (!user) useToast('error', '리뷰를 작성하시려면 로그인해주세요');
+    else openModal();
+  };
 
   if (!wineId) return;
 
@@ -233,7 +241,7 @@ function WineDetails() {
                   <Button
                     type="button"
                     className="bg-secondary-800 self-center enabled:hover:bg-secondary-700 text-lg mb-5"
-                    onClick={openModal}
+                    onClick={openReviewModal}
                   >
                     리뷰작성하기
                   </Button>

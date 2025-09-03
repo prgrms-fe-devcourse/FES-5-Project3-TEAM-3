@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import FlavorIcon from './FlavorIcon';
 import { computeTaste } from '@/utils/convertTasteInfo';
 import truncateText from '@/utils/truncateText';
+import { countryInfo } from '../filterSearch/filterInfo';
 
 interface WineBasicInfoType {
   wineBasicInfo: WineInfoType;
@@ -13,7 +14,7 @@ interface WineBasicInfoType {
 function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
   const {
     name,
-    country,
+    country_ko,
     abv,
     variety,
     sweetness,
@@ -22,6 +23,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
     body,
     description,
     category,
+    representative_flavor_ko,
     representative_flavor,
   } = wineBasicInfo;
   const computedTaste = computeTaste({ sweetness, acidic, tannic, body }) as {
@@ -75,8 +77,10 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
         )}
       >
         <img
-          src={`/icon/country/${country}.svg`}
-          alt={country ?? '와인생산국가'}
+          src={
+            country_ko ? `/icon/country/${countryInfo[country_ko]}.svg` : '/icon/country/others.svg'
+          }
+          alt={country_ko ?? '와인생산국가'}
           className="w-6 h-6"
           draggable="false"
           onError={(e) => {
@@ -84,7 +88,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
             e.currentTarget.src = '/icon/country/others.svg';
           }}
         />
-        {country}
+        {country_ko ?? '정보없음'}
         <img src="/icon/wine.svg" alt="도수" className="w-6 h-6" draggable="false" />
         {abv ?? '정보없음'}
       </div>
@@ -111,8 +115,10 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
           </p>
           <p className="text-text-secondary">주요향미료</p>
           <div className="grid grid-cols-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 items-center justify-center group py-2">
-            {representative_flavor ? (
-              representative_flavor.map((s) => <FlavorIcon flavor={s} key={s} type="large" />)
+            {representative_flavor_ko && representative_flavor ? (
+              representative_flavor_ko.map((s, i) => (
+                <FlavorIcon flavor={s} key={s} flavoren={representative_flavor[i]} type="large" />
+              ))
             ) : (
               <p className="self-center">flavor 정보가 없습니다</p>
             )}

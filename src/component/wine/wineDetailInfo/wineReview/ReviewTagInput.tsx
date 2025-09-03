@@ -157,6 +157,7 @@ function ReviewTagInput({
 
       <div className="flex gap-2 flex-wrap w-70 h-12 overflow-auto p-2">
         {type === '태그' &&
+          !disabled &&
           tags.map((tag) => (
             <div
               key={tag}
@@ -170,6 +171,7 @@ function ReviewTagInput({
             </div>
           ))}
         {type === '페어링' &&
+          !disabled &&
           pairings.map((pairing, index) => {
             const key = Object.keys(pairing)[0];
             const value = pairing[key];

@@ -22,12 +22,16 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
   const [reviewLiked, setReviewLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
   const userId = useAuth().userId;
-  if (!userId) return;
   const [user, setUser] = useState<{ profile_image_url: string; nickname: string }>();
 
   useEffect(() => {
     const getUserLike = async () => {
-      if (!userId) return;
+      if (!userId) {
+        if (!userId) {
+          setReviewLiked(false); // 또는 0
+          return;
+        }
+      }
       const { data, error } = await supabase
         .from('review_like')
         .select()
