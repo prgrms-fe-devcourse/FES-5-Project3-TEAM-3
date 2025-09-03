@@ -9,6 +9,7 @@ import { Await, useLoaderData } from 'react-router';
 import type { Tables } from '@/supabase/database.types';
 import Card from '../community/Main/Card';
 import AnimatedPost from '@/component/MainPage/AnimatedPost';
+import ScrollToTopButton from '@/component/community/ScrollToTopButton';
 
 type Review = Tables<'reviews'>;
 type Wine = Tables<'wines'>;
@@ -72,13 +73,17 @@ function MainPage() {
   return (
     <main>
       <section className="relative">
-        <img
-          className="block w-screen h-screen"
-          src="/image/HeroImg.png"
-          alt="와인과 석류 이미지"
-        />
-        <h2 className="absolute left-85.5 bottom-38 text-primary-100 text-[108px]">
-          <img src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
+        <picture>
+          <source media="(min-width:1024px)" srcSet="/image/HeroImg.png" />
+
+          <img
+            src="/image/mobileHeroImg.png"
+            alt="와인과 석류 이미지"
+            className="w-full h-100 object-cover lg:w-screen lg:h-screen"
+          />
+        </picture>
+        <h2 className="absolute left-5 bottom-10 lg:left-20 lg:bottom-38  xl:absolute xl:left-85.5 xl:bottom-38 text-primary-100 text-[108px]">
+          <img className="w-150" src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
         </h2>
       </section>
       <Suspense fallback={<SkeletonMainPage />}>
@@ -112,6 +117,7 @@ function MainPage() {
               </AnimatedPost>
             </div>
           </section>
+          <ScrollToTopButton className="cursor-pointer right-0 lg:mr-23" />
         </Await>
       </Suspense>
     </main>

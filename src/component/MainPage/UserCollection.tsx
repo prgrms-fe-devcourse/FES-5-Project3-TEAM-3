@@ -20,7 +20,7 @@ function UserCollection({ id, image, title, content, icon, flavor }: Props) {
           <div className="text-sm text-gray-500">{id + 1}</div>
           <div className="flex flex-col items-center text-center gap-2">
             <img className="w-[152px] h-[376px] object-contain" src={image[0]} alt={title} />
-            <p className="text-xs">{title}</p>
+            <p className="text-xs font-[Allura]">{title}</p>
             <h5 className="font-semibold">{title}</h5>
             <p className="w-[304px] text-gray-600 text-center">{content}</p>
             <div className="flex gap-2 items-center mt-2">

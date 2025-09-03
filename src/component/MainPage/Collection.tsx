@@ -130,8 +130,7 @@ export default function Collection({ collection }: { collection: Collection[] })
                   <img src="image/User Collection.png" alt="유저컬렉션" />
                 </h3>
                 <p className="mt-4">
-                  {vip}님의 와인셀러를 구경해보세요 <br /> 당신의 와인생활이 더 풍성해 질 수
-                  있습니다
+                  {vip}님의 셀러가 전하는 영감, <br /> 당신의 순간을 더욱 특별하게.
                 </p>
               </div>
 

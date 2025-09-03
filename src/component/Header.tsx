@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import supabase from '@/supabase/supabase';
 import ScrollToTop from '@/hook/ScrolToTop';
 
-function RealHeader() {
+function Header() {
   const { userId, signOut } = useAuth(
     useShallow((s) => ({
       userId: s.userId,
@@ -64,16 +64,13 @@ function RealHeader() {
     }
   };
 
-  const base = ' h-17.5 w-full flex items-center justify-center fixed z-99 duration-400';
+  const base = ' h-13 w-screen flex items-center justify-center fixed z-99 duration-400 lg:h-17.5';
 
   const headerBgClass = clsx(
     base,
     pathname == '/' ? (scrolled ? 'bg-primary-500' : 'bg-tranprent') : 'bg-primary-500'
   );
-  /*
-overlay는 서치바가 다 들어가고나서 끄고싶은데
-상위에서 열고 하위에서 닫으면 되는구나
-*/
+
   return (
     <div className={pathname == '/' ? '' : 'h-17.5'}>
       {overlay && (
@@ -81,7 +78,7 @@ overlay는 서치바가 다 들어가고나서 끄고싶은데
       )}
 
       <div className={headerBgClass}>
-        <div className="w-360 flex justify-between items-center px-10 py-2">
+        <div className="w-160 lg:w-360 flex justify-between items-center px-10 py-2">
           <h1 className="w-41.5 h-11.75 flex items-center pt-1">
             <NavLink to="/" onClick={ScrollToTop}>
               <img src="/image/Logo.png" alt="winepedia" />
@@ -143,39 +140,4 @@ overlay는 서치바가 다 들어가고나서 끄고싶은데
   );
 }
 
-function SkeletonHeader() {
-  return (
-    <div
-      className="bg-secondary-100 h-17.5 w-full flex items-center justify-center"
-      aria-busy="true"
-    >
-      <div className="w-360 flex justify-between items-center px-10 py-2 animate-pulse">
-        {/* 로고 자리 */}
-        <div className="w-41.5 h-11.75 flex items-center pt-1">
-          <div className="h-10 w-32 rounded-md bg-primary-900/10" />
-        </div>
-
-        {/* 네비 자리 */}
-        <nav className="flex items-center gap-4">
-          <div className="h-6 w-6 rounded-full bg-primary-900/10" />
-          <div className="h-5 w-12 rounded bg-primary-900/10" />
-          <div className="h-5 w-24 rounded bg-primary-900/10" />
-          <div className="h-5 w-20 rounded bg-primary-900/10" />
-        </nav>
-      </div>
-    </div>
-  );
-}
-
-function Header() {
-  const [isLoading, setIsLoading] = useState(false);
-  console.log(setIsLoading);
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setIsLoading(true)
-  //   },2000)
-  // }, [])
-
-  return <>{isLoading ? <SkeletonHeader /> : <RealHeader />}</>;
-}
 export default Header;
