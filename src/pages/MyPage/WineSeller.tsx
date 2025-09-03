@@ -3,7 +3,7 @@ import WineSellerCard from '@/component/MyPage/WineSeller/WineSellerCard';
 import WineSellerCardSkeleton from '@/component/MyPage/WineSeller/WineSellerCardSkeleton';
 import WineTasteAnalysis from '@/component/MyPage/WineSeller/WineTasteAnalysis';
 import Pagination from '@/component/Pagination';
-import { useMyReviews } from '@/hook/myPage/useMyReviews';
+import { useMyReviews, type WineSellerSortKey } from '@/hook/myPage/useMyReviews';
 import { useProfile } from '@/hook/profileSetting/useProfileBasic';
 import useToast from '@/hook/useToast';
 import { useAuth } from '@/store/@store';
@@ -17,7 +17,13 @@ function WineSeller() {
 
   const PAGE_SIZE = 8;
   const [page, setPage] = useState(1);
-  const { data, loading, error, totalPages } = useMyReviews(page, PAGE_SIZE, true);
+  const [sort, setSort] = useState<WineSellerSortKey>('created_desc');
+  const { data, loading, error, totalPages } = useMyReviews(page, PAGE_SIZE, true, sort);
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSort(e.target.value as WineSellerSortKey);
+    setPage(1);
+  };
 
   const subtitle =
     profileLoading || loading
@@ -67,9 +73,29 @@ function WineSeller() {
         <h2 className="w-full inline-flex flex-col justify-start items-start text-2xl font-semibold">
           My Wine Seller
         </h2>
-        <h3 className="w-full inline-flex flex-col justify-start items-start font-light text-text-secondary">
-          {subtitle}
-        </h3>
+        <div className="flex justify-between items-start">
+          <h3 className="w-full inline-flex flex-col justify-start items-start font-light text-text-secondary">
+            {subtitle}
+          </h3>
+          <div className="flex gap-2 min-w-50 items-center">
+            <label htmlFor="sort" className="text-text-secondary">
+              정렬
+            </label>
+            <select
+              id="sort"
+              value={sort}
+              onChange={handleSortChange}
+              className="h-9 rounded-xl border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+            >
+              <option value="created_desc">최신순</option>
+              <option value="created_asc">오래된 순</option>
+              <option value="rating_desc">평점 높은 순</option>
+              <option value="rating_asc">평점 낮은 순</option>
+              <option value="name_desc">와인 이름 A→Z</option>
+              <option value="name_asc">와인 이름 Z→A</option>
+            </select>
+          </div>
+        </div>
         <div className="grid px-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{cards}</div>
         <Pagination
           page={page}

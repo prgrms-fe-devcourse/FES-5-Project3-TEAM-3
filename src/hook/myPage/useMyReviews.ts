@@ -9,7 +9,20 @@ export type ReviewWithWine = ReviewRow & {
   wines: Pick<WineRow, 'name' | 'country' | 'abv' | 'image_url'> | null;
 };
 
-export function useMyReviews(page: number, pageSize: number = 8, reserveLastSlot: boolean = true) {
+export type WineSellerSortKey =
+  | 'created_desc'
+  | 'created_asc'
+  | 'rating_desc'
+  | 'rating_asc'
+  | 'name_desc'
+  | 'name_asc';
+
+export function useMyReviews(
+  page: number,
+  pageSize: number = 8,
+  reserveLastSlot: boolean = true,
+  sort: WineSellerSortKey = 'created_desc'
+) {
   const [data, setData] = useState<ReviewWithWine[]>([]);
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
@@ -79,15 +92,38 @@ export function useMyReviews(page: number, pageSize: number = 8, reserveLastSlot
       }
 
       const to = from + size - 1;
-      const { data: rows, error: queryErr } = await supabase
+      let query = supabase
         .from('reviews')
         .select(
           `*,
-          wines( name, country, abv, image_url )`
+          wines!wine_id ( name, country, abv, image_url )`
         )
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .range(from, to);
+        .eq('user_id', userId);
+
+      switch (sort) {
+        case 'created_asc':
+          query = query.order('created_at', { ascending: true });
+          break;
+        case 'created_desc':
+          query = query.order('created_at', { ascending: false });
+          break;
+        case 'rating_asc':
+          query = query.order('rating', { ascending: true });
+          break;
+        case 'rating_desc':
+          query = query.order('rating', { ascending: false });
+          break;
+        case 'name_asc':
+          query = query.order('name', { ascending: true, referencedTable: 'wines' });
+          break;
+        case 'name_desc':
+          query = query.order('name', { ascending: false, referencedTable: 'wines' });
+          break;
+      }
+
+      query = query.order('review_id', { ascending: true });
+
+      const { data: rows, error: queryErr } = await query.range(from, to);
 
       if (queryErr) {
         if (!cancelled) {
@@ -108,7 +144,7 @@ export function useMyReviews(page: number, pageSize: number = 8, reserveLastSlot
     return () => {
       cancelled = true;
     };
-  }, [page, pageSize, reserveLastSlot]);
+  }, [page, pageSize, reserveLastSlot, sort]);
 
   const totalPages = Math.max(1, Math.ceil((count + (reserveLastSlot ? 1 : 0)) / pageSize));
 
