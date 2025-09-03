@@ -36,21 +36,25 @@ export async function fetchPopularPosts(limit = 5) {
 
 /**
  * Global top tags (서비스 전체 기준, 클라이언트 집계)
- * - 소규모/개발 환경에서 사용. 데이터 많으면 RPC/view로 이전 권장.
  */
 export async function fetchGlobalTopTags(limit = 5) {
   try {
-    const { data, error } = await supabase.from('posts').select('hashtag_list').limit(1000);
+    // 좋아요 많은 글 순서대로 일정건수(fetchLimit) 가져온 뒤, 각 포스트의 첫 번째 태그만 집계
+    const fetchLimit = 1000; // 안전 상한, 필요 시 조정
+    const { data, error } = await supabase
+      .from('posts')
+      .select('hashtag_list')
+      .order('like_count', { ascending: false })
+      .limit(fetchLimit);
+
     if (error) throw error;
 
     const map = new Map<string, number>();
     (data ?? []).forEach((r: any) => {
       const list: string[] = Array.isArray(r?.hashtag_list) ? r.hashtag_list : [];
-      list.forEach((t) => {
-        const tag = (t ?? '').trim();
-        if (!tag) return;
-        map.set(tag, (map.get(tag) ?? 0) + 1);
-      });
+      const first = (list[0] ?? '').toString().trim();
+      if (!first) return;
+      map.set(first, (map.get(first) ?? 0) + 1);
     });
 
     return Array.from(map.entries())

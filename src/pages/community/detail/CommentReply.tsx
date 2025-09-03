@@ -5,6 +5,7 @@ import EditBtn from '@/component/community/EditBtn';
 import { useTimer } from '@/hook/useTimer';
 import useToast from '@/hook/useToast';
 import { useKeyDown } from '@/hook/useKeyDown';
+import LikeButton from '@/component/LikeButton';
 
 interface Props {
   profileImage: string;
@@ -13,6 +14,7 @@ interface Props {
   content: string;
   userId: string | null;
   replyId: string;
+  likes?: number;
   onDelete: (id: string) => Promise<void>;
 }
 
@@ -23,6 +25,7 @@ function CommentReply({
   replyId,
   userId,
   content,
+  likes,
   onDelete,
 }: Props) {
   if (!userId) return;
@@ -32,6 +35,9 @@ function CommentReply({
   const [edit, setEdit] = useState(false);
   const [editComment, setEditComment] = useState('');
   const [renderComment, setRenderComment] = useState('');
+
+  // 좋아요 카운트는 포스트 데이터에서 초기화 (LikeButton이 'liked' 여부는 자체 조회)
+  const [likesCount, setLikesCount] = useState<number>(likes ?? 0);
 
   useEffect(() => {
     setRenderComment(content);
@@ -92,10 +98,17 @@ function CommentReply({
           </p>
         )}
         <div>
-          <button className="flex gap-1 py-1 text-sm cursor-pointer">
-            <img src="/icon/like.svg" alt="좋아요" className="w-4 h-4 " />
-            <span>1</span>
-          </button>
+          <LikeButton
+            itemId={replyId}
+            kind="reply"
+            initialLiked={false}
+            initialCount={likesCount}
+            ownerId={userId ?? null}
+            className={`flex items-center gap-1 ${false ? 'text-gray-600' : ''}`}
+            onToggle={(_, count) => {
+              setLikesCount(count);
+            }}
+          />
         </div>
       </div>
     </div>

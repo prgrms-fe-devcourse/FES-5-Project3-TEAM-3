@@ -1,7 +1,9 @@
-import LeftContent from '@/pages/community/write/LeftContent';
 import RightPreview from '@/pages/community/write/RightPreview';
-
+import LeftContent from '@/pages/community/write/LeftContent';
+import useEditPost from '@/hook/useEditPost';
 function CommunityWrite() {
+  const { isEditMode, handleSaveEdit } = useEditPost();
+
   return (
     <div className="min-h-full">
       <div className="max-w-[90rem] mx-auto px-6 py-10">
@@ -13,12 +15,12 @@ function CommunityWrite() {
         </header>
 
         <form className="grid grid-cols-12 gap-8">
-          <LeftContent />
-
+          <LeftContent onSave={isEditMode ? handleSaveEdit : undefined} />
           <RightPreview />
         </form>
       </div>
     </div>
   );
 }
+
 export default CommunityWrite;
