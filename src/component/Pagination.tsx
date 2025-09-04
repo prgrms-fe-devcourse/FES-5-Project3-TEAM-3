@@ -1,5 +1,6 @@
 import type { PaginationItem, PaginationSize, UsePaginationOptions } from '@/@types/global';
 import { usePagination } from '@/hook/usePagination';
+import { scrollToTopPage } from '@/utils/scrollToTopPage';
 import tw from '@/utils/tw';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 
@@ -15,6 +16,8 @@ type PaginationProps = UsePaginationOptions & {
     onClick: () => void
   ) => React.ReactNode;
   ariaLabel?: string;
+  scrollOnChange?: ScrollBehavior;
+  scrollContainer?: string | React.RefObject<HTMLElement>;
 };
 
 function Pagination({
@@ -31,6 +34,8 @@ function Pagination({
   className = '',
   itemRenderer,
   ariaLabel = 'Pagination',
+  scrollOnChange = 'auto',
+  scrollContainer,
 }: PaginationProps) {
   // 페이지가 한 장 뿐이면 표시하지 않음
   if (totalPages < 2) return null;
@@ -53,8 +58,12 @@ function Pagination({
         setUncontrolledPage(n);
       }
       onPageChange?.(n);
+
+      requestAnimationFrame(() => {
+        scrollToTopPage(scrollContainer, scrollOnChange);
+      });
     },
-    [isControlled, clamp, onPageChange]
+    [isControlled, clamp, onPageChange, scrollOnChange, scrollContainer]
   );
 
   useEffect(() => {
