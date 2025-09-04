@@ -1,10 +1,12 @@
 import type { Tables } from '@/supabase/database.types';
 import TastingInfo from '../../tasting/TastingInfo';
 import ReviewRatings from './ReviewRatings';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 import { useAuth } from '@/store/@store';
 import useToast from '@/hook/useToast';
+// import { useReviewStore } from '@/store/reviewStore';
+// import { pairingCategory } from '../../filterSearch/filterInfo';
 
 function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () => void }) {
   const {
@@ -23,6 +25,8 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
   const [likeCount, setLikeCount] = useState(likes);
   const userId = useAuth().userId;
   const [user, setUser] = useState<{ profile_image_url: string; nickname: string }>();
+
+  // const openModal = useReviewStore((s) => s.openModal);
 
   useEffect(() => {
     const getUserLike = async () => {
@@ -49,7 +53,7 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
   useEffect(() => {
     const getProfile = async (id: string | null) => {
       if (!id) {
-        const nullUser = { profile_image_url: '', nickname: '알수없음' };
+        const nullUser = { profile_image_url: '/image/defaultProfile.png', nickname: '알수없음' };
         setUser(nullUser);
       } else {
         const { data, error } = await supabase
@@ -83,7 +87,38 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
     }
   };
 
-  const deleteReview = async () => {
+  // const editReview = async (e: React.MouseEvent<HTMLDivElement>) => {
+  //   e.stopPropagation();
+
+  //   if (userId !== user_id) {
+  //     useToast('warn', '본인이 작성한 리뷰만 수정할 수 있습니다');
+  //     return;
+  //   }
+  //   const { data: tagsData, error } = await supabase
+  //     .from('hashtags')
+  //     .select('tag_text')
+  //     .eq('user_id', userId!)
+  //     .eq('review_id', review_id);
+  //   if (error) useToast('warn', '리뷰정보를 가져오는데 실패하였습니다');
+  //   else {
+  //     const { data: pairingsData, error } = await supabase
+  //       .from('pairings')
+  //       .select('pairing_category, pairing_name')
+  //       .eq('user_id', userId!)
+  //       .eq('review_id', review_id);
+  //     if (error) useToast('warn', '리뷰정보를 가져오는데 실패하였습니다');
+  //     else {
+  //       const tags = tagsData.length !== 0 ? tagsData[0]['tag_text'] : [];
+  //       const pairings = pairingsData.map((p) => ({
+  //         [pairingCategory[p.pairing_category!]]: p.pairing_name,
+  //       }));
+  //       openModal({ review, tags, pairings });
+  //     }
+  //   }
+  // };
+
+  const deleteReview = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     const { error } = await supabase.from('reviews').delete().eq('review_id', review_id);
     if (error) {
       console.error(error);
@@ -95,14 +130,22 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
   };
 
   return (
-    <div className="flex justify-center items-baseline gap-5 border border-gray-400 rounded-2xl px-5 py-3 relative">
+    <div
+      className={`w-full min-w-140 flex justify-center items-baseline gap-5 border border-gray-400 rounded-2xl px-5 py-3 relative ${user_id === userId && 'hover:bg-secondary-100/50 hover:shadow-md'}`}
+      // onClick={editReview}
+    >
       <TastingInfo style="review" tasting={{ sweetness, acidic, tannic, body }} />
       <div className="flex flex-col flex-1">
-        <div className="flex justify-between items-center">
-          <div className="flex gap-1">
-            <img src={user?.profile_image_url} alt="사용자프로필" className="w-8 h-8" />
+        <div className="flex justify-between items-center gap-5">
+          <div className="flex items-center gap-2">
+            <img
+              src={user?.profile_image_url ? user?.profile_image_url : '/image/defaultProfile.png'}
+              alt="사용자프로필"
+              className="w-8 h-8"
+            />
             <p className="py-3">
-              {user?.nickname} <span className="text-gray-500">{created_at.slice(0, 10)}</span>
+              {user?.nickname}{' '}
+              <span className="text-gray-500 whitespace-nowrap">{created_at.slice(0, 10)}</span>
             </p>
           </div>
           <ReviewRatings rating={rating} w="w-6" h="h-6" />
@@ -119,7 +162,11 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
           {likeCount}
         </button>
         {user_id === userId && (
-          <button type="button" className="absolute bottom-3 right-5" onClick={deleteReview}>
+          <button
+            type="button"
+            className="absolute bottom-3 right-3 p-2 rounded-full bg-secondary-50"
+            onClick={deleteReview}
+          >
             <img src="/icon/delete.svg" alt="삭제" className="w-6 h-6" />
           </button>
         )}

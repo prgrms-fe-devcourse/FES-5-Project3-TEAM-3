@@ -31,11 +31,14 @@ export const getWines = async (from: number, to: number, appliedFilters?: Json) 
     .range(from, to);
   if (error) {
     console.error(error);
-    return [];
+    return { wines: [], total_count: 0 };
   }
-  console.log(appliedFilters);
-  console.log(data);
-  return data ?? [];
+
+  const winesData = data.map((w) => w.wines);
+  const totalCount = data?.[0]?.total_count ?? 0;
+  console.log(winesData);
+  console.log(totalCount);
+  return { wines: winesData as WineInfoType[], total_count: totalCount as number };
 };
 
 export async function wineLoader() {
@@ -64,12 +67,33 @@ function Wines() {
     바디: Object.keys(bodyTasteInfo),
   };
 
-  const data = useLoaderData() as { wines: Promise<WineInfoType[]> };
+  const data = useLoaderData() as {
+    wines: Promise<{ wines: WineInfoType[]; total_count: number }>;
+  };
   const [page, setPage] = useState(1);
-  const [winePromise, setWinePromise] = useState<Promise<WineInfoType[]>>(data.wines);
+  const [winePromise, setWinePromise] = useState<
+    Promise<{ wines: WineInfoType[]; total_count: number }>
+  >(data.wines);
+  const [totalPage, setTotalPage] = useState(10);
   const appliedFilters = useWineStore((s) => s.appliedFilters);
   const user = useAuth();
   const resetFilters = useWineStore((s) => s.resetFilters);
+
+  useEffect(() => {
+    const wineCount = async () => {
+      const { count, error } = await supabase
+        .from('wines')
+        .select('*', { count: 'exact', head: true });
+      if (error) {
+        console.log(error);
+        return null;
+      }
+      if (count) {
+        setTotalPage(Math.ceil(count / 9));
+      }
+    };
+    wineCount();
+  }, []);
 
   useEffect(() => {
     // 필터가 바뀌면 페이지 1로 초기화
@@ -77,7 +101,9 @@ function Wines() {
     const from = 0;
     const to = 8;
     // 필터 적용해서 새 Promise 가져오기
-    setWinePromise(getWines(from, to, appliedFilters));
+    const w = getWines(from, to, appliedFilters);
+    setWinePromise(w);
+    w.then((w) => setTotalPage(Math.ceil(w.total_count / 9)));
   }, [appliedFilters, user]);
 
   useEffect(() => {
@@ -105,10 +131,10 @@ function Wines() {
       <SearchBar filterOptions={filterOptions} />
       <div className="w-full px-50 py-8 grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 justify-center">
         <Suspense fallback={<WinesSkeleton />}>
-          <Await resolve={winePromise}>{(wines) => <WineList filteredWines={wines} />}</Await>
+          <Await resolve={winePromise}>{(wines) => <WineList filteredWines={wines.wines} />}</Await>
         </Suspense>
       </div>
-      <Pagination page={page} totalPages={10} onPageChange={pageChange} />
+      <Pagination page={page} totalPages={totalPage} onPageChange={pageChange} siblingCount={2} />
     </div>
   );
 }
