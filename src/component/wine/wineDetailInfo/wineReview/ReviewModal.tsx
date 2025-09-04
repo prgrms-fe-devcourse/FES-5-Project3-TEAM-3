@@ -277,6 +277,7 @@ function ReviewModal({
             className="w-full h-20 bg-white rounded-2xl resize-none p-3"
             onChange={(e) => setContent(e.target.value)}
             onKeyDown={handleKeyDown}
+            // value={content}
           ></textarea>
           <Button fullWidth>작성완료</Button>
         </form>
