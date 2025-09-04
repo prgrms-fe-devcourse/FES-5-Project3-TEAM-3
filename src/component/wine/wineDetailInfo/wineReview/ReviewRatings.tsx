@@ -1,5 +1,5 @@
 import { useReviewStore } from '@/store/reviewStore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function ReviewRatings({
   w = 'w-10', // 기본값 40px
@@ -14,6 +14,7 @@ function ReviewRatings({
 }) {
   const [selectedRating, setSelectedRating] = useState(rating); // rating을 받은 경우 rating, 안받았으면 0 (readonly일때는 rating 안주면 기본값 0)
 
+  useEffect(() => setSelectedRating(rating), [rating]);
   const fullStars = Math.floor(selectedRating); // 선택된별점의 숫자부분
   const floatStars = Number((selectedRating % 1).toFixed(1)); // 선택된별점의 소수부분(1자리)
   const percentage: number[] = []; // percentage 5->[1,1,1,1,1], 3.5->[1,1,1,0.5,0]처럼 만들기위한것
@@ -74,6 +75,9 @@ function ReviewRatings({
           </div>
         </div>
       ))}
+      {type === 'select' && (
+        <p className="text-text-secondary ml-2">{selectedRating !== 0 && selectedRating} / 5점</p>
+      )}
     </div>
   );
 }

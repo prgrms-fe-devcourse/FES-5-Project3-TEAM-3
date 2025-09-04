@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import FlavorIcon from './FlavorIcon';
 import { computeTaste } from '@/utils/convertTasteInfo';
 import truncateText from '@/utils/truncateText';
-import { countryInfo } from '../filterSearch/filterInfo';
 
 interface WineBasicInfoType {
   wineBasicInfo: WineInfoType;
@@ -14,6 +13,7 @@ interface WineBasicInfoType {
 function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
   const {
     name,
+    country,
     country_ko,
     abv,
     variety,
@@ -77,9 +77,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
         )}
       >
         <img
-          src={
-            country_ko ? `/icon/country/${countryInfo[country_ko]}.svg` : '/icon/country/others.svg'
-          }
+          src={country_ko ? `/icon/country/${country}.svg` : '/icon/country/others.svg'}
           alt={country_ko ?? '와인생산국가'}
           className="w-6 h-6"
           draggable="false"
@@ -120,7 +118,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
                 <FlavorIcon flavor={s} key={s} flavoren={representative_flavor[i]} type="large" />
               ))
             ) : (
-              <p className="self-center">flavor 정보가 없습니다</p>
+              <p className="col-span-full text-text-secondary">flavor 정보가 없습니다</p>
             )}
           </div>
         </>
