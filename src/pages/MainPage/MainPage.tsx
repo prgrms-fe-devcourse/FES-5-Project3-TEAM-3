@@ -106,10 +106,10 @@ function MainPage() {
               <img src="image/Trending posts.png" alt="trending posts" />
             </h3>
 
-            <div className="flex gap-3 w-full justify-center">
+            <div className="flex gap-3  justify-between w-full ">
               <AnimatedPost>
                 {postData.map((post) => (
-                  <div key={post.post_id} className="post-card will-change-transform  w-90">
+                  <div key={post.post_id} className="post-card will-change-transform w-90">
                     <Card post={post} />
                   </div>
                 ))}

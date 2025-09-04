@@ -13,8 +13,8 @@ function FindPassword() {
   };
 
   return (
-    <>
-      <div className="flex mx-98 mt-10  items-center justify-between">
+   
+      <div className="flex mt-10 my-10 items-center justify-center gap-20">
         <section className="flex flex-col items-center gap-9">
           <div className="flex flex-col gap-4 items-center">
             <h2 className="text-5xl text-primary-500 font-extrabold">Change Password</h2>
@@ -46,11 +46,15 @@ function FindPassword() {
           </form>
         </section>
 
-        <section>
-          <img src="/image/FoundPassword.png" alt="we'll help you get back in" />
+        <section className="rounded-8 w-145 overflow-hidden">
+          <img
+            className="w-full h-auto object-cover"
+            src="/image/FoundPassword.png"
+            alt="we'll help you get back in"
+          />
         </section>
       </div>
-    </>
+    
   );
 }
 export default FindPassword;

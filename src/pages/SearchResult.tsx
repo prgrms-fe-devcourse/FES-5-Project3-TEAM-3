@@ -18,8 +18,9 @@ function SearchResult() {
   const pagenatedItem = filterWine.slice(startIndex, endIndex);
 
   return (
-    <div className="min-h-screen w-249 mx-auto mt-8  items-center flex flex-col flex-1">
+    <div className="min-h-screen w-249 mx-auto my-10 mt-8  items-center flex flex-col flex-1">
       <MainSearchBar />
+      <div className='mt-8 text-xl'>"{keyword}"에 대한 검색결과</div>
       <div className="w-300 flex flex-col mt-10">
         <div className="w-full border-b">
           <p>{filterWine.length} items</p>
@@ -44,7 +45,7 @@ function SearchResult() {
               </div>
             )}
           </section>
-          <Pagination page={page} onPageChange={(p) => setPage(p)} totalPages={maxPage} size="md" />
+          <Pagination page={page} onPageChange={(p) => {setPage(p)}} totalPages={maxPage}size="md" />
         </div>
       </div>
     </div>

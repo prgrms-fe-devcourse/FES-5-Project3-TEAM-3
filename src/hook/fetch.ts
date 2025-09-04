@@ -23,3 +23,14 @@ export async function useHashCount() {
     throw new Error('hashtag_conts를 찾는데 실패했습니다');
   }
 }
+
+export async function useProfile() { 
+  try {
+    const { data, error } = await supabase.from('profile').select('nickname')
+    if (error) console.error(error)
+    return data
+  }
+  catch {
+    throw new Error('profile 테이블 데이터를 불러오는데 실파했습니다')
+  }
+}
