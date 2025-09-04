@@ -23,6 +23,8 @@ export default function Collection({ collection }: { collection: Collection[] })
   const current = useRef(0);
   const rafId = useRef<number | null>(null);
 
+ 
+
   const computeProgress = () => {
     const wrap = wrapperRef.current;
     if (!wrap) return 0;
@@ -140,6 +142,8 @@ export default function Collection({ collection }: { collection: Collection[] })
                   slidesPerView={1}
                   spaceBetween={30}
                   allowTouchMove={false}
+                  simulateTouch={false}
+                  preventClicks={false}
                   mousewheel={false}
                   pagination={{ clickable: true }}
                   modules={[Pagination]}
@@ -147,10 +151,12 @@ export default function Collection({ collection }: { collection: Collection[] })
                   className="h-full"
                 >
                   {collection &&
-                    collection.map((item, index) => (
+                    collection.map((item,index) => (
                       <SwiperSlide key={item.review_id} className="h-full">
                         <UserCollection
-                          id={index}
+                          key={item.wine_id}
+                          id={item.wine_id}
+                          number={index}
                           image={item.wines?.image_url ?? []}
                           title={item.wines?.name ?? ''}
                           content={item.content}

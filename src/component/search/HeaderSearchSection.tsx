@@ -1,22 +1,30 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Categories from '../MainPage/Categories';
 import gsap from 'gsap';
-import MainSearchBar from '../MainPage/MainSearchBar';
+import MainSearchBar from './MainSearchBar';
 import { Link } from 'react-router';
 import { wineCategories } from '@/assets/staticArr';
 import { useHashCount } from '@/hook/fetch';
 import type { Tables } from '@/supabase/database.types';
+import { useSearchStore } from '@/store/searchStore';
+import { useShallow } from 'zustand/shallow';
 
 type Props = {
-  searchBar: boolean;
   setOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 };
 type HashCount = Tables<'hashtag_counts'>;
 
-function HeaderSearchSection({ searchBar, setOverlay }: Props) {
+function HeaderSearchSection({ setOverlay }: Props) {
+  const { isOpen, recent } = useSearchStore(
+    useShallow((s) => ({
+      isOpen: s.isOpen,
+      recent:s.recent
+    }))
+  )
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [hashTags, setHashTags] = useState<HashCount[]>([]);
-
+  const item = Array.isArray(recent) ? recent : []
+  
   useEffect(() => {
     (async () => {
       const hash = await useHashCount();
@@ -36,7 +44,7 @@ function HeaderSearchSection({ searchBar, setOverlay }: Props) {
 
     gsap.killTweensOf(el);
 
-    if (searchBar) {
+    if (isOpen) {
       gsap.set(el, { display: 'flex', height: 'auto' });
 
       const target = el.offsetHeight;
@@ -66,35 +74,8 @@ function HeaderSearchSection({ searchBar, setOverlay }: Props) {
         },
       });
     }
-  }, [searchBar]);
-
-  const parseArray = (s: string | null): string[] => {
-    if (!s) return [];
-    try {
-      const value = JSON.parse(s);
-      return Array.isArray(value) ? value : [];
-    } catch {
-      return [];
-    }
-  };
-
-  const [recentSearch, setRecentSearch] = useState<string[]>(() =>
-    parseArray(localStorage.getItem('recntly-search'))
-  );
-
-  const handleClick = (keyword: string) => {
-    const k = keyword.toLowerCase().trim();
-    setRecentSearch?.((prev) => {
-      const next = [k, ...prev.filter((x: string) => x !== k)].slice(0, 5);
-      localStorage.setItem('recently-search', JSON.stringify(next));
-      return next;
-    });
-  };
-
-  useEffect(() => {
-    setRecentSearch(parseArray(localStorage.getItem('recently-search')));
-  }, []);
-
+  }, [isOpen]);
+    
   return (
     <>
       <div
@@ -102,21 +83,29 @@ function HeaderSearchSection({ searchBar, setOverlay }: Props) {
         ref={sectionRef}
       >
         <div className="h-124 flex flex-col mx-auto mt-8 gap-7 w-249">
-          <MainSearchBar setReseach={setRecentSearch} />
+          <MainSearchBar />
           <div className="flex flex-col gap-7 items-start">
             <div className="flex flex-col flex-wrap gap-4">
               <h2>#최근 검색어</h2>
               <div className="flex gap-4">
-                {recentSearch.map((keyword: string, i) => (
-                  <Link
-                    to={`/search?keyword=${encodeURIComponent(keyword)}`}
-                    className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"
-                    key={i}
-                    onClick={() => handleClick(keyword)}
-                  >
-                    <p className="text-secondary-700">{keyword}</p>
-                  </Link>
-                ))}
+                {item.map((keyword: string, i) => {
+                    const k = keyword
+                      .trim()
+                      .replace(/\s+/g, '')
+                      .toLowerCase();
+
+                  return (
+                    <Link
+                   
+                      to={`/search?keyword=${encodeURIComponent(k)}`}
+                      className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"
+                      key={i}
+                    >
+                      <p className="text-secondary-700">{k}</p>
+                    </Link>
+                  )
+                }
+                )}
               </div>
             </div>
             <div className="flex flex-col flex-wrap gap-4">

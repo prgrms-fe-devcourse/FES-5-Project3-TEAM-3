@@ -1,12 +1,24 @@
 import Items from '@/component/search/Items';
-import MainSearchBar from '@/component/MainPage/MainSearchBar';
+import MainSearchBar from '@/component/search/MainSearchBar';
 import { useSearchParams } from 'react-router';
 import { filtered } from '@/hook/useFilter';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Pagination from '@/component/Pagination';
 import SkeletonItem from '@/component/search/skeleton/SkeletonItem';
+import { useSearch } from '@/hook/mainpage/useSearch';
+import { useSearchStore } from '@/store/searchStore';
+
 
 function SearchResult() {
+  const {USER_SEARCH,setRecentSearch,parseArray} = useSearch()
+  const {searchBar} = useSearchStore()
+
+useEffect(() => {
+  if (searchBar) {
+    setRecentSearch(parseArray(localStorage.getItem(USER_SEARCH)));
+  }
+}, [USER_SEARCH, searchBar]);
+  
   const [params] = useSearchParams();
   const keyword = params.get('keyword');
   const filterWine = filtered(keyword ?? '');
@@ -19,8 +31,8 @@ function SearchResult() {
 
   return (
     <div className="min-h-screen w-249 mx-auto my-10 mt-8  items-center flex flex-col flex-1">
-      <MainSearchBar />
-      <div className='mt-8 text-xl'>"{keyword}"에 대한 검색결과</div>
+      <MainSearchBar/>
+      <div className="mt-8 text-xl">"{keyword}"에 대한 검색결과</div>
       <div className="w-300 flex flex-col mt-10">
         <div className="w-full border-b">
           <p>{filterWine.length} items</p>
@@ -33,7 +45,7 @@ function SearchResult() {
               pagenatedItem.map((item) => (
                 <Items
                   key={item.wine_id}
-                  image={item.image_url[0]}
+                  image={item.image_url[0] ?? 'image/wineImage.svg'}
                   title={item.name}
                   content={item.description_ko ?? ''}
                   wineId={item.wine_id}
@@ -45,10 +57,21 @@ function SearchResult() {
               </div>
             )}
           </section>
-          <Pagination page={page} onPageChange={(p) => {setPage(p)}} totalPages={maxPage}size="md" />
+          <Pagination
+            page={page}
+            onPageChange={(p) => {
+              setPage(p);
+            }}
+            totalPages={maxPage}
+            size="md"
+          />
         </div>
       </div>
     </div>
   );
 }
 export default SearchResult;
+function setRecentSearch(arg0: any) {
+  throw new Error('Function not implemented.');
+}
+

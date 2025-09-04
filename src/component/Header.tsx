@@ -6,6 +6,7 @@ import HeaderSearchSection from './search/HeaderSearchSection';
 import clsx from 'clsx';
 import supabase from '@/supabase/supabase';
 import ScrollToTop from '@/hook/ScrolToTop';
+import { useSearchStore } from '@/store/searchStore';
 
 function Header() {
   const { userId, signOut } = useAuth(
@@ -14,14 +15,19 @@ function Header() {
       signOut: s.signOut,
     }))
   );
+  const { close, toggle } = useSearchStore(
+    useShallow((s) => ({
+      close: s.close,
+      toggle:s.toggle
+    }))
+  )
 const navigate=useNavigate()
   const { pathname, search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
-  const [searchBar, setSearchBar] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [userImage, setUserImage] = useState('');
   useLayoutEffect(() => {
-    setSearchBar(false);
+    close()
   }, [pathname, search]);
   // 쿼리스트링의 keywordk변경마다 search바 닫힘
 
@@ -56,7 +62,7 @@ const navigate=useNavigate()
   }, [userId]);
 
   const handleSearch = () => {
-    setSearchBar(!searchBar);
+    toggle()
     setOverlay(true);
 
     if (window.scrollY <= 1) {
@@ -78,7 +84,7 @@ const navigate=useNavigate()
   return (
     <div className={pathname == '/' ? '' : 'min-h-17.5'}>
       {overlay && (
-        <div className="fixed inset-0 bg-black/40 z-90" onClick={() => setSearchBar(false)}></div>
+        <div className="fixed inset-0 bg-black/40 z-90" onClick={close}></div>
       )}
 
       <div className={headerBgClass}>
@@ -138,7 +144,7 @@ const navigate=useNavigate()
               </button>
             )}
           </nav>
-          <HeaderSearchSection searchBar={searchBar} setOverlay={setOverlay} />
+          <HeaderSearchSection setOverlay={setOverlay} />
         </div>
       </div>
     </div>
