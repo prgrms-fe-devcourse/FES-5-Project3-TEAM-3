@@ -14,7 +14,12 @@ function CommunityWrite() {
           </p>
         </header>
 
-        <form className="grid grid-cols-12 gap-8">
+        <form
+          className="grid grid-cols-12 gap-8"
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
           <LeftContent onSave={isEditMode ? handleSaveEdit : undefined} />
           <RightPreview />
         </form>

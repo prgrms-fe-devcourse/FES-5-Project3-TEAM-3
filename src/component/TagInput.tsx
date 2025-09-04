@@ -66,7 +66,10 @@ export default function TagInput({
           size="md"
           type="button"
           borderType="outline"
-          onClick={() => tags.length < max && onAdd()}
+          onClick={(e) => {
+            (e as React.MouseEvent).preventDefault();
+            if (tags.length < max) onAdd();
+          }}
           disabled={tags.length >= max}
         >
           추가
