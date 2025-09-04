@@ -1,20 +1,40 @@
 import Button from '@/component/Button';
 import VisibleBtn from '@/component/Login/VisibleBtn';
+import { useProfile } from '@/hook/fetch';
 import useToast from '@/hook/useToast';
+import type { Tables } from '@/supabase/database.types';
 import supabase from '@/supabase/supabase';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
+type Profile = Pick<Tables<'profile'>,'nickname'> 
+
+
 function Register() {
+  
+  const [users, setUsers] = useState<Profile[]>([])
   const [nickname, setNickName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
+  const userNickname = users.some((a) => a.nickname.includes(nickname));
+
 
   const navigate = useNavigate();
   const pwRef = useRef<HTMLInputElement | null>(null);
   const pwConfirmRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const titleElement = document.getElementsByTagName('title')[0]
+    titleElement.innerHTML = 'Winepedia | 회원가입';
+    (async () => {
+      const profile = await useProfile()
+      setUsers(profile ?? [])
+    })()
+  }, [])
+
+
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,21 +67,39 @@ function Register() {
       useToast('error', '비밀번호를 다시 확인해주세요');
       return;
     }
+    if (userNickname) {
+      useToast('error','이미 사용 중인 닉네임입니다.')
+      return
+    }
 
-    const { error } = await supabase.auth.signUp({
-      email,
+    const { data:signdata,error } = await supabase.auth.signUp({
+      email:email.trim(),
       password,
       options: {
-        data: { nickname, phone },
+        data: { nickname:nickname.trim(), phone:phone.trim() },
       },
     });
+  
+    const userId = signdata.user?.id;
+
     if (error) {
       console.error(error);
       useToast('error', '회원가입에 실패하셨습니다');
       return;
     } else {
-      useToast('success', '회원가입에 성공하셨습니다');
-      navigate('/');
+        if (error) {
+          useToast('error', '로그인 정보를 다시 확인해주세요');
+        } else {
+      
+              await supabase.from('profile').insert({
+                profile_id: userId,
+                nickname: nickname.trim(),
+                email: email.trim(),
+                phone: phone.trim(),
+              })
+          useToast('success', '회원가입에 성공하셨습니다'); 
+          navigate('/');
+        }
     }
   };
 
@@ -78,7 +116,7 @@ function Register() {
   };
 
   return (
-    <div className="flex m-98 mt-10 items-center justify-between">
+    <div className="flex mt-10 my-10 items-center justify-center gap-20">
       <section className="flex flex-col items-center gap-8">
         <div className="flex  flex-col items-center gap-4">
           <h2 className="text-5xl font-extrabold text-primary-500">Create an Account</h2>
@@ -175,8 +213,12 @@ function Register() {
           </div>
         </form>
       </section>
-      <section>
-        <img src="/image/registerImg.png" alt="회원가입 이미지" />
+      <section className="rounded-8 w-145  overflow-hidden">
+        <img
+          className="w-full h-auto object-cover"
+          src="/image/registerImg.png"
+          alt="회원가입 이미지"
+        />
       </section>
     </div>
   );

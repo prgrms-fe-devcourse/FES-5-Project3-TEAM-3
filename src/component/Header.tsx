@@ -1,6 +1,6 @@
 import { useAuth } from '@/store/@store';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 import HeaderSearchSection from './search/HeaderSearchSection';
 import clsx from 'clsx';
@@ -14,7 +14,7 @@ function Header() {
       signOut: s.signOut,
     }))
   );
-
+const navigate=useNavigate()
   const { pathname, search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
@@ -47,7 +47,7 @@ function Header() {
         .from('profile')
         .select('profile_image_url')
         .eq('profile_id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) console.log(error);
       if (data) setUserImage(data.profile_image_url);
@@ -63,6 +63,10 @@ function Header() {
       setScrolled(!scrolled);
     }
   };
+  
+  const goToLogin = () => {
+    navigate('/account/login',{state:pathname})
+  }
 
   const base = ' h-13 w-screen flex items-center justify-center fixed z-99 duration-400 lg:h-17.5';
 
@@ -72,7 +76,7 @@ function Header() {
   );
 
   return (
-    <div className={pathname == '/' ? '' : 'h-17.5'}>
+    <div className={pathname == '/' ? '' : 'min-h-17.5'}>
       {overlay && (
         <div className="fixed inset-0 bg-black/40 z-90" onClick={() => setSearchBar(false)}></div>
       )}
@@ -124,13 +128,14 @@ function Header() {
                 </Link>
               </div>
             ) : (
-              <NavLink
-                to="account/login"
-                className="flex font-semibold text-secondary-50 items-center gap-2"
+                <button
+                  type="button"
+                onClick={goToLogin}
+                className="flex font-semibold text-secondary-50 items-center gap-2 cursor-pointer"
               >
                 <img src="/icon/fi-rr-glass-cheers.svg" alt="로그인아이콘" />
                 Login
-              </NavLink>
+              </button>
             )}
           </nav>
           <HeaderSearchSection searchBar={searchBar} setOverlay={setOverlay} />
