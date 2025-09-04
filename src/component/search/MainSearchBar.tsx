@@ -1,20 +1,26 @@
+
 import useToast from '@/hook/useToast';
-
-import { useRef, useState } from 'react';
+import { useSearchStore } from '@/store/searchStore';
+import { useRef} from 'react';
 import { useNavigate } from 'react-router';
+import { useShallow } from 'zustand/shallow';
 
-interface Props {
-  setReseach?: React.Dispatch<React.SetStateAction<string[]>>;
-}
 
-function MainSearchBar({ setReseach }: Props) {
+
+function MainSearchBar() {
+  const { query, setQuery, addRecent } = useSearchStore(
+    useShallow((s) => ({
+      query: s.query,
+      setQuery: s.setQuery,
+      addRecent:s.addRecent
+    }))
+  )
   const navigate = useNavigate();
-  const [keyword, setKeyword] = useState('');
   const searchBarRef = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const k = keyword.toLowerCase().trim();
+    const k = query.trim().replace(/\s+/g, '').toLowerCase();
     if (searchBarRef.current) {
       searchBarRef.current.value = '';
     }
@@ -23,13 +29,9 @@ function MainSearchBar({ setReseach }: Props) {
       useToast('error', '검색어를 입력하세요');
       return;
     }
-    setReseach?.((prev) => {
-      const next = [k, ...prev.filter((x: string) => x !== k)].slice(0, 5);
-      localStorage.setItem('recently-search', JSON.stringify(next));
-      return next;
-    });
-
-    navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
+    addRecent(k)
+    navigate(`/search?keyword=${encodeURIComponent(k)}`);
+    setQuery('')
   };
 
   const handleFocus = (e: React.MouseEvent<HTMLFormElement, MouseEvent>) => {
@@ -50,9 +52,9 @@ function MainSearchBar({ setReseach }: Props) {
         ref={searchBarRef}
         type="text"
         id="search"
-        value={keyword}
+        value={query}
         autoComplete="off"
-        onChange={(e) => setKeyword(e.target.value)}
+        onChange={(e) => setQuery(e.target.value)}
         placeholder="검색어를 입력하세요."
       />
       <label htmlFor="search">
