@@ -1,13 +1,15 @@
 import { useMyReviewAgg } from '@/hook/myPage/useMyReviewAgg';
 import WineAnalysisPie from './WineAnalysisPie';
 import WineRatingDistBar from './WineRatingDistBar';
+import useToast from '@/hook/useToast';
 
 function WineTasteAnalysis() {
   const { data, loading, error } = useMyReviewAgg();
 
   if (error) {
+    useToast('error', '데이터를 불러오는 데 실패했습니다.');
     console.error(error);
-    return <p className="text-error-500">데이터를 불러오는 데 실패했습니다.</p>;
+    return <p className="text-error-500">데이터를 불러오지 못했습니다.</p>;
   }
 
   return (
