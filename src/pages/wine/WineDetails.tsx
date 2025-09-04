@@ -52,7 +52,11 @@ export const getPairings = async (id: string) => {
 };
 
 export const getWineReview = async (wineId: string) => {
-  const { data, error } = await supabase.from('reviews').select().eq('wine_id', wineId);
+  const { data, error } = await supabase
+    .from('reviews')
+    .select()
+    .eq('wine_id', wineId)
+    .order('created_at', { ascending: false });
   if (error) {
     console.error(error);
     return null;
@@ -94,7 +98,6 @@ function WineDetails() {
   const [averageRating, setAverageRating] = useState(0);
   const [averageTaste, setAverageTaste] = useState({ sweetness: 0, acidic: 0, tannic: 0, body: 0 });
   const [reviewers, setReviewers] = useState(0);
-  const [rating] = useState(averageRating); // supabase에서 가져오기
   const user = useAuth().userId;
 
   useEffect(() => {
@@ -151,6 +154,8 @@ function WineDetails() {
 
   const openReviewModal = () => {
     if (!user) useToast('error', '리뷰를 작성하시려면 로그인해주세요');
+    else if (reviews.find((r) => r.user_id === user))
+      useToast('error', '이미 작성한 리뷰가 있습니다');
     else openModal();
   };
 
@@ -190,7 +195,7 @@ function WineDetails() {
 
             return (
               <>
-                <div className="m-auto flex flex-col justify-center items-center gap-4 select-none lg:px-5 xl:px-30">
+                <div className="m-auto flex flex-col justify-center items-center gap-4 select-none px-5 xl:px-30">
                   <div className="w-full h-full flex flex-col md:flex-row items-center justify-center gap-5 lg:gap-10 xl:gap-20 py-5 flex-wrap md:wrap-normal">
                     <img
                       src={
@@ -226,8 +231,8 @@ function WineDetails() {
                       </div>
                       <div className="h-fit flex justify-center w-full">
                         <p className="m-auto text-lg">리뷰</p>
-                        <ReviewRatings rating={rating} w="w-8" h="h-8" />
-                        <p className="m-auto">{rating} / 5</p>
+                        <ReviewRatings rating={averageRating} w="w-8" h="h-8" />
+                        <p className="m-auto">{averageRating} / 5</p>
                       </div>
                     </div>
                   </div>
@@ -245,7 +250,7 @@ function WineDetails() {
                   >
                     리뷰작성하기
                   </Button>
-                  <div className="w-full flex items-center justify-center flex-wrap gap-20 py-5">
+                  <div className="w-full flex items-center justify-center flex-wrap gap-10 2xl:gap-20 py-5">
                     <RatingSummary
                       rating={averageRating}
                       reviewerCount={reviewers}
