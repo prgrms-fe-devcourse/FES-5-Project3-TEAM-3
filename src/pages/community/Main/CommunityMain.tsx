@@ -19,6 +19,10 @@ function CommunityMain() {
   const handleTagClickLocal = (tag: string) => {
     const plain = String(tag).replace(/^#/, '').trim();
     if (!plain) return;
+    if (activeTag === plain) {
+      clearActiveTag();
+      return;
+    }
     setActiveTag(plain);
     fetchPosts(`#${plain}`, sortBy);
   };
@@ -136,7 +140,7 @@ function CommunityMain() {
                   <div className="mb-3 text-sm">
                     현재 태그 필터: <strong>#{activeTag}</strong>
                     <button className="ml-3 text-xs text-gray-500" onClick={clearActiveTag}>
-                      필터 해제
+                      태그 해제
                     </button>
                   </div>
                 )}
