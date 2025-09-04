@@ -4,13 +4,19 @@ import clsx from 'clsx';
 import FlavorIcon from './FlavorIcon';
 import { computeTaste } from '@/utils/convertTasteInfo';
 import truncateText from '@/utils/truncateText';
+import { useState } from 'react';
+import supabase from '@/supabase/supabase';
+import { useAuth } from '@/store/@store';
+import useToast from '@/hook/useToast';
+import { countryInfo } from '../filterSearch/filterInfo';
 
 interface WineBasicInfoType {
   wineBasicInfo: WineInfoType;
   type?: 'default' | 'detail';
+  wish?: boolean;
 }
 
-function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
+function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBasicInfoType) {
   const {
     name,
     country,
@@ -21,10 +27,11 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
     acidic,
     tannic,
     body,
-    description,
+    description_ko,
     category,
     representative_flavor_ko,
     representative_flavor,
+    wine_id,
   } = wineBasicInfo;
   const computedTaste = computeTaste({ sweetness, acidic, tannic, body }) as {
     sweetness: number;
@@ -41,6 +48,26 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
     dessert: 'bg-secondary-500/60',
   };
 
+  const [wished, setWished] = useState(wish);
+  const userId = useAuth().userId;
+
+  const toggleWish = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!userId) {
+      useToast('error', '위시리스트를 추가하려면 로그인하세요');
+      return;
+    }
+    const { data, error } = await supabase
+      .from('wishlists')
+      .upsert({ user_id: userId, wine_id, bookmark: !wished }, { onConflict: 'user_id,wine_id' })
+      .select();
+    if (error) console.error(error);
+    if (data) {
+      setWished(data[0].bookmark);
+    }
+  };
+
   return (
     <div
       className={clsx(
@@ -48,25 +75,38 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
         type === 'detail' && 'gap-2 w-3/4 md:w-1/3 min-w-60'
       )}
     >
-      {/*와인정보  : 영어이름+한국이름?+도수+향미료+맛(당도, 산미, 탄닌, 바디감)*/}
-      <h3
-        className={clsx(
-          ' text-2xl mb-4 text-text-primary',
-          type === 'detail' && 'text-3xl select-text'
-        )}
-      >
-        {type === 'default' ? truncateText(name, 32) : name}
+      <div className="flex justify-between gap-5">
+        {/*와인정보  : 영어이름+한국이름?+도수+향미료+맛(당도, 산미, 탄닌, 바디감)*/}
+        <h3
+          className={clsx(
+            'w-full text-2xl mb-4 text-text-primary',
+            type === 'detail' && 'text-3xl select-text'
+          )}
+        >
+          {type === 'default' ? truncateText(name, 32) : name}
+          {type === 'detail' && (
+            <>
+              <span
+                className={clsx(
+                  'w-fit px-3 text-text-primary shadow-sm rounded-xl text-lg ml-3 select-none self-center',
+                  wineTypeStyle[wineType]
+                )}
+              >
+                {wineType}
+              </span>
+            </>
+          )}
+        </h3>
         {type === 'detail' && (
-          <span
-            className={clsx(
-              'w-fit px-3 text-text-primary shadow-sm rounded-xl text-lg ml-3 select-none',
-              wineTypeStyle[wineType]
+          <button type="button" onClick={toggleWish} className="mb-4">
+            {wished ? (
+              <img src="/icon/bookmarkFilled.svg" alt="위시리스트삭제" className="w-8 h-8" />
+            ) : (
+              <img src="/icon/bookmark.svg" alt="위시리스트추가" className="w-8 h-8" />
             )}
-          >
-            {wineType}
-          </span>
+          </button>
         )}
-      </h3>
+      </div>
       {/* <p>
             소테른<span>{alcohol_content ? `[${alcohol_content}]` : ''}</span>
           </p> */}
@@ -77,7 +117,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
         )}
       >
         <img
-          src={country_ko ? `/icon/country/${country}.svg` : '/icon/country/others.svg'}
+          src={(country_ko && countryInfo[country_ko].icon) || '/icon/country/others.svg'}
           alt={country_ko ?? '와인생산국가'}
           className="w-6 h-6"
           draggable="false"
@@ -86,7 +126,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
             e.currentTarget.src = '/icon/country/others.svg';
           }}
         />
-        {country_ko ?? '정보없음'}
+        {country_ko ?? country ?? '정보없음'}
         <img src="/icon/wine.svg" alt="도수" className="w-6 h-6" draggable="false" />
         {abv ?? '정보없음'}
       </div>
@@ -109,7 +149,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
       ) : (
         <>
           <p className="mb-3 text-text-secondary">
-            {description === '' ? '설명없음' : description}
+            {description_ko === '' ? '설명없음' : description_ko}
           </p>
           <p className="text-text-secondary">주요향미료</p>
           <div className="grid grid-cols-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 items-center justify-center group py-2">

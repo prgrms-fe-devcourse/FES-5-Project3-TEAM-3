@@ -14,6 +14,7 @@ function SearchBar({ filterOptions }: FilterOptionsType) {
   const primary = ['국가', '품종', '종류'] as const;
   const [openAdditionalOpt, setOpenAdditionalOpt] = useState(false);
   const setAppliedFilters = useWineStore((state) => state.setAppliedFilters);
+  const resetTempFilters = useWineStore((s) => s.resetTempFilters);
 
   const toggleAdditionalOpt = () => {
     setOpenAdditionalOpt((prev) => !prev);
@@ -23,7 +24,15 @@ function SearchBar({ filterOptions }: FilterOptionsType) {
   const additionalCountry = useMemo(() => filterOptions['국가'].slice(10), [filterOptions]);
 
   return (
-    <div className="flex flex-col px-50 py-3 pb-0 w-full h-auto gap-3">
+    <div className="flex flex-col px-50 py-3 pb-0 w-full h-auto gap-3 relative">
+      <Button
+        type="button"
+        size="sm"
+        className="absolute bottom-24 right-52"
+        onClick={resetTempFilters}
+      >
+        초기화
+      </Button>
       {openAdditionalOpt
         ? Object.entries(filterOptions).map(([key, value]) => {
             const k = key as FilterKey;
@@ -51,8 +60,9 @@ function SearchBar({ filterOptions }: FilterOptionsType) {
       >
         옵션전체보기 {openAdditionalOpt ? '▴' : '▾'}
       </div>
+
       <Button fullWidth onClick={setAppliedFilters}>
-        검색하기
+        필터적용하기
       </Button>
     </div>
   );

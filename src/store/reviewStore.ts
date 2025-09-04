@@ -31,6 +31,7 @@ interface ReviewStore {
   deletePairing: (value: Record<string, string>) => void;
   setContent: (value: string) => void;
   reset: () => void;
+  log: () => void;
 }
 
 const initialState = {
@@ -47,7 +48,7 @@ const initialState = {
   pairing: [] as Record<string, string>[],
 };
 
-export const useReviewStore = create<ReviewStore>((set, _get) => ({
+export const useReviewStore = create<ReviewStore>((set, get) => ({
   isOpen: false,
   isEditMode: false,
   rating: null,
@@ -70,9 +71,10 @@ export const useReviewStore = create<ReviewStore>((set, _get) => ({
         tannic: value.review.tannin_score,
         body: value.review.body_score,
         content: value.review.content,
-        tag: value.tags,
         pairing: value.pairings,
+        tag: value.tags,
         isEditMode: true,
+        onlyReview: true,
       });
     } else {
       // 새 리뷰 작성 모드 (기본값만 유지)
@@ -96,12 +98,22 @@ export const useReviewStore = create<ReviewStore>((set, _get) => ({
   setAcidicTaste: (value: number) => set({ acidic: value }),
   setTannicTaste: (value: number) => set({ tannic: value }),
   setBodyTaste: (value: number) => set({ body: value }),
-  toggleOnlyReview: () => set((state) => ({ onlyReview: !state.onlyReview })),
+  toggleOnlyReview: () =>
+    set((state) => ({
+      onlyReview: !state.onlyReview,
+    })),
   addTag: (tag) => set((state) => ({ tag: [...state.tag, tag] })),
   deleteTag: (tag) => set((state) => ({ tag: state.tag.filter((t) => t !== tag) })),
   addPairing: (pairing) => set((state) => ({ pairing: [...state.pairing, pairing] })),
   deletePairing: (pairing) =>
-    set((state) => ({ pairing: state.pairing.filter((p) => p !== pairing) })),
+    set((state) => ({
+      pairing: state.pairing.filter((p) => {
+        const [key, value] = Object.entries(p)[0];
+        const [targetKey, targetValue] = Object.entries(pairing)[0];
+        return !(key === targetKey && value === targetValue);
+      }),
+    })),
   setContent: (content) => set({ content }),
   reset: () => set(initialState),
+  log: () => get(),
 }));

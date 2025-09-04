@@ -21,7 +21,7 @@ export const getWineDetails = async (id: string) => {
   const { data, error } = await supabase.from('wines').select().eq('wine_id', id);
   if (error) {
     console.error(error);
-    return null;
+    return [];
   }
   return data;
 };
@@ -31,21 +31,26 @@ export const getWineTag = async (id: string) => {
     .from('hashtag_counts')
     .select()
     .contains('wine_ids', [id])
+    .neq('tag_count', 0)
     .order('tag_count', { ascending: false });
 
   if (error) {
     console.error(error);
-    return null;
+    return [];
   }
   return data;
 };
 
 export const getPairings = async (id: string) => {
-  const { data, error } = await supabase.from('pairings').select().eq('wine_id', id);
+  const { data, error } = await supabase
+    .from('wine_pairings_counts')
+    .select()
+    .eq('wine_id', id)
+    .order('pairing_count', { ascending: false });
   console.log(data, error);
   if (error) {
     console.error(error);
-    return null;
+    return [];
   }
   console.log(data);
   return data;
@@ -59,7 +64,7 @@ export const getWineReview = async (wineId: string) => {
     .order('created_at', { ascending: false });
   if (error) {
     console.error(error);
-    return null;
+    return [];
   }
   return data;
 };
@@ -85,7 +90,7 @@ function WineDetails() {
   const data = useLoaderData() as {
     wines: Promise<WineInfoType[]>;
     tags: Tables<'hashtag_counts'>[];
-    pairings: Tables<'pairings'>[];
+    pairings: Tables<'wine_pairings_counts'>[];
     reviews: Tables<'reviews'>[];
   };
 
@@ -93,12 +98,14 @@ function WineDetails() {
   const openModal = useReviewStore((state) => state.openModal);
 
   const [reviews, setReviews] = useState(data.reviews);
+  const [tags, setTags] = useState(data.tags);
+  const [pairings, setPairings] = useState(data.pairings);
 
   const [reviewRating, setReviewRating] = useState([0, 0, 0, 0, 0]);
   const [averageRating, setAverageRating] = useState(0);
   const [averageTaste, setAverageTaste] = useState({ sweetness: 0, acidic: 0, tannic: 0, body: 0 });
   const [reviewers, setReviewers] = useState(0);
-  const user = useAuth().userId;
+  const userId = useAuth().userId;
 
   useEffect(() => {
     if (!reviews || reviews.length === 0) {
@@ -153,8 +160,8 @@ function WineDetails() {
   }, [reviews]);
 
   const openReviewModal = () => {
-    if (!user) useToast('error', '리뷰를 작성하시려면 로그인해주세요');
-    else if (reviews.find((r) => r.user_id === user))
+    if (!userId) useToast('error', '리뷰를 작성하시려면 로그인해주세요');
+    else if (reviews.find((r) => r.user_id === userId))
       useToast('error', '이미 작성한 리뷰가 있습니다');
     else openModal();
   };
@@ -162,9 +169,34 @@ function WineDetails() {
   if (!wineId) return;
 
   const refreshReviews = async () => {
-    const newReviews = await getWineReview(wineId);
-    setReviews(newReviews ?? []);
+    if (!wineId) return;
+    const [reviews, tags, pairings] = await Promise.all([
+      getWineReview(wineId),
+      getWineTag(wineId),
+      getPairings(wineId),
+    ]);
+    setReviews(reviews ?? []);
+    setTags(tags ?? []);
+    setPairings(pairings ?? []);
   };
+
+  const [wish, setWish] = useState(false);
+
+  useEffect(() => {
+    const isWish = async () => {
+      if (!userId) return;
+      const { data, error } = await supabase
+        .from('wishlists')
+        .select('bookmark')
+        .eq('user_id', userId)
+        .eq('wine_id', wineId);
+      if (error) console.error(error);
+      if (data && data.length !== 0) {
+        setWish(data[0].bookmark);
+      }
+    };
+    isWish();
+  }, [userId, wineId]);
 
   return (
     <>
@@ -204,10 +236,10 @@ function WineDetails() {
                           : '/image/wineImage.svg'
                       }
                       alt={w.name}
-                      className="h-full"
+                      className="w-25"
                       draggable="false"
                     />
-                    <WineBasicInfo wineBasicInfo={w} type="detail" />
+                    <WineBasicInfo wineBasicInfo={w} type="detail" wish={wish} />
                     <div className="w-3/4 md:w-85 flex flex-col justify-center items-center p-5 gap-10">
                       <div className="w-full md:w-80 h-80">
                         <p className="flex justify-end items-center gap-2">
@@ -236,12 +268,8 @@ function WineDetails() {
                       </div>
                     </div>
                   </div>
-                  <Await resolve={data.tags}>
-                    {(tags) => <ItemsContainer items={tags.slice(0, 5)} type="tags" />}
-                  </Await>
-                  <Await resolve={data.pairings}>
-                    {(pairings) => <ItemsContainer items={pairings} type="pairings" />}
-                  </Await>
+                  <ItemsContainer items={tags} type="tags" />
+                  <ItemsContainer items={pairings} type="pairings" />
                   <h3 className="text-xl">이 와인 드셔보셨나요 ? 리뷰를 작성해주세요</h3>
                   <Button
                     type="button"
@@ -264,8 +292,8 @@ function WineDetails() {
                     wineId={w.wine_id}
                     wineImage={w.image_url}
                     wineName={w.name}
-                    pairings={data.pairings}
-                    tags={data.tags}
+                    pairings={pairings}
+                    tags={tags}
                     refresh={refreshReviews}
                   />
                 }

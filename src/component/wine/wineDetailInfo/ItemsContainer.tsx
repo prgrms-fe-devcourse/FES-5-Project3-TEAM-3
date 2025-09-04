@@ -1,11 +1,12 @@
 import type { Tables } from '@/supabase/database.types';
 import Parings from './Parings';
 import WineTag from './WineTag';
+import { memo } from 'react';
 
 type ItemsProps =
   | {
       type: 'pairings';
-      items: Tables<'pairings'>[];
+      items: Tables<'wine_pairings_counts'>[];
     }
   | {
       type: 'tags';
@@ -25,13 +26,17 @@ function ItemsContainer({ items, type }: ItemsProps) {
             {`5개 이상의 ${type === 'pairings' ? '페어링이' : '태그가'} 등록되면 확인할 수 있습니다`}
           </p>
         ) : type === 'pairings' ? (
-          items.map((item) => <Parings key={item.pairing_id} pairing={item} />)
+          items
+            .slice(0, 5)
+            .map((item) => (
+              <Parings key={`${item.pairing_category}/${item.pairing_name}`} pairing={item} />
+            ))
         ) : (
-          items.map((item) => <WineTag key={item.tag_text} tag={item} />)
+          items.slice(0, 5).map((item) => <WineTag key={item.tag_text} tag={item} />)
         )}
       </ul>
     </>
   );
 }
 
-export default ItemsContainer;
+export default memo(ItemsContainer);

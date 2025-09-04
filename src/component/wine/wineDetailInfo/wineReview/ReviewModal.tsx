@@ -24,7 +24,7 @@ function ReviewModal({
   wineId: string;
   wineImage: string[];
   wineName: string;
-  pairings: Tables<'pairings'>[];
+  pairings: Tables<'wine_pairings_counts'>[];
   tags: Tables<'hashtag_counts'>[];
   refresh: () => void;
 }) {
@@ -43,11 +43,13 @@ function ReviewModal({
     rating,
     content,
     reset,
-    isEditMode,
     sweetness,
-    tannic,
     acidic,
+    tannic,
     body,
+    editMode,
+    tag,
+    pairing,
   } = useReviewStore(
     useShallow((s) => ({
       isOpen: s.isOpen,
@@ -55,16 +57,16 @@ function ReviewModal({
       setContent: s.setContent,
       toggleOnlyReview: s.toggleOnlyReview,
       onlyReview: s.onlyReview,
-      addTag: s.addTag,
-      deleteTag: s.deleteTag,
       rating: s.rating,
       content: s.content,
       reset: s.reset,
-      isEditMode: s.isEditMode,
       sweetness: s.sweetness,
       tannic: s.tannic,
       acidic: s.acidic,
       body: s.body,
+      editMode: s.isEditMode,
+      tag: s.tag,
+      pairing: s.pairing,
     }))
   );
 
@@ -102,19 +104,10 @@ function ReviewModal({
 
     if (onlyReview) {
       const review = { wine_id: wineId, rating, content, user_id };
-      const { data, error } = await supabase.from('reviews').insert(review).select();
-      if (error) {
-        console.error(error);
-        return;
-      }
-      reset();
-      closeModal();
-      refresh();
-      return data;
-    } else if (isEditMode) {
       const { data, error } = await supabase
         .from('reviews')
-        .upsert({ rating, content, wine_id: wineId, user_id }, { onConflict: 'user_id, wine_id' });
+        .upsert(review, { onConflict: 'user_id, wine_id' })
+        .select();
       if (error) {
         console.error(error);
         return;
@@ -124,8 +117,6 @@ function ReviewModal({
       refresh();
       return data;
     } else {
-      const { rating, sweetness, acidic, tannic, body, content, tag, pairing } =
-        useReviewStore.getState();
       if (!rating || !sweetness || !acidic || !tannic || !body) {
         useToast('error', '맛 평가를 입력해주세요');
         return;
@@ -172,15 +163,20 @@ function ReviewModal({
         body_score: body,
       };
 
-      const { data, error } = await supabase.from('reviews').insert(review).select();
+      const { data, error } = await supabase
+        .from('reviews')
+        .upsert(review, { onConflict: 'user_id, wine_id' })
+        .select();
       if (error) {
         console.error('리뷰', error);
         return;
       } else {
-        const { error } = await supabase
+        const { error: error_tags } = await supabase
           .from('hashtags')
-          .upsert([{ review_id: data[0].review_id, wine_id: wineId, user_id, tag_text: tag }]);
-        if (error) console.error('태그', error);
+          .upsert([{ review_id: data[0].review_id, wine_id: wineId, user_id, tag_text: tag }], {
+            onConflict: 'user_id, wine_id, tag_text',
+          });
+        if (error_tags) console.error('태그', error);
         else {
           const pairingObject = pairing.map((p) => {
             const [category, value] = Object.entries(p)[0];
@@ -193,8 +189,8 @@ function ReviewModal({
               pairing_name: value,
             };
           });
-          const { error } = await supabase.from('pairings').upsert(pairingObject);
-          if (error) console.error(error);
+          const { error: error_pairing } = await supabase.from('pairings').insert(pairingObject);
+          if (error_pairing) console.error(error);
           else {
             console.log(data);
             reset();
@@ -238,35 +234,35 @@ function ReviewModal({
                 className="w-5 h-5 bg-gray-300"
                 gap="gap-3"
               />
-            ) : isEditMode ? (
+            ) : editMode ? (
               <TastingInfo
-                type="readonly"
-                tasting={{ sweetness, tannic, acidic, body }}
+                type="select"
                 style="review"
                 className="w-5 h-5"
-                gap="gap-3"
+                tasting={{ sweetness, tannic, acidic, body }}
               />
             ) : (
               <TastingInfo type="select" style="review" className="w-5 h-5" />
             )}
           </div>
           <div className="flex flex-col justify-center relative">
-            <ReviewTagInput disabled={onlyReview} isEditMode={isEditMode} tagOptions={tagText} />
+            <ReviewTagInput disabled={onlyReview} tagOptions={tagText} isEditMode={editMode} />
             <hr className="text-gray-400 p-2" />
             <ReviewPairingInput
               disabled={onlyReview}
-              isEditMode={isEditMode}
               pairingOptions={pairingText}
+              isEditMode={editMode}
             />
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <ReviewRatings type="select" w="w-8" h="h-8" rating={isEditMode ? rating! : undefined} />
+          <ReviewRatings type="select" w="w-8" h="h-8" rating={rating ?? undefined} />
           <label htmlFor="onlyReview" className="text-text-primary">
             <input
               type="checkbox"
               id="onlyReview"
-              checked={onlyReview}
+              checked={onlyReview ?? false}
+              disabled={editMode}
               onChange={toggleOnlyReview}
             />{' '}
             리뷰만 작성하기
@@ -277,7 +273,7 @@ function ReviewModal({
             className="w-full h-20 bg-white rounded-2xl resize-none p-3"
             onChange={(e) => setContent(e.target.value)}
             onKeyDown={handleKeyDown}
-            // value={content}
+            value={content}
           ></textarea>
           <Button fullWidth>작성완료</Button>
         </form>
