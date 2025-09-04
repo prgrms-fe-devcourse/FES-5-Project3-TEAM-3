@@ -3,8 +3,7 @@ import Spinner from '@/component/Spinner';
 import { useMyPosts } from '@/hook/myPage/useMyPosts';
 import useToast from '@/hook/useToast';
 import { useAuth } from '@/store/@store';
-import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useState } from 'react';
 // import Card from '../community/Main/Card';
 import { useMyLikedPosts } from '@/hook/myPage/useMyLikedPosts';
 import Button from '@/component/Button';
@@ -21,31 +20,6 @@ function MyActivities() {
 
   const userId = useAuth((s) => s.userId);
   const isAuthLoading = useAuth((s) => s.isLoading);
-  const announcedRef = useRef(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (isAuthLoading || userId) return;
-
-    // error toast 1회만
-    if (!announcedRef.current) {
-      useToast('error', '로그인이 필요합니다.');
-      announcedRef.current = true;
-    }
-
-    const t1 = setTimeout(() => {
-      useToast('info', '로그인 페이지로 이동합니다.');
-    }, 500);
-    const t2 = setTimeout(() => {
-      navigate('/account/login', { replace: true, state: { from: location } });
-    }, 1000);
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, [userId, isAuthLoading, navigate, location]);
 
   const w = useMyPosts(userId ?? undefined, pageWritten, pageSize, { enabled: mode === 'written' });
   const l = useMyLikedPosts(userId ?? undefined, pageLiked, pageSize, {
@@ -56,7 +30,7 @@ function MyActivities() {
 
   let content: React.ReactNode = null;
 
-  if (active.loading && active.data.rows.length === 0) {
+  if (isAuthLoading || (active.loading && active.data.rows.length === 0)) {
     content = <Spinner />;
   } else if (active.error) {
     useToast('error', '데이터를 불러오는 데 실패했습니다.');

@@ -5,7 +5,6 @@ import { uploadImage } from '@/utils/supabase/uploadImage';
 import Button from '../Button';
 import { useAuth } from '@/store/@store';
 import useToast from '@/hook/useToast';
-import { useLocation, useNavigate } from 'react-router';
 import Spinner from '../Spinner';
 import supabase from '@/supabase/supabase';
 import { useConfirm } from '@/hook/useConfirm';
@@ -30,35 +29,9 @@ function SettingImage() {
   const updateAvatar = useUpdateAvatar();
 
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const announcedRef = useRef(false);
   const confirm = useConfirm();
 
   const fieldKey = 'avatar';
-
-  /* profile guard */
-  useEffect(() => {
-    if (isAuthLoading || profileId) return;
-
-    // error toast 1회만
-    if (!announcedRef.current) {
-      useToast('error', '로그인이 필요합니다.');
-      announcedRef.current = true;
-    }
-
-    const t1 = setTimeout(() => {
-      useToast('info', '로그인 페이지로 이동합니다.');
-    }, 500);
-    const t2 = setTimeout(() => {
-      navigate('/account/login', { replace: true, state: { from: location } });
-    }, 1000);
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, [profileId, isAuthLoading, navigate, location]);
 
   // 서버 값으로 avatarUrl 초기화
   useEffect(() => {
@@ -192,8 +165,7 @@ function SettingImage() {
     if (fileRef.current) fileRef.current.value = '';
   };
 
-  // 나중에 default profile image로 변경 필요
-  const imageSrc = avatarPreview ?? avatarUrl ?? undefined;
+  const imageSrc = avatarPreview ?? avatarUrl ?? '/image/defaultProfile.png';
 
   if (isAuthLoading || profileLoading || !profileId)
     return (
