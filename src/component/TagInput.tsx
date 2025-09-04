@@ -22,10 +22,15 @@ export default function TagInput({
   max = 5,
   placeholder = '추가 태그 입력 (최대 5개)',
 }: Props) {
+  const composingRef = React.useRef(false);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // IME(한글 등) 조합 중 Enter 무시 (Mac 중복 입력 방지)
+    if (composingRef.current || (e.nativeEvent as any)?.isComposing) return;
+
     if (e.key === 'Enter') {
       e.preventDefault();
-      onAdd();
+      if (tags.length < max) onAdd();
     }
   };
 
@@ -52,6 +57,8 @@ export default function TagInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
+          onCompositionStart={() => (composingRef.current = true)}
+          onCompositionEnd={() => (composingRef.current = false)}
           aria-label="태그 입력"
         />
 
@@ -59,7 +66,7 @@ export default function TagInput({
           size="md"
           type="button"
           borderType="outline"
-          onClick={() => onAdd()}
+          onClick={() => tags.length < max && onAdd()}
           disabled={tags.length >= max}
         >
           추가

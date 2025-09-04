@@ -61,6 +61,36 @@ export function useCommunityForm() {
 
   const [isSaving, setIsSaving] = useState(false);
 
+  // 추가: 저장 전 유효성 검사
+  const validateBeforeSave = useCallback((): string | null => {
+    const ALLOWED = ['free', 'question', 'review'];
+    const trimmedTitle = (title ?? '').trim();
+
+    // 본문에서 순수 텍스트 길이 계산
+    let textLen = 0;
+    try {
+      const doc = new DOMParser().parseFromString(body || '', 'text/html');
+      const text = (doc?.body?.textContent ?? '').trim();
+      textLen = text.length;
+    } catch {
+      textLen = (body ?? '').replace(/<[^>]*>/g, '').trim().length;
+    }
+
+    if (!category || !ALLOWED.includes(String(category))) {
+      return '카테고리를 선택하세요.';
+    }
+    if (trimmedTitle.length < 2) {
+      return '제목은 2자 이상 입력하세요.';
+    }
+    if (textLen < 10) {
+      return '본문은 10자 이상 입력하세요.';
+    }
+    if (Array.isArray(tags) && tags.length > 5) {
+      return '태그는 최대 5개까지 추가할 수 있습니다.';
+    }
+    return null;
+  }, [category, title, body, tags]);
+
   const getStoreState = () => useCommunityStore.getState();
 
   const handleEditorChange = useCallback(
@@ -102,15 +132,23 @@ export function useCommunityForm() {
     [addImages]
   );
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(async (): Promise<boolean> => {
     setIsSaving(true);
+
+    const vmsg = validateBeforeSave();
+    if (vmsg) {
+      useToast('info', vmsg);
+      setIsSaving(false);
+      return false; // 실패: 이동 X
+    }
+
     try {
       const resp = await supabase.auth.getUser();
       const user = (resp as any)?.data?.user ?? (resp as any)?.user ?? null;
       if (!user) {
         useToast('info', '로그인이 필요합니다. 로그인 후 시도하세요.');
         setIsSaving(false);
-        return;
+        return false; // 실패: 이동 X
       }
 
       const store = getStoreState();
@@ -134,7 +172,7 @@ export function useCommunityForm() {
       }
 
       await createCommunityPost({
-        title,
+        title: (title ?? '').trim(),
         body: newBody,
         imageUrls: publicUrls,
         primaryIdx,
@@ -143,6 +181,7 @@ export function useCommunityForm() {
         userId: undefined,
       });
 
+      // 초기화
       if (typeof clearImages === 'function') clearImages();
       setCategory('');
       setTitle('');
@@ -151,10 +190,13 @@ export function useCommunityForm() {
       try {
         (tags || []).slice().forEach((t: any) => removeTag(t));
       } catch {}
-      window.alert('게시가 완료되었습니다.');
+
+      useToast('success', '게시가 완료되었습니다.');
+      return true; // 성공
     } catch (err: any) {
       console.error('Save error', err);
-      window.alert('저장 중 오류가 발생했습니다.');
+      useToast('error', '저장 중 오류가 발생했습니다.');
+      return false; // 실패
     } finally {
       setIsSaving(false);
     }
@@ -169,6 +211,7 @@ export function useCommunityForm() {
     setTitle,
     setTagInput,
     setCategory,
+    validateBeforeSave,
   ]);
 
   const preventFormSubmit = useCallback((e: React.KeyboardEvent) => {

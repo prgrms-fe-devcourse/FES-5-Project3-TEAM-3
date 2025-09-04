@@ -15,9 +15,11 @@ export function usePosts(limit = 30) {
       try {
         const trimmed = (term ?? '').trim();
         const orderMode = sort ?? sortBy;
+
+        // 기본 builder
         let builder = supabase.from('posts').select('*, profile(nickname, profile_image_url)');
 
-        // 정렬 적용
+        // 정렬 적용 (builder에 체인)
         if (orderMode === 'likes') {
           builder = builder.order('like_count', { ascending: false });
         } else {
@@ -26,8 +28,18 @@ export function usePosts(limit = 30) {
         builder = builder.limit(limit);
 
         if (trimmed) {
-          const pattern = `%${trimmed.replace(/%/g, '\\%')}%`;
-          builder = builder.or(`title.ilike.${pattern},content.ilike.${pattern}`);
+          // 태그 검색 모드: "#tag" 형태이면 hashtag_list 배열에 포함된 항목으로 필터
+          if (trimmed.startsWith('#')) {
+            const tag = trimmed.replace(/^#/, '').trim().toLowerCase();
+            if (tag) {
+              // 기존 builder에 contains로 필터 적용 (재할당 하지 않음)
+              builder = builder.contains('hashtag_list', [tag]);
+            }
+          } else {
+            const pattern = `%${trimmed.replace(/%/g, '\\%')}%`;
+            // builder.or은 supabase에서 사용가능한 포맷으로 조합
+            builder = builder.or(`title.ilike.${pattern},content.ilike.${pattern}`);
+          }
         }
 
         const { data, error } = await builder;

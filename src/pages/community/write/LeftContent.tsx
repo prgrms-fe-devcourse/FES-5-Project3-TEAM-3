@@ -1,7 +1,7 @@
 import TextEditor from '@/component/community/TextEditor';
 import TagInput from '@/component/TagInput';
 import { useCommunityForm } from '@/hook/community/useCommunityForm';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 function LeftContent({ onSave }: { onSave?: () => Promise<void> | void }) {
   const {
@@ -24,9 +24,36 @@ function LeftContent({ onSave }: { onSave?: () => Promise<void> | void }) {
     handleInsertImages,
     handleSave,
     preventFormSubmit,
+
+    // 추가: 이미지 초기화 사용
+    clearImages,
   } = useCommunityForm();
 
   const navigate = useNavigate();
+  const location = useLocation() as { state?: { mode?: 'edit' | string; post?: { post_id?: string } } };
+
+  // 취소: 내용 비우고 이동
+  const handleCancel = () => {
+    // 1) 내용 초기화
+    setCategory('');            // 또는 기본 카테고리로
+    setTitle('');
+    handleEditorChange('');     // 본문 비우기
+    clearTags();
+    setTagInput('');
+    clearImages();              // 이미지/프리뷰/대표 초기화
+
+    // 2) 이동(뒤로가기 → 폴백)
+    if (window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+    const postId = location.state?.post?.post_id;
+    if (location.state?.mode === 'edit' && postId) {
+      navigate(`/community/detail/${postId}`);
+    } else {
+      navigate('/community');
+    }
+  };
 
   return (
     <div className="col-span-12 lg:col-span-6 gap-10">
@@ -78,7 +105,8 @@ function LeftContent({ onSave }: { onSave?: () => Promise<void> | void }) {
       <div className="pt-2 flex items-center justify-end gap-3">
         <button
           type="button"
-          className="px-5 py-2 rounded-xl border border-gray-300 bg-white text-sm hover:bg-gray-50"
+          className="px-5 py-2 rounded-xl border border-gray-300 bg-white text-sm hover:bg-gray-50 cursor-pointer"
+          onClick={handleCancel}
         >
           취소
         </button>
@@ -86,10 +114,15 @@ function LeftContent({ onSave }: { onSave?: () => Promise<void> | void }) {
           type="button"
           onClick={async () => {
             if (typeof onSave === 'function') {
-              await onSave();
+              await onSave(); // 수정 모드: 기존 로직 유지(상세로 이동)
               return;
             }
-            await handleSave();
+            const ok = await handleSave(); // 신규: 성공 여부 확인
+            if (!ok) {
+              // 실패: 토스트만 띄우고 현재 페이지 유지
+              return;
+            }
+            // 성공: /community 이동
             navigate('/community');
           }}
           disabled={isSaving}
