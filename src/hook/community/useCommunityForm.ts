@@ -153,28 +153,29 @@ export function useCommunityForm() {
 
       const store = getStoreState();
       const files: File[] = store.imageFiles ?? [];
-      const blobs: string[] = store.imageUrls ?? [];
       const primaryIdx = typeof store.primaryIdx === 'number' ? store.primaryIdx : 0;
 
       const STORAGE_BUCKET =
         (import.meta.env.VITE_SUPABASE_STORAGE_BUCKET as string) ?? 'post_images';
-      let publicUrls: string[] = [];
-      if (files.length > 0) {
-        const res = await uploadFilesToBucket(files, STORAGE_BUCKET);
-        publicUrls = res?.publicUrls || [];
-      }
+      // 변경: imageUrls/imageNames는 스토어에서 가져와 전달
+      const storeImageUrls = store.imageUrls ?? [];
+      const storeImageNames = store.imageNames ?? [];
 
+      const res = await uploadFilesToBucket(files, STORAGE_BUCKET, storeImageUrls, storeImageNames);
+      const mapping = res.mapping || {};
       let newBody = body || '';
-      for (let i = 0; i < blobs.length; i++) {
-        const blobUrl = blobs[i];
-        const pub = publicUrls[i];
-        if (blobUrl && pub) newBody = newBody.split(blobUrl).join(pub);
+      for (const [blobUrl, pubUrl] of Object.entries(mapping)) {
+        if (blobUrl && pubUrl) newBody = newBody.split(blobUrl).join(pubUrl);
       }
+      // 안전하게 null/undefined/빈 문자열 제거 -> string[] 보장
+      const finalImageUrls = (res.finalImageUrls || []).filter(
+        (u): u is string => typeof u === 'string' && u.trim() !== ''
+      );
 
       await createCommunityPost({
         title: (title ?? '').trim(),
         body: newBody,
-        imageUrls: publicUrls,
+        imageUrls: finalImageUrls,
         primaryIdx,
         category,
         tags,

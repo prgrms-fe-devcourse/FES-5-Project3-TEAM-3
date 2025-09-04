@@ -42,17 +42,15 @@ function LeftContent({ onSave }: { onSave?: () => Promise<void> | void }) {
     setTagInput('');
     clearImages();              // 이미지/프리뷰/대표 초기화
 
-    // 2) 이동(뒤로가기 → 폴백)
-    if (window.history.length > 1) {
-      navigate(-1);
-      return;
-    }
+    // 2) 이동(이전으로 단순 돌아가기 대신 명시적 라우트로 이동)
     const postId = location.state?.post?.post_id;
     if (location.state?.mode === 'edit' && postId) {
-      navigate(`/community/detail/${postId}`);
-    } else {
-      navigate('/community');
+      // 편집 취소: 상세 페이지로 강제 이동 -> 상세 컴포넌트가 재조회되도록 함
+      navigate(`/community/detail/${postId}`, { replace: true });
+      return;
     }
+    // 일반 취소: 리스트로 이동
+    navigate('/community', { replace: true });
   };
 
   return (

@@ -48,7 +48,7 @@ function CommunityDetail() {
           setPost(postData as PostWithProfile | null);
         }
 
-        // 댓글 조회: 해당 post_id의 최상위 댓글만(대댓글은 PostComment 내부에서 처리)
+        // 댓글 조회
         const { data: replyData, error: replyError } = await supabase
           .from('reply')
           .select('*, profile(profile_id,nickname,profile_image_url)')
@@ -68,9 +68,18 @@ function CommunityDetail() {
       }
     };
 
+    // 즉시 호출
     fetchPostAndReplies();
+
+    // 뒤로/앞으로 이동(popstate) 시에도 재조회하도록 리스너 추가
+    const onPop = () => {
+      fetchPostAndReplies();
+    };
+    window.addEventListener('popstate', onPop);
+
     return () => {
       mounted = false;
+      window.removeEventListener('popstate', onPop);
     };
   }, [postId]);
 

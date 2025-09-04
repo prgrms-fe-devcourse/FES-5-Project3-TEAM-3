@@ -6,8 +6,7 @@ import ScrollToTopButton from '@/component/community/ScrollToTopButton';
 import PopularLike from '@/pages/community/Main/PopularLike';
 import { usePosts } from '@/hook/usePosts';
 import { usePopularTags } from '@/hook/useTags';
-import { useLocation } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 function CommunityMain() {
   // 분리된 훅 사용
@@ -21,7 +20,6 @@ function CommunityMain() {
     const plain = String(tag).replace(/^#/, '').trim();
     if (!plain) return;
     setActiveTag(plain);
-    // fetchPosts는 "#tag" 포맷을 해시태그 검색 모드로 처리하도록 구현되어 있음
     fetchPosts(`#${plain}`, sortBy);
   };
 
