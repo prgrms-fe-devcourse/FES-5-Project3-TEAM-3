@@ -4,10 +4,10 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 interface Props {
-  setReseach?: React.Dispatch<React.SetStateAction<string[]>>;
+  setResearch?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-function MainSearchBar({ setReseach }: Props) {
+function MainSearchBar({ setResearch }: Props) {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState('');
   const searchBarRef = useRef<HTMLInputElement | null>(null);
@@ -23,7 +23,7 @@ function MainSearchBar({ setReseach }: Props) {
       useToast('error', '검색어를 입력하세요');
       return;
     }
-    setReseach?.((prev) => {
+    setResearch?.((prev) => {
       const next = [k, ...prev.filter((x: string) => x !== k)].slice(0, 5);
       localStorage.setItem('recently-search', JSON.stringify(next));
       return next;
@@ -39,14 +39,14 @@ function MainSearchBar({ setReseach }: Props) {
 
   return (
     <form
-      className="flex items-center justify-center border-1 border-[#8e95a9] w-full px-6 py-2 rounded-full gap-89.5 cursor-text"
+      className="flex items-center justify-center border-1 border-[#8e95a9] w-full px-4 sm:px-6 py-2 rounded-full gap-3 sm:gap-6 lg:gap-89.5 cursor-text"
       onSubmit={(e) => handleSubmit(e)}
       onClick={(e) => handleFocus(e)}
     >
       <input
-        className="w-full  outline-none 
+        className="w-full  outline-none
               flex justify-center
-             focus:placeholder:opacity-0"
+              focus:placeholder:opacity-0"
         ref={searchBarRef}
         type="text"
         id="search"

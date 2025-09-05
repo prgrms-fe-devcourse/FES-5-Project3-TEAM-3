@@ -112,8 +112,8 @@ export default function Collection({ collection }: { collection: Collection[] })
               barHeight={4}
               barActiveWidth={80}
               barActiveHeight={4}
-              gapClassName="gap-12"
-              className="mr-20"
+              gapClassName="gap-6 md:gap-10 lg:gap-12"
+              className="mr-4 md:mr-12 lg:mr-20 hidden md:flex"
               dotClassName="bg-white/40 hover:bg-white/60 "
               activeDotClassName="bg-white"
               getLabel={(i) => `${i + 1} / ${total}`}
@@ -124,12 +124,12 @@ export default function Collection({ collection }: { collection: Collection[] })
               className="absolute inset-0 w-full h-full object-cover -z-10"
             />
 
-            <div className="absolute inset-0 z-10 grid grid-cols-2 gap-94 max-w-6xl mx-auto px-6 py-8">
-              <div className="text-white flex flex-col mt-30">
-                <h3 className="text-[108px] leading-none">
+            <div className="absolute inset-0 z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 max-w-6xl mx-auto px-6 py-8">
+              <div className="text-white flex flex-col mt-10 lg:mt-30">
+                <h3 className="leading-none">
                   <img src="image/User Collection.png" alt="유저컬렉션" />
                 </h3>
-                <p className="mt-4">
+                <p className="mt-4 text-sm sm:text-base">
                   {vip}님의 셀러가 전하는 영감, <br /> 당신의 순간을 더욱 특별하게.
                 </p>
               </div>

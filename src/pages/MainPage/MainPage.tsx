@@ -79,17 +79,21 @@ function MainPage() {
           <img
             src="/image/mobileHeroImg.png"
             alt="와인과 석류 이미지"
-            className="w-full h-100 object-cover lg:w-screen lg:h-screen"
+            className="w-full object-cover h-[260px] sm:h-[360px] md:h-[420px] lg:w-screen lg:h-screen"
           />
         </picture>
-        <h2 className="absolute left-5 bottom-10 lg:left-20 lg:bottom-38  xl:absolute xl:left-85.5 xl:bottom-38 text-primary-100 text-[108px]">
-          <img className="w-150" src="image/HeroText.png" alt="Winepedia explore,taste,enjoy" />
+        <h2 className="absolute left-4 bottom-6 md:left-10 md:bottom-12 lg:left-20 lg:bottom-38 xl:left-85.5 xl:bottom-38 text-primary-100">
+          <img
+            className="w-40 sm:w-60 md:w-80 lg:w-150"
+            src="image/HeroText.png"
+            alt="Winepedia explore,taste,enjoy"
+          />
         </h2>
       </section>
       <Suspense fallback={<SkeletonMainPage />}>
         <Await resolve={Promise.all([nickname, postData, collectionData])}>
           <section className="bg-radial from-background-base from-60% to-secondary-300 to-100% flex justify-center">
-            <div className="grid grid-rows-3 grid-cols-3  gap-5  py-34.75">
+            <div className="max-w-[90rem] mx-auto px-4 lg:px-10 py-10 lg:py-34.75">
               {wines &&
                 wines.map(({ id, src, alt, title, text }) => (
                   <WineGrid key={id} src={src} alt={alt} title={title} text={text} />
@@ -97,19 +101,26 @@ function MainPage() {
             </div>
           </section>
 
-          <section>
+          <section className="max-w-[90rem] mx-auto px-4 lg:px-10">
             <Collection collection={collectionData} />
           </section>
 
-          <section className="h-200 mt-35 flex flex-col items-center gap-8">
+          <section className="h-200 mt-35 lg:mt-35 flex flex-col items-center gap-8">
             <h3>
-              <img src="image/Trending posts.png" alt="trending posts" />
+              <img
+                src="image/Trending posts.png"
+                alt="trending posts"
+                className="h-8 sm:h-10 lg:h-auto"
+              />
             </h3>
 
-            <div className="flex gap-3 w-full justify-center">
+            <div className="flex gap-3 w-full justify-center px-4">
               <AnimatedPost>
                 {postData.map((post) => (
-                  <div key={post.post_id} className="post-card will-change-transform  w-90">
+                  <div
+                    key={post.post_id}
+                    className="post-card will-change-transform w-full xs:w-64 sm:w-72 md:w-80 lg:w-90"
+                  >
                     <Card post={post} />
                   </div>
                 ))}
@@ -117,7 +128,9 @@ function MainPage() {
               </AnimatedPost>
             </div>
           </section>
-          <ScrollToTopButton className="cursor-pointer right-0 lg:mr-23" />
+          <div className="max-w-[90rem] mx-auto px-4 lg:px-10">
+            <ScrollToTopButton className="cursor-pointer right-0 lg:mr-23" />
+          </div>
         </Await>
       </Suspense>
     </main>
