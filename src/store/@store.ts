@@ -49,8 +49,9 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
     const { error } = await supabase.auth.signOut();
     const ok = confirm('로그아웃을 하시겠습니까?')
     
-    if(ok && !error)
+    if (ok && !error) {
     useToast('success', '로그아웃 하셨습니다');
+    }
     set({ userId: null, userEmail: null, userPhone: null });
   },
 
