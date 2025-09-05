@@ -90,7 +90,12 @@ function TastingGraph({
       >
         {colors.map((color, index) => {
           const fillLevel = selected ?? hovered;
-          const isFilled = type === 'select' ? index + 1 <= (fillLevel ?? 0) : index + 1 <= rating;
+          const isFilled =
+            type === 'select'
+              ? rating
+                ? index + 1 <= rating
+                : index + 1 <= (fillLevel ?? 0)
+              : index + 1 <= rating;
           return (
             <div
               key={index}

@@ -6,6 +6,7 @@ import { wineLoader } from '@/pages/wine/Wines';
 import { wineDetailLoader } from '@/pages/wine/WineDetails';
 import CommunityMain from '@/pages/community/Main/CommunityMain';
 import { MainPageLoader } from '@/pages/MainPage/MainPage';
+import RequireAuthLayout from '@/pages/MyPage/RequireAuthLayout';
 
 /* Code Splitting */
 const Root = lazy(() => import('@/pages'));
@@ -88,41 +89,46 @@ export const routes = createBrowserRouter([
       // MyPage route
       {
         path: 'my-page',
-        Component: MyPageLayout,
+        element: <RequireAuthLayout />,
         children: [
           {
-            index: true,
-            element: <Navigate to="home" replace />,
-          },
-          {
-            path: 'home',
-            Component: MyHome,
-            handle: { label: 'Home', showInNav: true },
-          },
-          {
-            path: 'wine-seller',
-            Component: WineSeller,
-            handle: { label: 'Wine Seller', showInNav: true },
-          },
-          {
-            path: 'wish-list',
-            Component: WishList,
-            handle: { label: 'Wish List', showInNav: true },
-          },
-          {
-            path: 'activity',
-            Component: MyActivities,
-            handle: { label: 'My Activities', showInNav: true },
-          },
-          {
-            path: 'achievement',
-            Component: MyAchievement,
-            handle: { label: 'My Achievement', showInNav: true },
-          },
-          {
-            path: 'settings',
-            Component: Settings,
-            handle: { label: 'Settings', showInNav: true },
+            Component: MyPageLayout,
+            children: [
+              {
+                index: true,
+                element: <Navigate to="home" replace />,
+              },
+              {
+                path: 'home',
+                Component: MyHome,
+                handle: { label: 'Home', showInNav: true },
+              },
+              {
+                path: 'wine-seller',
+                Component: WineSeller,
+                handle: { label: 'Wine Seller', showInNav: true },
+              },
+              {
+                path: 'wish-list',
+                Component: WishList,
+                handle: { label: 'Wish List', showInNav: true },
+              },
+              {
+                path: 'activity',
+                Component: MyActivities,
+                handle: { label: 'My Activities', showInNav: true },
+              },
+              {
+                path: 'achievement',
+                Component: MyAchievement,
+                handle: { label: 'My Achievement', showInNav: true },
+              },
+              {
+                path: 'settings',
+                Component: Settings,
+                handle: { label: 'Settings', showInNav: true },
+              },
+            ],
           },
         ],
       },

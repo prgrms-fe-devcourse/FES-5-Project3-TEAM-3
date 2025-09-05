@@ -3,7 +3,7 @@ import supabase from '@/supabase/supabase';
 export type CreatePostParams = {
   title: string;
   body: string;
-  imageUrls?: string[]; // 업로드된 public URL 배열
+  imageUrls?: (string | null)[]; // 변경: nullable 허용
   primaryIdx?: number; // 대표 이미지 인덱스
   category?: string;
   tags?: string[] | null;
@@ -22,6 +22,11 @@ export async function createCommunityPost(params: CreatePostParams) {
     tags = null,
     userId = null,
   } = params;
+
+  // imageUrls 내부에 null/undefined/빈문자열이 있을 수 있으므로 안전하게 정리
+  const safeImageUrls: string[] = Array.isArray(imageUrls)
+    ? imageUrls.filter((u): u is string => typeof u === 'string' && u.trim() !== '')
+    : [];
 
   // 유효하지 않은 카테고리는 기본 'free' 사용
   const safeCategory = VALID_CATEGORIES.includes(category) ? category : 'free';
@@ -55,13 +60,13 @@ export async function createCommunityPost(params: CreatePostParams) {
       content: body || '',
       post_category: safeCategory,
       hashtag_list: tags && tags.length > 0 ? tags : null,
-      ...(imageUrls && imageUrls.length > 0
+      ...(safeImageUrls && safeImageUrls.length > 0
         ? {
-            image_url: imageUrls,
+            image_url: safeImageUrls,
             thumbnail_image:
-              typeof primaryIdx === 'number' && primaryIdx >= 0 && primaryIdx < imageUrls.length
-                ? imageUrls[primaryIdx]
-                : imageUrls[0],
+              typeof primaryIdx === 'number' && primaryIdx >= 0 && primaryIdx < safeImageUrls.length
+                ? safeImageUrls[primaryIdx]
+                : safeImageUrls[0],
           }
         : {}),
     };

@@ -1,7 +1,6 @@
 import type { WineInfoType } from '@/pages/wine/Wines';
 import WineInfo from './WineInfo';
 import { memo } from 'react';
-import { Link } from 'react-router';
 
 interface WineListProps {
   filteredWines: WineInfoType[];
@@ -58,16 +57,15 @@ function WineList({ filteredWines }: WineListProps) {
   // const filteredWines = await filterWines();
   if (!filteredWines || filteredWines.length === 0)
     return (
-      <div className="col-span-full flex justify-center items-center text-gray-500">
+      <div className="col-span-full self-center flex justify-center items-center text-gray-500 s">
         검색결과가 없습니다
       </div>
     );
+
   return (
     <>
       {filteredWines.map((wine) => (
-        <Link key={wine.name} to={`/wines/detail/${wine.wine_id}`} className="group">
-          <WineInfo wineInfo={wine} />
-        </Link>
+        <WineInfo wineInfo={wine} key={wine.wine_id} />
       ))}
     </>
   );

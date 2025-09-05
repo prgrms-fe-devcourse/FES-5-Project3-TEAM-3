@@ -101,11 +101,19 @@ function RightPreview() {
               )}
             </div>
             {body ? (
-              <div
-                className="mt-4 text-sm text-gray-900 whitespace-pre-wrap prose prose-sm max-w-none"
-                // editor에서 생성된 HTML을 그대로 렌더링
-                dangerouslySetInnerHTML={{ __html: body || '' }}
-              />
+              (() => {
+                const html = String(body || '');
+                const normalized = html
+                  .replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '<p><br/></p>')
+                  .replace(/<div>(?:\s|&nbsp;|<br\s*\/?>)*<\/div>/gi, '<p><br/></p>');
+
+                return (
+                  <div
+                    className="mt-4 text-sm text-gray-900 prose prose-sm max-w-none whitespace-pre-wrap"
+                    dangerouslySetInnerHTML={{ __html: normalized }}
+                  />
+                );
+              })()
             ) : (
               <p className="mt-4 text-sm text-gray-400">내용이 없습니다.</p>
             )}

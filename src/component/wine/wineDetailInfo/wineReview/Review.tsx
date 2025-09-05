@@ -5,8 +5,9 @@ import React, { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 import { useAuth } from '@/store/@store';
 import useToast from '@/hook/useToast';
-// import { useReviewStore } from '@/store/reviewStore';
-// import { pairingCategory } from '../../filterSearch/filterInfo';
+import { useConfirm } from '@/hook/useConfirm';
+import { useReviewStore } from '@/store/reviewStore';
+import { pairingCategory } from '../../filterSearch/filterInfo';
 
 function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () => void }) {
   const {
@@ -26,16 +27,16 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
   const userId = useAuth().userId;
   const [user, setUser] = useState<{ profile_image_url: string; nickname: string }>();
 
-  // const openModal = useReviewStore((s) => s.openModal);
+  const confirm = useConfirm();
+  const openModal = useReviewStore((s) => s.openModal);
 
   useEffect(() => {
     const getUserLike = async () => {
       if (!userId) {
-        if (!userId) {
-          setReviewLiked(false); // 또는 0
-          return;
-        }
+        setReviewLiked(false); // 또는 0
+        return;
       }
+
       const { data, error } = await supabase
         .from('review_like')
         .select()
@@ -87,52 +88,73 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
     }
   };
 
-  // const editReview = async (e: React.MouseEvent<HTMLDivElement>) => {
-  //   e.stopPropagation();
+  const editReview = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
 
-  //   if (userId !== user_id) {
-  //     useToast('warn', '본인이 작성한 리뷰만 수정할 수 있습니다');
-  //     return;
-  //   }
-  //   const { data: tagsData, error } = await supabase
-  //     .from('hashtags')
-  //     .select('tag_text')
-  //     .eq('user_id', userId!)
-  //     .eq('review_id', review_id);
-  //   if (error) useToast('warn', '리뷰정보를 가져오는데 실패하였습니다');
-  //   else {
-  //     const { data: pairingsData, error } = await supabase
-  //       .from('pairings')
-  //       .select('pairing_category, pairing_name')
-  //       .eq('user_id', userId!)
-  //       .eq('review_id', review_id);
-  //     if (error) useToast('warn', '리뷰정보를 가져오는데 실패하였습니다');
-  //     else {
-  //       const tags = tagsData.length !== 0 ? tagsData[0]['tag_text'] : [];
-  //       const pairings = pairingsData.map((p) => ({
-  //         [pairingCategory[p.pairing_category!]]: p.pairing_name,
-  //       }));
-  //       openModal({ review, tags, pairings });
-  //     }
-  //   }
-  // };
+    if (userId !== user_id) {
+      useToast('warn', '본인이 작성한 리뷰만 수정할 수 있습니다');
+      return;
+    }
+    const { data, error } = await supabase
+      .from('reviews')
+      .select(
+        ` *,
+    hashtags(tag_text),
+    pairings(pairing_category, pairing_name)
+  `
+      )
+      .eq('user_id', userId!)
+      .eq('review_id', review_id);
+
+    if (error) {
+      useToast('error', '리뷰정보를 가져오는데 실패하였습니다');
+      console.log(error);
+      return null;
+    }
+
+    const { hashtags, pairings, ...review } = data[0];
+
+    const formatted = {
+      review,
+      tags: data[0].hashtags[0]?.tag_text || [],
+      pairings:
+        data[0].pairings?.map((p) => ({
+          [pairingCategory[p.pairing_category!]]: p.pairing_name,
+        })) ?? [],
+    };
+    console.log(formatted);
+    openModal(formatted);
+  };
 
   const deleteReview = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    const { error } = await supabase.from('reviews').delete().eq('review_id', review_id);
-    if (error) {
-      console.error(error);
-      return null;
-    } else {
-      useToast('error', '리뷰가 삭제되었습니다');
-      refresh();
+    const ok = await confirm({
+      title: '정말 삭제하시겠습니까?',
+      description: <></>,
+      confirmText: '삭제하기',
+      cancelText: '취소',
+      tone: 'danger',
+    });
+
+    if (!ok) return;
+    try {
+      const { error } = await supabase.from('reviews').delete().eq('review_id', review_id);
+      if (error) {
+        console.error(error);
+        return null;
+      } else {
+        useToast('error', '리뷰가 삭제되었습니다');
+        refresh();
+      }
+    } catch (err: any) {
+      useToast('error', err?.message ?? '처리 중 오류가 발생했습니다.');
     }
   };
 
   return (
     <div
       className={`w-full min-w-140 flex justify-center items-baseline gap-5 border border-gray-400 rounded-2xl px-5 py-3 relative ${user_id === userId && 'hover:bg-secondary-100/50 hover:shadow-md'}`}
-      // onClick={editReview}
+      onClick={editReview}
     >
       <TastingInfo style="review" tasting={{ sweetness, acidic, tannic, body }} />
       <div className="flex flex-col flex-1">
@@ -153,7 +175,11 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
         {content}
       </div>
       <div>
-        <button type="button" className="flex flex-col" onClick={toggleLike}>
+        <button
+          type="button"
+          className={`flex flex-col ${userId && 'cursor-pointer'}`}
+          onClick={toggleLike}
+        >
           {reviewLiked ? (
             <img src="/icon/like_true.svg" alt="좋아요" className="w-6 h-6" />
           ) : (
@@ -161,7 +187,7 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
           )}
           {likeCount}
         </button>
-        {user_id === userId && (
+        {user_id && user_id === userId && (
           <button
             type="button"
             className="absolute bottom-3 right-3 p-2 rounded-full bg-secondary-50"

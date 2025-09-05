@@ -48,7 +48,7 @@ function CommunityDetail() {
           setPost(postData as PostWithProfile | null);
         }
 
-        // 댓글 조회: 해당 post_id의 최상위 댓글만(대댓글은 PostComment 내부에서 처리)
+        // 댓글 조회
         const { data: replyData, error: replyError } = await supabase
           .from('reply')
           .select('*, profile(profile_id,nickname,profile_image_url)')
@@ -68,9 +68,18 @@ function CommunityDetail() {
       }
     };
 
+    // 즉시 호출
     fetchPostAndReplies();
+
+    // 뒤로/앞으로 이동(popstate) 시에도 재조회하도록 리스너 추가
+    const onPop = () => {
+      fetchPostAndReplies();
+    };
+    window.addEventListener('popstate', onPop);
+
     return () => {
       mounted = false;
+      window.removeEventListener('popstate', onPop);
     };
   }, [postId]);
 
@@ -178,10 +187,19 @@ function CommunityDetail() {
             <div className="px-13 max-w-none text-gray-800">
               {/* 본문(이미 HTML로 저장된 경우) */}
               {post?.content ? (
-                <div
-                  className="prose max-w-none"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
-                />
+                (() => {
+                  const content = String(post.content ?? '');
+                  // HTML 여부 판단
+                  const isHtml = /<\/?[a-z][\s\S]*>/i.test(content);
+                  if (isHtml) {
+                    const normalized = content
+                      .replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '<p><br/></p>')
+                      .replace(/<div>(?:\s|&nbsp;|<br\s*\/?>)*<\/div>/gi, '<p><br/></p>');
+                    return <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: normalized }} />;
+                  }
+                  // plain text: 개행 보존
+                  return <div className="whitespace-pre-wrap text-gray-800">{content}</div>;
+                })()
               ) : (
                 <p>본문이 없습니다.</p>
               )}

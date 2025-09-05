@@ -39,29 +39,17 @@ export async function fetchPopularPosts(limit = 5) {
  */
 export async function fetchGlobalTopTags(limit = 5) {
   try {
-    // 좋아요 많은 글 순서대로 일정건수(fetchLimit) 가져온 뒤, 각 포스트의 첫 번째 태그만 집계
-    const fetchLimit = 1000; // 안전 상한, 필요 시 조정
+    // DB의 hashtag_counts 테이블에서 tag_count 내림차순으로 가져오기
     const { data, error } = await supabase
-      .from('posts')
-      .select('hashtag_list')
-      .order('like_count', { ascending: false })
-      .limit(fetchLimit);
+      .from('hashtag_counts')
+      .select('tag_text, tag_count')
+      .order('tag_count', { ascending: false })
+      .limit(limit);
 
     if (error) throw error;
 
-    const map = new Map<string, number>();
-    (data ?? []).forEach((r: any) => {
-      const list: string[] = Array.isArray(r?.hashtag_list) ? r.hashtag_list : [];
-      const first = (list[0] ?? '').toString().trim();
-      if (!first) return;
-      map.set(first, (map.get(first) ?? 0) + 1);
-    });
-
-    return Array.from(map.entries())
-      .map(([tag, cnt]) => ({ tag, cnt }))
-      .sort((a, b) => b.cnt - a.cnt)
-      .slice(0, limit)
-      .map((x) => x.tag);
+    const tags = Array.isArray(data) ? data.map((r: any) => r.tag_text).filter(Boolean) : [];
+    return tags;
   } catch (err) {
     console.error('[fetchGlobalTopTags] error', err);
     return [];

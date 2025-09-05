@@ -50,21 +50,24 @@ function WineWishCard({
   }, [name]);
 
   return (
-    <Link
-      to={to}
+    <div
       className={[
         'w-42 bg-secondary-100 border border-secondary-500 rounded-lg shadow-md flex flex-col gap-4 items-center px-4 py-5 relative overflow-hidden',
         'transition-all duration-200 ease-out',
         'hover:bg-secondary-200/70 hover:shadow-lg',
         'motion-safe:hover:translate-y-0.5 motion-safe:hover:scale-[1.01]',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary-700/80',
+        'focus-visible:outline-none focus-within:ring-2 focus-within:ring-secondary-700/80',
       ].join(' ')}
     >
       {/* bookmark button */}
       <button
         type="button"
-        className="absolute top-2 right-2 size-4"
-        onClick={() => onToggleBookmark(wine_id, !bookmarked)}
+        className="absolute top-2 right-2 size-4 z-10 cursor-pointer"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onToggleBookmark(wine_id, !bookmarked);
+        }}
       >
         {bookmarked ? (
           <img src={bookmarkTrue} alt="북마크" className="size-full object-cover" />
@@ -102,7 +105,9 @@ function WineWishCard({
         {country ?? 'Country : -'} | {abv ?? 'ABV : -'}
       </p>
       <ReviewRatings rating={rating} type="readonly" w="w-5" h="h-5" />
-    </Link>
+
+      <Link to={to} className="absolute inset-0 z-0" aria-label={`${name} 상세 보기`} />
+    </div>
   );
 }
 export default WineWishCard;

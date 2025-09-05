@@ -34,7 +34,7 @@ function MyPageNav({ routes, basePath = '/my-page', className }: MyPageNavProps)
       )}
     >
       <div className="self-stretch flex justify-start items-center gap-4">
-        <div className="size-16 border border-zinc-300 rounded-full">
+        <div className="size-16 border-2 border-zinc-300 rounded-full">
           {avatarSrc ? (
             <img
               src={avatarSrc}
@@ -44,7 +44,7 @@ function MyPageNav({ routes, basePath = '/my-page', className }: MyPageNavProps)
               referrerPolicy="no-referrer"
             />
           ) : (
-            <div className="size-full bg-zinc-300"></div>
+            <div className="size-full bg-zinc-300 rounded-full"></div>
           )}
         </div>
         <div className="inline-flex flex-col gap-1">
