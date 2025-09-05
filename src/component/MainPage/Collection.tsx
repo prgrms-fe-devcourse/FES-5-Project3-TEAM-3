@@ -97,7 +97,6 @@ export default function Collection({ collection }: { collection: Collection[] })
   const stickyDurationVH = total * 100;
   const vip = collection.map((a) => a.profile?.nickname)[0] ?? 'Winepedia 회원';
 
-  console.log(vip)
   return (
     <section>
       <div ref={wrapperRef} className="relative" style={{ height: `calc(${stickyDurationVH}vh)` }}>
