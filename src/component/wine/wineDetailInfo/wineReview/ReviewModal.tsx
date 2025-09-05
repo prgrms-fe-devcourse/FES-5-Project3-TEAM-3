@@ -136,28 +136,6 @@ function ReviewModal({
         return;
       }
 
-      // const review = {
-      //   p_wine_id: wineId,
-      //   p_rating: rating,
-      //   p_content: content,
-      //   p_user_id: user_id,
-      //   p_sweetness: sweetness,
-      //   p_acidity: acidic,
-      //   p_tannin: tannic,
-      //   p_body: body,
-      //   p_pairings: pairing,
-      //   p_tags: tag,
-      // };
-
-      // const { data, error } = await supabase
-      //   .rpc('insert_review_with_tags_and_pairings', {
-      //     ...review,
-      //     p_pairings: JSON.stringify(review.p_pairings),
-      //   })
-      //   .select();
-      // if (error) console.log(error);
-      // else console.log('성공', data);
-
       const review = {
         wine_id: wineId,
         rating,
@@ -222,7 +200,7 @@ function ReviewModal({
         >
           <div className="flex justify-between items-center">
             <h2 className="text-2xl text-text-primary">리뷰작성하기</h2>
-            <button type="button" aria-label="모달닫기" onClick={close}>
+            <button type="button" aria-label="모달닫기" onClick={close} className="cursor-pointer">
               <img src="/icon/close.svg" alt="close" className="w-6 h-6" />
             </button>
           </div>

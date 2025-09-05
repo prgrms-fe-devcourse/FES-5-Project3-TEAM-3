@@ -59,7 +59,7 @@ function CommentReply({
       .eq('reply_id', replyId)
       .select('reply_id,content')
       .single();
-    if (error) console.log(error);
+    if (error) console.error(error);
     if (data) {
       setRenderComment(data.content);
       setEdit(false);

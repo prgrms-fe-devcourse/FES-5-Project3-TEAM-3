@@ -41,7 +41,7 @@ function Header() {
         .eq('profile_id', userId)
         .maybeSingle();
 
-      if (error) console.log(error);
+      if (error) console.error(error);
       if (data) setUserImage(data.profile_image_url);
     };
     fetchData();
