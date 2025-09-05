@@ -4,6 +4,7 @@ import { create } from 'zustand';
 interface ReviewStore {
   isOpen: boolean;
   isEditMode: boolean;
+  addWineSeller: boolean;
   rating: number | null;
   sweetness: number | null;
   acidic: number | null;
@@ -13,6 +14,7 @@ interface ReviewStore {
   content: string;
   tag: string[];
   pairing: Record<string, string>[];
+
   openModal: (value?: {
     review: Tables<'reviews'>;
     tags: string[];
@@ -25,6 +27,7 @@ interface ReviewStore {
   setTannicTaste: (value: number) => void;
   setBodyTaste: (value: number) => void;
   toggleOnlyReview: () => void;
+  toggleWineSeller: () => void;
   addTag: (value: string) => void;
   deleteTag: (value: string) => void;
   addPairing: (value: Record<string, string>) => void;
@@ -46,11 +49,13 @@ const initialState = {
   content: '',
   tag: [] as string[],
   pairing: [] as Record<string, string>[],
+  addWineSeller: true,
 };
 
 export const useReviewStore = create<ReviewStore>((set, get) => ({
   isOpen: false,
   isEditMode: false,
+  addWineSeller: true,
   rating: null,
   sweetness: null,
   acidic: null,
@@ -75,6 +80,7 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
         tag: value.tags,
         isEditMode: true,
         onlyReview: true,
+        addWineSeller: value.review.addWineSeller!,
       });
     } else {
       // 새 리뷰 작성 모드 (기본값만 유지)
@@ -88,6 +94,7 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
         content: '',
         tag: [],
         pairing: [],
+        addWineSeller: true,
       });
     }
   },
@@ -101,6 +108,10 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
   toggleOnlyReview: () =>
     set((state) => ({
       onlyReview: !state.onlyReview,
+    })),
+  toggleWineSeller: () =>
+    set((state) => ({
+      addWineSeller: !state.addWineSeller,
     })),
   addTag: (tag) => set((state) => ({ tag: [...state.tag, tag] })),
   deleteTag: (tag) => set((state) => ({ tag: state.tag.filter((t) => t !== tag) })),

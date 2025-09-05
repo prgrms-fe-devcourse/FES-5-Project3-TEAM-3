@@ -39,6 +39,8 @@ function ReviewModal({
     closeModal,
     setContent,
     toggleOnlyReview,
+    toggleWineSeller,
+    addWineSeller,
     onlyReview,
     rating,
     content,
@@ -56,6 +58,8 @@ function ReviewModal({
       closeModal: s.closeModal,
       setContent: s.setContent,
       toggleOnlyReview: s.toggleOnlyReview,
+      toggleWineSeller: s.toggleWineSeller,
+      addWineSeller: s.addWineSeller,
       onlyReview: s.onlyReview,
       rating: s.rating,
       content: s.content,
@@ -103,7 +107,7 @@ function ReviewModal({
     }
 
     if (onlyReview) {
-      const review = { wine_id: wineId, rating, content, user_id };
+      const review = { wine_id: wineId, rating, content, user_id, addWineSeller };
       const { data, error } = await supabase
         .from('reviews')
         .upsert(review, { onConflict: 'user_id, wine_id' })
@@ -161,6 +165,7 @@ function ReviewModal({
         acidity_score: acidic,
         tannin_score: tannic,
         body_score: body,
+        addWineSeller,
       };
 
       const { data, error } = await supabase
@@ -257,16 +262,22 @@ function ReviewModal({
         </div>
         <div className="flex justify-between items-center">
           <ReviewRatings type="select" w="w-8" h="h-8" rating={rating ?? undefined} />
-          <label htmlFor="onlyReview" className="text-text-primary">
-            <input
-              type="checkbox"
-              id="onlyReview"
-              checked={onlyReview ?? false}
-              disabled={editMode}
-              onChange={toggleOnlyReview}
-            />{' '}
-            리뷰만 작성하기
-          </label>
+          <div className="flex flex-col items-end">
+            <label htmlFor="onlyReview" className="text-text-primary">
+              <input
+                type="checkbox"
+                id="onlyReview"
+                checked={onlyReview ?? false}
+                disabled={editMode}
+                onChange={toggleOnlyReview}
+              />{' '}
+              리뷰만 작성하기
+            </label>
+            <label className="text-text-primary">
+              <input type="checkbox" checked={addWineSeller ?? false} onChange={toggleWineSeller} />{' '}
+              나의 와인셀러에 추가
+            </label>
+          </div>
         </div>
         <form onSubmit={submitReview}>
           <textarea
