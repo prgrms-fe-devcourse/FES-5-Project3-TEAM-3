@@ -70,6 +70,4 @@ function SearchResult() {
   );
 }
 export default SearchResult;
-function setRecentSearch(arg0: any) {
-  throw new Error('Function not implemented.');
-}
+
