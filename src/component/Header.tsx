@@ -1,12 +1,14 @@
 import { useAuth } from '@/store/@store';
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect,  useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 import HeaderSearchSection from './search/HeaderSearchSection';
 import clsx from 'clsx';
 import ScrollToTop from '@/hook/ScrolToTop';
 import { useSearchStore } from '@/store/searchStore';
-import { useProfile } from '@/hook/fetch';
+import supabase from '@/supabase/supabase';
+import { useProfile } from '@/hook/profileSetting/useProfileBasic';
+
 
 function Header() {
   const { userId, signOut } = useAuth(
@@ -25,18 +27,29 @@ const navigate=useNavigate()
   const { pathname, search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [overlay, setOverlay] = useState(false);
+  const [userImage, setUserImage] = useState('');
+  
 
-  const { data: profile } = useProfile(userId || undefined);
+  const { data: profile} = useProfile(userId ?? undefined);
 
-  const withVersion = (url?: string | null, ver?: string | null) => {
-    if (!url) return null;
-    const sep = url.includes('?') ? '&' : '?';
-    return ver ? `${url}${sep}v=${encodeURIComponent(ver)}` : url;
-  };
-  const src = useMemo(
-    () => withVersion(profile?.profile_image_url, (profile as any)?.updated_at),
-    [profile?.profile_image_url, (profile as any)?.updated_at]
-  );
+  const avatarSrc = profile?.profile_image_url || undefined;
+
+
+
+ useEffect(() => {
+   if (!userId) return;
+   const fetchData = async () => {
+     const { data, error } = await supabase
+       .from('profile')
+       .select('profile_image_url')
+       .eq('profile_id', userId)
+       .maybeSingle();
+
+     if (error) console.log(error);
+     if (data) setUserImage(data.profile_image_url);
+   };
+   fetchData();
+ }, [userId]);
 
   useLayoutEffect(() => {
     close()
@@ -75,7 +88,7 @@ const navigate=useNavigate()
     navigate('/account/login',{state:pathname})
   }
 
-  const base = ' h-13 w-screen flex items-center justify-center fixed z-99 duration-400 lg:h-17.5';
+  const base = 'h-17.5 w-screen flex items-center justify-center fixed z-99 duration-400 ';
 
   const headerBgClass = clsx(
     base,
@@ -83,7 +96,7 @@ const navigate=useNavigate()
   );
 
   return (
-    <div className={pathname == '/' ? '' : 'min-h-17.5'}>
+    <div className={pathname == '/' ? '' : ' min-h-17.5'}>
       {overlay && <div className="fixed inset-0 bg-black/40 z-90" onClick={close}></div>}
 
       <div className={headerBgClass}>
@@ -139,8 +152,8 @@ const navigate=useNavigate()
               {userId ? (
                 <Link to="my-page">
                   <img
-                    key={src}
-                    src={src ? src : '/image/defaultProfile.png'}
+                    key={userImage}
+                    src={avatarSrc ? avatarSrc : '/image/defaultProfile.png'}
                     alt="프로필이미지"
                     className="rounded-full w-7 h-7 cursor-pointer"
                   />
