@@ -5,7 +5,9 @@ import React, { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 import { useAuth } from '@/store/@store';
 import useToast from '@/hook/useToast';
+
 import { useConfirm } from '@/hook/useConfirm';
+
 // import { useReviewStore } from '@/store/reviewStore';
 // import { pairingCategory } from '../../filterSearch/filterInfo';
 
@@ -27,7 +29,9 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
   const userId = useAuth().userId;
   const [user, setUser] = useState<{ profile_image_url: string; nickname: string }>();
 
+
   const confirm = useConfirm();
+  
   // const openModal = useReviewStore((s) => s.openModal);
 
   useEffect(() => {
