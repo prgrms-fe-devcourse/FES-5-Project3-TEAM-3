@@ -16,7 +16,7 @@ import type { Json, Tables } from '@/supabase/database.types';
 // import wines from '@/data/data.json';
 import supabase from '@/supabase/supabase';
 import { Suspense, useEffect, useState } from 'react';
-import { Await, useLoaderData } from 'react-router';
+import { Await, useLoaderData, useNavigationType, useSearchParams } from 'react-router';
 
 export type WineInfoType = Tables<'wines'>;
 
@@ -46,6 +46,8 @@ export async function wineLoader() {
 }
 
 function Wines() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   // 적용된 필터(zustand+URLQuery) -> SearchBar에서 검색버튼 누르면 업데이트되도록
   // 와인데이터 : json or supabase에서 가져오기
   // 필터데이터
@@ -70,14 +72,25 @@ function Wines() {
   const data = useLoaderData() as {
     wines: Promise<{ wines: WineInfoType[]; total_count: number }>;
   };
-  const [page, setPage] = useState(1);
+
   const [winePromise, setWinePromise] = useState<
     Promise<{ wines: WineInfoType[]; total_count: number }>
   >(data.wines);
+
+  const urlPage = Number(searchParams.get('page')) || 1;
+
+  const [page, setPage] = useState(urlPage);
   const [totalPage, setTotalPage] = useState(10);
   const appliedFilters = useWineStore((s) => s.appliedFilters);
+  const navType = useNavigationType(); // 뒤로가기/앞가기/새로고침 구분
+
   const user = useAuth();
+
   const resetFilters = useWineStore((s) => s.resetFilters);
+
+  // useEffect(() => {
+  //   setPage(Number(searchParams.get('page') || '1'));
+  // }, [searchParams]);
 
   useEffect(() => {
     const wineCount = async () => {
@@ -96,21 +109,31 @@ function Wines() {
   }, []);
 
   useEffect(() => {
-    // 필터가 바뀌면 페이지 1로 초기화
-    setPage(1);
-    const from = 0;
-    const to = 8;
+    if (navType === 'POP') {
+      const from = (Number(searchParams.get('page')) - 1) * 9;
+      const to = Number(searchParams.get('page')) * 9 - 1;
+      const w = getWines(from, to, appliedFilters);
+      setWinePromise(w);
+      w.then((w) => setTotalPage(Math.ceil(w.total_count / 9)));
+    } else {
+      // 필터가 바뀌거나 user가 바뀌면 페이지 1로 초기화
+      setSearchParams({ ...Object.fromEntries(searchParams), page: '1' });
+      setPage(1);
+      const from = 0;
+      const to = 8;
+      const w = getWines(from, to, appliedFilters);
+      setWinePromise(w);
+      w.then((w) => setTotalPage(Math.ceil(w.total_count / 9)));
+    }
     // 필터 적용해서 새 Promise 가져오기
-    const w = getWines(from, to, appliedFilters);
-    setWinePromise(w);
-    w.then((w) => setTotalPage(Math.ceil(w.total_count / 9)));
-  }, [appliedFilters, user]);
+  }, [appliedFilters, user, navType]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const winesDiv = document.getElementById('wines-container');
       if (winesDiv && !winesDiv.contains(e.target as Node)) {
         resetFilters();
+        setSearchParams({ ...Object.fromEntries(searchParams), page: '1' });
         setPage(1);
       }
     };
@@ -122,14 +145,19 @@ function Wines() {
   const pageChange = (newPage: number) => {
     const from = (newPage - 1) * 9;
     const to = newPage * 9 - 1;
+    setSearchParams({ ...Object.fromEntries(searchParams), page: String(newPage) });
+
     setPage(newPage);
     setWinePromise(getWines(from, to, appliedFilters));
   };
 
   return (
-    <div id="wines-container" className="flex flex-col justify-center items-center">
+    <div
+      id="wines-container"
+      className="flex flex-col justify-baseline items-center min-h-[calc(100vh-12.125rem)]"
+    >
       <SearchBar filterOptions={filterOptions} />
-      <div className="w-full px-50 py-8 grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 justify-center">
+      <div className="w-full px-50 py-8 grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 justify-center flex-grow">
         <Suspense fallback={<WinesSkeleton />}>
           <Await resolve={winePromise}>{(wines) => <WineList filteredWines={wines.wines} />}</Await>
         </Suspense>

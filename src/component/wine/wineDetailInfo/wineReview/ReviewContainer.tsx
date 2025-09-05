@@ -1,7 +1,7 @@
 import type { Tables } from '@/supabase/database.types';
 import Review from './Review';
 import Pagination from '@/component/Pagination';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 function ReviewContainer({
   reviews,
@@ -26,7 +26,7 @@ function ReviewContainer({
     setPage(1);
   }, [reviews]);
 
-  if (reviewData.length === 0) {
+  if (!reviewData || reviewData.length === 0) {
     return (
       <div className="min-w-140 self-center text-center text-lg text-text-secondary">
         리뷰가 없습니다
@@ -49,4 +49,4 @@ function ReviewContainer({
   );
 }
 
-export default ReviewContainer;
+export default memo(ReviewContainer);
