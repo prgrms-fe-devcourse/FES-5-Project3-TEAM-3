@@ -14,7 +14,7 @@ function Login() {
       signOut: s.signOut,
     }))
   );
-  const { state } = useLocation()
+  const { state } = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();

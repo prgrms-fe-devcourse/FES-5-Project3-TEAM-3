@@ -41,7 +41,7 @@ export const getCollection = async (nickname: string): Promise<Collection[]> => 
     .from('reviews')
     .select('*,profile!inner(nickname),wines(*)')
     .eq('profile.nickname', nickname)
-    .order('rating', {ascending:false})
+    .order('rating', { ascending: false })
     .limit(5);
   if (error) console.error(error);
   return data ?? [];

@@ -18,13 +18,13 @@ function HeaderSearchSection({ setOverlay }: Props) {
   const { isOpen, recent } = useSearchStore(
     useShallow((s) => ({
       isOpen: s.isOpen,
-      recent:s.recent
+      recent: s.recent,
     }))
-  )
+  );
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [hashTags, setHashTags] = useState<HashCount[]>([]);
-  const item = Array.isArray(recent) ? recent : []
-  
+  const item = Array.isArray(recent) ? recent : [];
+
   useEffect(() => {
     (async () => {
       const hash = await useHashCount();
@@ -75,7 +75,7 @@ function HeaderSearchSection({ setOverlay }: Props) {
       });
     }
   }, [isOpen]);
-    
+
   return (
     <>
       <div
@@ -89,23 +89,18 @@ function HeaderSearchSection({ setOverlay }: Props) {
               <h2>#최근 검색어</h2>
               <div className="flex gap-4">
                 {item.map((keyword: string, i) => {
-                    const k = keyword
-                      .trim()
-                      .replace(/\s+/g, '')
-                      .toLowerCase();
+                  const k = keyword.trim().replace(/\s+/g, '').toLowerCase();
 
                   return (
                     <Link
-                   
                       to={`/search?keyword=${encodeURIComponent(k)}`}
                       className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"
                       key={i}
                     >
                       <p className="text-secondary-700">{k}</p>
                     </Link>
-                  )
-                }
-                )}
+                  );
+                })}
               </div>
             </div>
             <div className="flex flex-col flex-wrap gap-4">

@@ -23,8 +23,6 @@ export default function Collection({ collection }: { collection: Collection[] })
   const current = useRef(0);
   const rafId = useRef<number | null>(null);
 
- 
-
   const computeProgress = () => {
     const wrap = wrapperRef.current;
     if (!wrap) return 0;
@@ -151,7 +149,7 @@ export default function Collection({ collection }: { collection: Collection[] })
                   className="h-full"
                 >
                   {collection &&
-                    collection.map((item,index) => (
+                    collection.map((item, index) => (
                       <SwiperSlide key={item.review_id} className="h-full">
                         <UserCollection
                           key={item.wine_id}

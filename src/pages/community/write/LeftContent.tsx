@@ -30,17 +30,19 @@ function LeftContent({ onSave }: { onSave?: () => Promise<void> | void }) {
   } = useCommunityForm();
 
   const navigate = useNavigate();
-  const location = useLocation() as { state?: { mode?: 'edit' | string; post?: { post_id?: string } } };
+  const location = useLocation() as {
+    state?: { mode?: 'edit' | string; post?: { post_id?: string } };
+  };
 
   // 취소: 내용 비우고 이동
   const handleCancel = () => {
     // 1) 내용 초기화
-    setCategory('');            // 또는 기본 카테고리로
+    setCategory(''); // 또는 기본 카테고리로
     setTitle('');
-    handleEditorChange('');     // 본문 비우기
+    handleEditorChange(''); // 본문 비우기
     clearTags();
     setTagInput('');
-    clearImages();              // 이미지/프리뷰/대표 초기화
+    clearImages(); // 이미지/프리뷰/대표 초기화
 
     // 2) 이동(이전으로 단순 돌아가기 대신 명시적 라우트로 이동)
     const postId = location.state?.post?.post_id;

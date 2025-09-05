@@ -92,7 +92,9 @@ export async function uploadFilesToBucket(
     }
 
     // 2) fallback: 남아있는 첫 blob 위치에 매핑
-    const blobIndex = urls.findIndex((u) => typeof u === 'string' && (u as string).startsWith('blob:'));
+    const blobIndex = urls.findIndex(
+      (u) => typeof u === 'string' && (u as string).startsWith('blob:')
+    );
     if (blobIndex !== -1) {
       const blobUrl = urls[blobIndex] as string;
       mapping[blobUrl] = pub;

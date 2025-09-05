@@ -195,7 +195,12 @@ function CommunityDetail() {
                     const normalized = content
                       .replace(/<p>(?:\s|&nbsp;)*<\/p>/gi, '<p><br/></p>')
                       .replace(/<div>(?:\s|&nbsp;|<br\s*\/?>)*<\/div>/gi, '<p><br/></p>');
-                    return <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: normalized }} />;
+                    return (
+                      <div
+                        className="prose max-w-none"
+                        dangerouslySetInnerHTML={{ __html: normalized }}
+                      />
+                    );
                   }
                   // plain text: 개행 보존
                   return <div className="whitespace-pre-wrap text-gray-800">{content}</div>;

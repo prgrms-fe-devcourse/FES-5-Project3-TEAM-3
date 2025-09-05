@@ -3,7 +3,7 @@ import { countryInfo } from '../wine/filterSearch/filterInfo';
 
 interface Props {
   id: string;
-  number:number
+  number: number;
   image: string[];
   title: string;
   content: string;
@@ -11,7 +11,7 @@ interface Props {
   flavor: string[];
 }
 
-function UserCollection({ id,number, image, title, content, icon, flavor }: Props) {
+function UserCollection({ id, number, image, title, content, icon, flavor }: Props) {
   const country = countryInfo[icon] ?? '';
   const mainFlavor = flavor.slice(0, 3).join(',  ');
 
@@ -24,9 +24,7 @@ function UserCollection({ id,number, image, title, content, icon, flavor }: Prop
             <div className="flex flex-col items-center text-center gap-2">
               <img
                 className="w-[152px] h-[376px] object-contain"
-                src={
-                  image.length !== 0 ? (image[1] ?? image[0]) : '/image/wineImage.svg'
-                }
+                src={image.length !== 0 ? (image[1] ?? image[0]) : '/image/wineImage.svg'}
                 alt={title}
               />
               <h5 className="font-semibold">{title}</h5>
