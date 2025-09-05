@@ -39,8 +39,9 @@ export const getUser = async () => {
 export const getCollection = async (nickname: string): Promise<Collection[]> => {
   const { data, error } = await supabase
     .from('reviews')
-    .select('*,profile(nickname),wines(*)')
+    .select('*,profile!inner(nickname),wines(*)')
     .eq('profile.nickname', nickname)
+    .order('rating', {ascending:false})
     .limit(5);
   if (error) console.error(error);
   return data ?? [];

@@ -5,8 +5,8 @@ import { filtered } from '@/hook/useFilter';
 import { useEffect, useState } from 'react';
 import Pagination from '@/component/Pagination';
 import SkeletonItem from '@/component/search/skeleton/SkeletonItem';
-import { useSearch } from '@/hook/mainpage/useSearch';
 import { useSearchStore } from '@/store/searchStore';
+import { useSearch } from '@/hook/search/useSearch';
 
 
 function SearchResult() {
