@@ -29,7 +29,16 @@ const navigate=useNavigate()
   useLayoutEffect(() => {
     close()
   }, [pathname, search]);
-  // 쿼리스트링의 keywordk변경마다 search바 닫힘
+
+
+
+useEffect(() => {
+
+  useSearchStore.getState().reset();
+  useSearchStore.persist.rehydrate();
+}, [userId]);
+
+
 
   useEffect(() => {
     if (pathname !== '/') return;

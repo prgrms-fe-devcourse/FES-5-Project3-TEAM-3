@@ -11,13 +11,13 @@ import { useSearchStore } from '@/store/searchStore';
 
 function SearchResult() {
   const {USER_SEARCH,setRecentSearch,parseArray} = useSearch()
-  const {searchBar} = useSearchStore()
+  const {isOpen} = useSearchStore()
 
 useEffect(() => {
-  if (searchBar) {
+  if (isOpen) {
     setRecentSearch(parseArray(localStorage.getItem(USER_SEARCH)));
   }
-}, [USER_SEARCH, searchBar]);
+}, [USER_SEARCH, isOpen]);
   
   const [params] = useSearchParams();
   const keyword = params.get('keyword');
