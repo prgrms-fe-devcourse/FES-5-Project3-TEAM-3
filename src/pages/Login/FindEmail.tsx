@@ -1,7 +1,8 @@
 import Button from '@/component/Button';
 import Spinner from '@/component/Spinner';
 import useToast from '@/hook/useToast';
-import supabase from '@/supabase/supabase';
+import { isValidPhone } from '@/utils/isValidPhone';
+import { findEmailByPhone } from '@/utils/supabase/findEmailByPhone';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -10,7 +11,7 @@ function FindEmail() {
 
   const [foundEmail, setFoundEmail] = useState<string | null>(null);
   const [mode, setMode] = useState<'form' | 'result'>('form');
-  const [isloading, setIsloading] = useState(false);
+  const [isloading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target.value;
@@ -26,40 +27,33 @@ function FindEmail() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsloading(true);
+    setIsLoading(true);
+    setFoundEmail(null);
+
+    if (!phone.trim()) {
+      useToast('error', '전화번호를 입력해주세요');
+      return;
+    }
+    if (!isValidPhone(phone)) {
+      useToast('error', '올바른 전화번호를 입력해주세요');
+      return;
+    }
 
     try {
-      const digits = phone.replace(/\D/g, ''); // 숫자만
-      if (!digits) {
-        useToast('error', '휴대폰 번호를 입력해주세요'); // 또는 toast('error', ...)
-        return;
+      const normalized = phone.replace(/\D/g, '');
+      const res = await findEmailByPhone(normalized);
+      if (res.ok && res.found) {
+        setFoundEmail(`회원님께서 가입해주신 이메일은 다음과 같습니다: ${res.email_masked}`);
+      } else {
+        setFoundEmail('입력하신 번호와 일치하는 계정이 없습니다.');
       }
-      if (!digits.startsWith('010') || digits.length !== 11) {
-        useToast('error', '휴대전화 형식이 다릅니다');
-        return;
-      }
-
-      // 'https://tejflzndemytckczpazg.supabase.co/functions/v1/findId' 배포용 fetch링크
-      const response = await supabase.functions.invoke(
-        'https://tejflzndemytckczpazg.supabase.co/functions/v1/findId',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: { phone: digits }, // ← 하이픈 제거하고 전송
-        }
-      );
-
-      const result = response.data as { found: boolean; emailMasked?: string };
-      if (!result.found || !result.emailMasked) {
-        useToast('error', '일치하는 계정을 찾지 못했습니다');
-        return;
-      }
-      setFoundEmail(result.emailMasked); // ← 서버 키와 맞춤
-      setMode('result');
     } catch (err) {
+      setFoundEmail('에러가 발생했습니다.');
       useToast('error', '서버 요청 중 오류가 발생했습니다.');
+      console.error(err);
     } finally {
-      setIsloading(false);
+      setIsLoading(false);
+      setMode('result');
     }
   };
 
@@ -76,7 +70,6 @@ function FindEmail() {
               <Spinner />
             ) : (
               <>
-                <h2>회원님께서 가입해주신 이메일은 다음과 같습니다.</h2>
                 <p>{foundEmail}</p>
               </>
             )
