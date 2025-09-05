@@ -1,16 +1,19 @@
 import Button from '@/component/Button';
 import Spinner from '@/component/Spinner';
 import useToast from '@/hook/useToast';
-import supabase from '@/supabase/supabase';
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { isValidPhone } from '@/utils/isValidPhone';
+import { findEmailByPhone } from '@/utils/supabase/findEmailByPhone';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 
 function FindEmail() {
   const [phone, setPhone] = useState('');
 
-  const [foundEmail, setFoundEmail] = useState<string | null>(null);
+  const [result, setResult] = useState<React.ReactNode | null>(null);
   const [mode, setMode] = useState<'form' | 'result'>('form');
-  const [isloading, setIsloading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const target = e.target.value;
@@ -26,40 +29,67 @@ function FindEmail() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsloading(true);
+    setIsLoading(true);
+    setResult(null);
+
+    if (!phone.trim()) {
+      useToast('error', '전화번호를 입력해주세요');
+      setIsLoading(false);
+      return;
+    }
+    if (!isValidPhone(phone)) {
+      useToast('error', '올바른 전화번호를 입력해주세요');
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const digits = phone.replace(/\D/g, ''); // 숫자만
-      if (!digits) {
-        useToast('error', '휴대폰 번호를 입력해주세요'); // 또는 toast('error', ...)
-        return;
+      const normalized = phone.replace(/\D/g, '');
+      const res = await findEmailByPhone(normalized);
+      if (res.ok && res.found) {
+        setResult(
+          <div className="w-full flex flex-col gap-6 justify-center items-center">
+            <h2>회원님께서 가입해주신 이메일은 다음과 같습니다.</h2>
+            <strong>{res.email_masked}</strong>
+            <Button
+              type="button"
+              color="primary"
+              className="mx-auto"
+              onClick={() => navigate('/account/login')}
+            >
+              로그인 하러가기
+            </Button>
+          </div>
+        );
+      } else {
+        setResult(
+          <div className="w-full flex flex-col gap-6 justify-center items-center">
+            <p className="text-error-500 text-center">입력하신 번호와 일치하는 계정이 없습니다.</p>
+            <Button
+              type="button"
+              color="primary"
+              className="mx-auto"
+              onClick={() => setMode('form')}
+            >
+              번호 재입력하기
+            </Button>
+          </div>
+        );
       }
-      if (!digits.startsWith('010') || digits.length !== 11) {
-        useToast('error', '휴대전화 형식이 다릅니다');
-        return;
-      }
-
-      // 'https://tejflzndemytckczpazg.supabase.co/functions/v1/findId' 배포용 fetch링크
-      const response = await supabase.functions.invoke(
-        'https://tejflzndemytckczpazg.supabase.co/functions/v1/findId',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: { phone: digits }, // ← 하이픈 제거하고 전송
-        }
-      );
-
-      const result = response.data as { found: boolean; emailMasked?: string };
-      if (!result.found || !result.emailMasked) {
-        useToast('error', '일치하는 계정을 찾지 못했습니다');
-        return;
-      }
-      setFoundEmail(result.emailMasked); // ← 서버 키와 맞춤
-      setMode('result');
     } catch (err) {
+      setResult(
+        <div className="w-full flex flex-col gap-6 justify-center items-center">
+          <p className="text-error-500 text-center">에러가 발생했습니다.</p>
+          <Button type="button" color="primary" className="mx-auto" onClick={() => setMode('form')}>
+            다시 시도하기
+          </Button>
+        </div>
+      );
       useToast('error', '서버 요청 중 오류가 발생했습니다.');
+      console.error(err);
     } finally {
-      setIsloading(false);
+      setIsLoading(false);
+      setMode('result');
     }
   };
 
@@ -72,13 +102,10 @@ function FindEmail() {
             <p className="text-lg text-[#556987]">인증을 위해 휴대폰번호를 입력해주세요</p>
           </div>
           {mode == 'result' ? (
-            isloading ? (
+            isLoading ? (
               <Spinner />
             ) : (
-              <>
-                <h2>회원님께서 가입해주신 이메일은 다음과 같습니다.</h2>
-                <p>{foundEmail}</p>
-              </>
+              <div className="w-full flex flex-col justify-center items-center gap-6">{result}</div>
             )
           ) : (
             <form className="flex flex-col gap-4" onSubmit={(e) => handleSubmit(e)}>
@@ -96,13 +123,13 @@ function FindEmail() {
                   placeholder="휴대폰번호를 입력해 주세요"
                 />
               </div>
-              <Link to="../login" className="text-right text-primary-500 text-[12px] font-light">
-                로그인 하러가기
-              </Link>
               <div className="flex flex-col items-center gap-4">
-                <Button type="submit" color="primary">
-                  Check your Email
+                <Button type="submit" color="primary" disabled={isLoading}>
+                  {isLoading ? '확인 중...' : 'Check your Email'}
                 </Button>
+                <Link to="../login" className="text-center text-primary-500 text-[12px] font-light">
+                  로그인 하러가기
+                </Link>
               </div>
             </form>
           )}
