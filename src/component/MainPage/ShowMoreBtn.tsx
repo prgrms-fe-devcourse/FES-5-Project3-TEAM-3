@@ -5,8 +5,8 @@ function ShowMoreBtn() {
     <>
       <Link
         to="/community"
-        className="group relative rounded-full border-[0.1px] w-20
-        p-2 h-15 ml-4 cursor-pointer flex justify-center items-center transition-all duration-200 translate-y-30"
+        className="group relative rounded-full inline-flex size-20 flex-none items-center justify-center border-text-primary/60 w-20 h-20 border-[0.1px] 
+        p-2 ml-8 cursor-pointer transition-all duration-200 translate-y-30"
       >
         <svg
           width="34"

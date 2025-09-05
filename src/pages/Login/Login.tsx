@@ -4,7 +4,7 @@ import useToast from '@/hook/useToast';
 import { useAuth } from '@/store/@store';
 import supabase from '@/supabase/supabase';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 
 function Login() {
@@ -14,7 +14,7 @@ function Login() {
       signOut: s.signOut,
     }))
   );
-
+  const { state } = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -29,32 +29,21 @@ function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    const userNickName = data.user?.user_metadata.nickname;
-    const userId = data.user?.id;
-    const userEmail = data.user?.email ?? email;
-    const userPhone = data.user?.user_metadata.phone;
-
     if (error) {
       useToast('error', '로그인 정보를 다시 확인해주세요');
     } else {
-      await supabase.from('profile').insert({
-        profile_id: userId,
-        nickname: userNickName,
-        email: userEmail,
-        phone: userPhone,
-      });
-      navigate('/');
+      navigate(state);
     }
   };
 
   return (
     <>
-      <div className="flex mx-98 mt-10  items-center justify-between">
+      <div className="flex mt-10 my-10 justify-center items-center gap-20">
         <section className="flex flex-col items-center gap-9">
           <div className="flex flex-col gap-4 items-center">
             <h2 className="text-5xl text-primary-500 font-extrabold">Login</h2>
@@ -127,8 +116,8 @@ function Login() {
           </form>
         </section>
 
-        <section>
-          <img src="/image/loginImg.png" alt="로그인 화면" />
+        <section className="rounded-8 w-145 overflow-hidden">
+          <img className="w-full h-auto object-cover" src="/image/loginImg.png" alt="로그인 화면" />
         </section>
       </div>
     </>
