@@ -1,12 +1,12 @@
 import { useAuth } from '@/store/@store';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 import HeaderSearchSection from './search/HeaderSearchSection';
 import clsx from 'clsx';
-import supabase from '@/supabase/supabase';
 import ScrollToTop from '@/hook/ScrolToTop';
 import { useSearchStore } from '@/store/searchStore';
+import { useProfile } from '@/hook/fetch';
 
 function Header() {
   const { userId, signOut } = useAuth(
@@ -25,20 +25,27 @@ const navigate=useNavigate()
   const { pathname, search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [overlay, setOverlay] = useState(false);
-  const [userImage, setUserImage] = useState('');
+
+  const { data: profile } = useProfile(userId || undefined);
+
+  const withVersion = (url?: string | null, ver?: string | null) => {
+    if (!url) return null;
+    const sep = url.includes('?') ? '&' : '?';
+    return ver ? `${url}${sep}v=${encodeURIComponent(ver)}` : url;
+  };
+  const src = useMemo(
+    () => withVersion(profile?.profile_image_url, (profile as any)?.updated_at),
+    [profile?.profile_image_url, (profile as any)?.updated_at]
+  );
+
   useLayoutEffect(() => {
     close()
   }, [pathname, search]);
 
-
-
-useEffect(() => {
-
+  useEffect(() => {
   useSearchStore.getState().reset();
   useSearchStore.persist.rehydrate();
-}, [userId]);
-
-
+  }, [userId]);
 
   useEffect(() => {
     if (pathname !== '/') return;
@@ -54,21 +61,6 @@ useEffect(() => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [pathname]);
-
-  useEffect(() => {
-    if (!userId) return;
-    const fetchData = async () => {
-      const { data, error } = await supabase
-        .from('profile')
-        .select('profile_image_url')
-        .eq('profile_id', userId)
-        .maybeSingle();
-
-      if (error) console.log(error);
-      if (data) setUserImage(data.profile_image_url);
-    };
-    fetchData();
-  }, [userId]);
 
   const handleSearch = () => {
     toggle()
@@ -87,14 +79,12 @@ useEffect(() => {
 
   const headerBgClass = clsx(
     base,
-    pathname == '/' ? (scrolled ? 'bg-primary-500' : 'bg-tranprent') : 'bg-primary-500'
+    pathname == '/' ? (scrolled ? 'bg-primary-500' : 'bg-transparent') : 'bg-primary-500'
   );
 
   return (
     <div className={pathname == '/' ? '' : 'min-h-17.5'}>
-      {overlay && (
-        <div className="fixed inset-0 bg-black/40 z-90" onClick={close}></div>
-      )}
+      {overlay && <div className="fixed inset-0 bg-black/40 z-90" onClick={close}></div>}
 
       <div className={headerBgClass}>
         <div className="w-160 lg:w-360 flex justify-between items-center px-10 py-2">
@@ -125,33 +115,40 @@ useEffect(() => {
               Community
             </NavLink>
 
-            {userId ? (
-              <div className="flex gap-4 items-center">
+            <div className="flex items-center gap-3 justify-end  h-10">
+              {userId ? (
+                <div className="flex gap-2 items-center ">
+                  <button
+                    type="button"
+                    onClick={signOut}
+                    className="cursor-pointer text-secondary-50 font-semibold"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
                 <button
                   type="button"
-                  onClick={signOut}
-                  className="cursor-pointer text-secondary-50 font-semibold"
+                  onClick={goToLogin}
+                  className="flex font-semibold text-secondary-50 items-center gap-2 cursor-pointer"
                 >
-                  Logout
+                  Login
                 </button>
+              )}
+
+              {userId ? (
                 <Link to="my-page">
                   <img
-                    src={userImage ? userImage : '/image/defaultProfile.png'}
+                    key={src}
+                    src={src ? src : '/image/defaultProfile.png'}
                     alt="프로필이미지"
-                    className="rounded-full w-10 h-10 cursor-pointer"
+                    className="rounded-full w-7 h-7 cursor-pointer"
                   />
                 </Link>
-              </div>
-            ) : (
-                <button
-                  type="button"
-                onClick={goToLogin}
-                className="flex font-semibold text-secondary-50 items-center gap-2 cursor-pointer"
-              >
-                <img src="/icon/fi-rr-glass-cheers.svg" alt="로그인아이콘" />
-                Login
-              </button>
-            )}
+              ) : (
+                <img className="w-6 h-6" src="/icon/fi-rr-glass-cheers.svg" alt="로그인아이콘" />
+              )}
+            </div>
           </nav>
           <HeaderSearchSection setOverlay={setOverlay} />
         </div>
