@@ -169,12 +169,14 @@ function ReviewTagInput({
 
       <div className="flex gap-2 flex-wrap w-70 h-12 overflow-auto p-2" ref={containerRef}>
         {type === '태그' &&
-          !disabled &&
+          (!disabled || isEditMode) &&
           tags.map((tag) => (
             <div
               key={tag}
               className="h-fit flex items-center rounded-full bg-gray-300 px-3 py-1 text-text-secondary gap-2 whitespace-nowrap"
-              onClick={() => deleteTag(tag)}
+              onClick={() => {
+                !isEditMode && deleteTag(tag);
+              }}
             >
               {tag}
               <button type="button">
@@ -183,7 +185,7 @@ function ReviewTagInput({
             </div>
           ))}
         {type === '페어링' &&
-          !disabled &&
+          (!disabled || isEditMode) &&
           pairings.map((pairing, index) => {
             const key = Object.keys(pairing)[0];
             const value = pairing[key];
@@ -191,7 +193,9 @@ function ReviewTagInput({
               <div
                 key={index}
                 className="flex items-center rounded-full bg-gray-300 px-3 py-1 text-text-secondary gap-2 whitespace-nowrap"
-                onClick={() => deletePairings(pairing)}
+                onClick={() => {
+                  !isEditMode && deletePairings(pairing);
+                }}
               >
                 {key}/{value}
                 <button type="button">

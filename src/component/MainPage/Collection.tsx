@@ -140,6 +140,8 @@ export default function Collection({ collection }: { collection: Collection[] })
                   slidesPerView={1}
                   spaceBetween={30}
                   allowTouchMove={false}
+                  simulateTouch={false}
+                  preventClicks={false}
                   mousewheel={false}
                   pagination={{ clickable: true }}
                   modules={[Pagination]}
@@ -150,7 +152,9 @@ export default function Collection({ collection }: { collection: Collection[] })
                     collection.map((item, index) => (
                       <SwiperSlide key={item.review_id} className="h-full">
                         <UserCollection
-                          id={index}
+                          key={item.wine_id}
+                          id={item.wine_id}
+                          number={index}
                           image={item.wines?.image_url ?? []}
                           title={item.wines?.name ?? ''}
                           content={item.content}

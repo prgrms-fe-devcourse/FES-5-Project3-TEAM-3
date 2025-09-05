@@ -95,7 +95,7 @@ function MyHome() {
     useToast('error', '데이터를 불러오는 데 실패했습니다.');
     badgeContent = <p className="text-error-500 my-8">데이터를 불러오지 못했습니다.</p>;
   } else if (!badgeLoading && badgeData.length === 0) {
-    badgeContent = <p className="text-text-secondary my-8">아직 작성한 리뷰가 없습니다.</p>;
+    badgeContent = <p className="text-text-secondary my-8">아직 달성된 업적이 없습니다.</p>;
   } else if (!badgeLoading && badgeData.length > 0) {
     const earnedSet = new Set(badgeData);
     const earnedBadges = BADGE_CATALOG.filter((b) => earnedSet.has(b.title)).slice(0, 5);
@@ -110,8 +110,8 @@ function MyHome() {
 
   return (
     <div className="flex flex-col gap-12 overflow-scroll">
-      <section className="flex flex-col gap-6">
-        <div className="flex justify-between w-full px-6">
+      <section className="flex flex-col gap-6 border-2 border-secondary-500/30 rounded-xl p-6">
+        <div className="flex justify-between w-full">
           <h2 className="w-full inline-flex flex-col justify-start items-start text-2xl font-semibold">
             Wine Sellers
           </h2>
@@ -120,15 +120,17 @@ function MyHome() {
             aria-label="와인셀러 메뉴로 이동합니다."
             className="inline-flex gap-1 items-center"
           >
-            <span className="block break-keep min-w-16">전체 보기</span>
+            <span className="block break-keep min-w-14 text-slate-500 font-light text-sm">
+              전체 보기
+            </span>
             <img src="/icon/rightChevron.svg" alt=">" className="size-4 object-contain" />
           </Link>
         </div>
         {wineSellerContent}
       </section>
-      <div className="flex justify-between">
-        <section className="w-1/2 flex flex-col gap-6">
-          <div className="flex justify-between w-full px-6">
+      <div className="flex justify-between gap-6">
+        <section className="w-1/2 flex flex-col gap-6 border-2 border-secondary-500/30 rounded-xl p-6">
+          <div className="flex justify-between w-full">
             <h2 className="w-full inline-flex flex-col justify-start items-start text-2xl font-semibold">
               Wish Lists
             </h2>
@@ -137,27 +139,29 @@ function MyHome() {
               aria-label="Wish List 메뉴로 이동합니다."
               className="inline-flex gap-1 items-center"
             >
-              <span className="block break-keep min-w-16">전체 보기</span>
+              <span className="block break-keep min-w-14 text-slate-500 font-light text-sm">
+                전체 보기
+              </span>
               <img src="/icon/rightChevron.svg" alt=">" className="size-4 object-contain" />
             </Link>
           </div>
           {wishListContent}
         </section>
-        <section className="w-1/2">
-          <h2 className="w-full inline-flex flex-col justify-start items-start text-2xl font-semibold px-6">
+        <section className="w-1/2 border-2 border-secondary-500/30 rounded-xl p-6">
+          <h2 className="w-full inline-flex flex-col justify-start items-start text-2xl font-semibold">
             Wine Taste Analysis
           </h2>
           {chartErr ? (
             <p className="text-error-500 my-8">데이터를 불러오지 못했습니다.</p>
           ) : (
-            <div className="w-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center">
               <WineAnalysisPie data={chartData} loading={chartLoading} title="" />
             </div>
           )}
         </section>
       </div>
-      <section className="flex flex-col gap-6">
-        <div className="flex justify-between w-full px-6">
+      <section className="flex flex-col gap-6 border-2 border-secondary-500/30 rounded-xl p-6">
+        <div className="flex justify-between w-full">
           <h2 className="w-full inline-flex flex-col justify-start items-start text-2xl font-semibold">
             My Achievement
           </h2>
@@ -166,7 +170,9 @@ function MyHome() {
             aria-label="나의 업적 메뉴로 이동합니다."
             className="inline-flex gap-1 items-center"
           >
-            <span className="block break-keep min-w-16">전체 보기</span>
+            <span className="block break-keep min-w-14 text-slate-500 font-light text-sm">
+              전체 보기
+            </span>
             <img src="/icon/rightChevron.svg" alt=">" className="size-4 object-contain" />
           </Link>
         </div>

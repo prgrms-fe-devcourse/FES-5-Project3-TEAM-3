@@ -39,8 +39,9 @@ export const getUser = async () => {
 export const getCollection = async (nickname: string): Promise<Collection[]> => {
   const { data, error } = await supabase
     .from('reviews')
-    .select('*,profile(nickname),wines(*)')
+    .select('*,profile!inner(nickname),wines(*)')
     .eq('profile.nickname', nickname)
+    .order('rating', { ascending: false })
     .limit(5);
   if (error) console.error(error);
   return data ?? [];
@@ -106,10 +107,10 @@ function MainPage() {
               <img src="image/Trending posts.png" alt="trending posts" />
             </h3>
 
-            <div className="flex gap-3 w-full justify-center">
+            <div className="flex gap-3  justify-between w-full ">
               <AnimatedPost>
                 {postData.map((post) => (
-                  <div key={post.post_id} className="post-card will-change-transform  w-90">
+                  <div key={post.post_id} className="post-card will-change-transform w-90">
                     <Card post={post} />
                   </div>
                 ))}

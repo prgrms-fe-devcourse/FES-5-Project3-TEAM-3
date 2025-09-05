@@ -192,6 +192,7 @@ function SettingBio({ maxLength = 300 }: BioProps) {
             aria-invalid={!!getMessage(fieldKey)}
             aria-describedby="bio-help bio-error"
             className="w-full rounded-lg border border-secondary-800/40 p-3 outline-none focus:ring-1 focus:ring-secondary-800 bg-secondary-50"
+            maxLength={maxLength + 1}
           />
           <div className="flex items-center justify-between text-sm text-text-secondary/50">
             <span id="bio-help">⌘/Ctrl + Enter 저장 · ESC 취소</span>

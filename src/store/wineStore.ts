@@ -34,6 +34,7 @@ export type FilterAction = {
   setTempFilters: (key: FilterKey, value: string) => void;
   setAppliedFilters: () => void;
   resetFilters: () => void;
+  resetTempFilters: () => void;
 };
 
 const initialState: FilterState = {
@@ -85,6 +86,8 @@ export const useWineStore = create<FilterState & FilterAction>((set, get) => ({
     });
   },
   resetFilters: () => set(initialState),
+  resetTempFilters: () =>
+    set({ 국가: [], 품종: [], 도수: [], 종류: [], 당도: [], 산미: [], 탄닌: [], 바디: [] }),
 
   setAppliedFilters: () => {
     const state = get();

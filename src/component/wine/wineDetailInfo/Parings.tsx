@@ -1,7 +1,7 @@
 import type { Tables } from '@/supabase/database.types';
 import { useEffect, useRef, useState } from 'react';
 
-function Parings({ pairing }: { pairing: Tables<'pairings'> }) {
+function Parings({ pairing }: { pairing: Tables<'wine_pairings_counts'> }) {
   const { pairing_category, pairing_name } = pairing;
   const category = pairing_category ?? 'others';
   const textRef = useRef<HTMLParagraphElement>(null);
@@ -20,9 +20,9 @@ function Parings({ pairing }: { pairing: Tables<'pairings'> }) {
       <img
         src={`/image/pairing/${category}.png`}
         alt={category}
-        className="x-25 min-w-25 h-25 min-h-25 rounded-full"
+        className="x-25 min-w-15 aspect-square rounded-full"
       />
-      <div className="w-35 overflow-hidden">
+      <div className="w-fit overflow-hidden">
         <p
           ref={textRef}
           className={`whitespace-nowrap transform transition-transform duration-1000 ${

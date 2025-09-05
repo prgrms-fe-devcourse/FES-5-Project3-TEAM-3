@@ -1,20 +1,33 @@
 import Button from '@/component/Button';
 import VisibleBtn from '@/component/Login/VisibleBtn';
+import { useProfile } from '@/hook/fetch';
 import useToast from '@/hook/useToast';
+import type { Tables } from '@/supabase/database.types';
 import supabase from '@/supabase/supabase';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
+type Profile = Pick<Tables<'profile'>, 'nickname'>;
+
 function Register() {
+  const [users, setUsers] = useState<Profile[]>([]);
   const [nickname, setNickName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
+  const userNickname = users.some((a) => a.nickname.includes(nickname));
 
   const navigate = useNavigate();
   const pwRef = useRef<HTMLInputElement | null>(null);
   const pwConfirmRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const profile = await useProfile();
+      setUsers(profile ?? []);
+    })();
+  }, []);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,46 +52,92 @@ function Register() {
       useToast('error', '휴대폰번호를 확인해주세요');
       return;
     }
-    if (!phone.startsWith('010')) {
+    if (!(phone.startsWith('010') || phone.startsWith('02'))) {
       useToast('error', '휴대전화 형식이 다릅니다');
       return;
     }
+
     if (password !== confirmPassword) {
       useToast('error', '비밀번호를 다시 확인해주세요');
       return;
     }
+    if (userNickname) {
+      useToast('error', '이미 사용 중인 닉네임입니다.');
+      return;
+    }
 
-    const { error } = await supabase.auth.signUp({
-      email,
+    const { data: signdata, error } = await supabase.auth.signUp({
+      email: email.trim(),
       password,
       options: {
-        data: { nickname, phone },
+        data: { nickname: nickname.trim(), phone: phone.trim() },
       },
     });
+
+    const userId = signdata.user?.id;
+
     if (error) {
       console.error(error);
       useToast('error', '회원가입에 실패하셨습니다');
       return;
     } else {
-      useToast('success', '회원가입에 성공하셨습니다');
-      navigate('/');
+      if (error) {
+        useToast('error', '로그인 정보를 다시 확인해주세요');
+      } else {
+        await supabase.from('profile').insert({
+          profile_id: userId,
+          nickname: nickname.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+        });
+        useToast('success', '회원가입에 성공하셨습니다');
+        navigate('/');
+      }
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const target = e.target.value;
-    let raw = target.replace(/\D/g, '');
+  const validatePhone = (v: string) => {
+    const digits = v.replace(/\D/g, '');
 
-    if (raw.length <= 11) {
-      raw = raw.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-      setPhone(raw);
-    } else if (raw.length > 11) {
-      e.preventDefault();
+    // 02: 02 + 3 + 4 = 총 9자리
+    const isSeoul = /^02\d{7}$/.test(digits);
+
+    // 그 외: 0으로 시작, 02는 제외, 총 10~11자리
+    const isOther = /^0(?!2)\d{9,10}$/.test(digits);
+
+    return isSeoul || isOther;
+  };
+
+  const formatPhone = (digits: string) => {
+    if (digits.startsWith('02')) {
+      return digits
+        .replace(/\D/g, '')
+        .replace(/(\d{2})(\d{3})(\d{0,4}).*/, (_, a, b, c) =>
+          c ? `${a}-${b}-${c}` : b ? `${a}-${b}` : `${a}`
+        );
+    }
+    return digits
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d{3,4})(\d{0,4}).*/, (_, a, b, c) =>
+        c ? `${a}-${b}-${c}` : b ? `${a}-${b}` : `${a}`
+      );
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, '');
+
+    setPhone(formatPhone(digits));
+  };
+
+  const handleBlur = () => {
+    const digits = phone.replace(/\D/g, '');
+    if (!validatePhone(digits)) {
+      throw new Error('전화번호 형식을 확인해주세요.');
     }
   };
 
   return (
-    <div className="flex m-98 mt-10 items-center justify-between">
+    <div className="flex mt-10 my-10 items-center justify-center gap-20">
       <section className="flex flex-col items-center gap-8">
         <div className="flex  flex-col items-center gap-4">
           <h2 className="text-5xl font-extrabold text-primary-500">Create an Account</h2>
@@ -124,6 +183,7 @@ function Register() {
               type="tel"
               required
               value={phone}
+              onBlur={handleBlur}
               onChange={(e) => handleChange(e)}
               placeholder=' "ㅡ" 없이 휴대폰번호를 입력해주세요'
             />
@@ -175,8 +235,12 @@ function Register() {
           </div>
         </form>
       </section>
-      <section>
-        <img src="/image/registerImg.png" alt="회원가입 이미지" />
+      <section className="rounded-8 w-145  overflow-hidden">
+        <img
+          className="w-full h-auto object-cover"
+          src="/image/registerImg.png"
+          alt="회원가입 이미지"
+        />
       </section>
     </div>
   );
