@@ -47,7 +47,7 @@ function WineSeller() {
   if (error) {
     console.error(error);
     useToast('error', '데이터를 불러오는 데 실패했습니다.');
-    cards = <p className="text-error-500">'데이터를 불러올 수 없습니다.'</p>;
+    cards = <p className="text-error-500">데이터를 불러오지 못했습니다.</p>;
   }
 
   if (!loading && data.length === 0) {
