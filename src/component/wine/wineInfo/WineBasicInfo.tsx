@@ -65,6 +65,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
     if (error) console.error(error);
     if (data) {
       setWished(data[0].bookmark);
+      useToast('success', '위시리스트가 변경되었습니다');
     }
   };
 

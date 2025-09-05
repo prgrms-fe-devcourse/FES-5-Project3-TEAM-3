@@ -42,6 +42,7 @@ function WineInfo({ wineInfo }: { wineInfo: WineInfoType }) {
     if (error) console.error(error);
     if (data) {
       setWish(data[0].bookmark);
+      useToast('success', '위시리스트가 변경되었습니다');
     }
   };
 
