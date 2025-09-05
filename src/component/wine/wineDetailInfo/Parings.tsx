@@ -20,9 +20,9 @@ function Parings({ pairing }: { pairing: Tables<'wine_pairings_counts'> }) {
       <img
         src={`/image/pairing/${category}.png`}
         alt={category}
-        className="x-25 min-w-25 h-25 min-h-25 rounded-full"
+        className="x-25 min-w-15 aspect-square rounded-full"
       />
-      <div className="w-35 overflow-hidden">
+      <div className="w-fit overflow-hidden">
         <p
           ref={textRef}
           className={`whitespace-nowrap transform transition-transform duration-1000 ${
