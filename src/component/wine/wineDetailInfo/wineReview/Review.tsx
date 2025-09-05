@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import supabase from '@/supabase/supabase';
 import { useAuth } from '@/store/@store';
 import useToast from '@/hook/useToast';
+import { useConfirm } from '@/hook/useConfirm';
 import { useReviewStore } from '@/store/reviewStore';
 import { pairingCategory } from '../../filterSearch/filterInfo';
 
@@ -26,6 +27,7 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
   const userId = useAuth().userId;
   const [user, setUser] = useState<{ profile_image_url: string; nickname: string }>();
 
+  const confirm = useConfirm();
   const openModal = useReviewStore((s) => s.openModal);
 
   useEffect(() => {
@@ -128,13 +130,26 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
 
   const deleteReview = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    const { error } = await supabase.from('reviews').delete().eq('review_id', review_id);
-    if (error) {
-      console.error(error);
-      return null;
-    } else {
-      useToast('error', '리뷰가 삭제되었습니다');
-      refresh();
+    const ok = await confirm({
+      title: '정말 삭제하시겠습니까?',
+      description: <></>,
+      confirmText: '삭제하기',
+      cancelText: '취소',
+      tone: 'danger',
+    });
+
+    if (!ok) return;
+    try {
+      const { error } = await supabase.from('reviews').delete().eq('review_id', review_id);
+      if (error) {
+        console.error(error);
+        return null;
+      } else {
+        useToast('error', '리뷰가 삭제되었습니다');
+        refresh();
+      }
+    } catch (err: any) {
+      useToast('error', err?.message ?? '처리 중 오류가 발생했습니다.');
     }
   };
 

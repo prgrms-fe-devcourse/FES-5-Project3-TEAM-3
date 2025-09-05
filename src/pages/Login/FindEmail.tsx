@@ -1,6 +1,7 @@
 import Button from '@/component/Button';
 import Spinner from '@/component/Spinner';
 import useToast from '@/hook/useToast';
+import supabase from '@/supabase/supabase';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -26,45 +27,45 @@ function FindEmail() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsloading(true);
-    if (!phone.trim()) {
-      useToast('error', '휴대폰 번호를 입력해주세요');
-      return;
-    }
-    if (phone.length < 11) {
-      useToast('error', '휴대폰번호를 확인해주세요');
-      return;
-    }
-    if (!phone.startsWith('010')) {
-      useToast('error', '휴대전화 형식이 다릅니다');
-      return;
-    }
 
     try {
-      const response = await fetch('https://tejflzndemytckczpazg.supabase.co/functions/v1/findId', {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify({ phone }),
-      });
+      const digits = phone.replace(/\D/g, ''); // 숫자만
+      if (!digits) {
+        useToast('error', '휴대폰 번호를 입력해주세요'); // 또는 toast('error', ...)
+        return;
+      }
+      if (!digits.startsWith('010') || digits.length !== 11) {
+        useToast('error', '휴대전화 형식이 다릅니다');
+        return;
+      }
 
-      const result = await response.json();
+      // 'https://tejflzndemytckczpazg.supabase.co/functions/v1/findId' 배포용 fetch링크
+      const response = await supabase.functions.invoke(
+        'https://tejflzndemytckczpazg.supabase.co/functions/v1/findId',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: { phone: digits }, // ← 하이픈 제거하고 전송
+        }
+      );
 
-      if (!response.ok) {
+      const result = response.data as { found: boolean; emailMasked?: string };
+      if (!result.found || !result.emailMasked) {
         useToast('error', '일치하는 계정을 찾지 못했습니다');
         return;
       }
+      setFoundEmail(result.emailMasked); // ← 서버 키와 맞춤
       setMode('result');
-      setFoundEmail(result.maskedEmail);
-      setIsloading(false);
-    } catch {
+    } catch (err) {
       useToast('error', '서버 요청 중 오류가 발생했습니다.');
+    } finally {
+      setIsloading(false);
     }
   };
 
   return (
     <>
-      <div className="flex mx-98 mt-10  items-center justify-between">
+      <div className="flex mt-10 my-10 items-center justify-center gap-20">
         <section className="flex flex-col items-center gap-9">
           <div className="flex flex-col gap-4 items-center">
             <h2 className="text-5xl text-primary-500 font-extrabold">Forgot your Email?</h2>
@@ -107,8 +108,12 @@ function FindEmail() {
           )}
         </section>
 
-        <section>
-          <img src="/image/foundIemail.png" alt="로그인 화면" />
+        <section className="rounded-8 w-145 overflow-hidden">
+          <img
+            className="w-full h-auto object-cover"
+            src="/image/foundIemail.png"
+            alt="로그인 화면"
+          />
         </section>
       </div>
     </>
