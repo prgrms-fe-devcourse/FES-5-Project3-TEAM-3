@@ -26,15 +26,11 @@ function Register() {
   const pwConfirmRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    const titleElement = document.getElementsByTagName('title')[0]
-    titleElement.innerHTML = 'Winepedia | 회원가입';
     (async () => {
       const profile = await useProfile()
       setUsers(profile ?? [])
     })()
   }, [])
-
-
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,10 +55,11 @@ function Register() {
       useToast('error', '휴대폰번호를 확인해주세요');
       return;
     }
-    if (!phone.startsWith('010')) {
-      useToast('error', '휴대전화 형식이 다릅니다');
-      return;
-    }
+  if (!(phone.startsWith('010') || phone.startsWith('02'))) {
+    useToast('error', '휴대전화 형식이 다릅니다');
+    return;
+  }
+    
     if (password !== confirmPassword) {
       useToast('error', '비밀번호를 다시 확인해주세요');
       return;
@@ -103,17 +100,49 @@ function Register() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const target = e.target.value;
-    let raw = target.replace(/\D/g, '');
+const validatePhone = (v: string) => {
+  const digits = v.replace(/\D/g, '');
 
-    if (raw.length <= 11) {
-      raw = raw.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-      setPhone(raw);
-    } else if (raw.length > 11) {
-      e.preventDefault();
+  // 02: 02 + 3 + 4 = 총 9자리
+  const isSeoul = /^02\d{7}$/.test(digits);
+
+  // 그 외: 0으로 시작, 02는 제외, 총 10~11자리
+  const isOther = /^0(?!2)\d{9,10}$/.test(digits);
+
+  return isSeoul || isOther;
+};
+
+  const formatPhone = (digits: string) => {
+    if (digits.startsWith('02')) {
+      return digits
+        .replace(/\D/g, '')
+        .replace(/(\d{2})(\d{3})(\d{0,4}).*/, (_, a, b, c) =>
+          c ? `${a}-${b}-${c}` : b ? `${a}-${b}` : `${a}`
+        );
     }
+    return digits
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d{3,4})(\d{0,4}).*/, (_, a, b, c) =>
+        c ? `${a}-${b}-${c}` : b ? `${a}-${b}` : `${a}`
+      );
   };
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const digits = e.target.value.replace(/\D/g, '');
+
+  setPhone(formatPhone(digits));
+
+  };
+  
+  const handleBlur = () => {
+    const digits = phone.replace(/\D/g, '');
+    if (!validatePhone(digits)) {
+      throw new Error('전화번호 형식을 확인해주세요.');
+    } 
+  };
+
+
 
   return (
     <div className="flex mt-10 my-10 items-center justify-center gap-20">
@@ -162,6 +191,7 @@ function Register() {
               type="tel"
               required
               value={phone}
+              onBlur={handleBlur}
               onChange={(e) => handleChange(e)}
               placeholder=' "ㅡ" 없이 휴대폰번호를 입력해주세요'
             />
