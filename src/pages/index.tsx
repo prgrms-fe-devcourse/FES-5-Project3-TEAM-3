@@ -5,12 +5,12 @@ import { Outlet } from 'react-router';
 
 function Root() {
   return (
-    <div className="flex flex-col max-w-screen max-h-screen">
+    <div className="min-h-screen flex flex-col">
       <ScrollToTop />
       <header>
         <Header />
       </header>
-      <main>
+      <main className="flex-1">
         <Outlet></Outlet>
       </main>
       <footer>
