@@ -49,33 +49,36 @@ function WineRatingDistBar({ data, title = '평균 별점', loading }: DistBarPr
           borderWidth: 0,
           backgroundColor: '#E5C67F',
           borderRadius: 8,
-          barPercentabge: 0.7,
+          barPercentage: 0.7,
           categoryPercentage: 0.8,
         },
       ],
     };
   }, [data]);
 
-  const options: ChartOptions<'bar'> = {
-    indexAxis: 'y' as const,
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: { display: false, grid: { display: false } },
-      y: { grid: { display: false } },
-    },
-    plugins: {
-      legend: { display: false },
-      tooltip: { enabled: false },
-      datalabels: {
-        anchor: 'center',
-        align: 'center',
-        color: '#333',
-        display: (context: any) => context.dataset.data[context.dataIndex] !== 0,
-        formatter: (value: number) => value,
+  const options = useMemo<ChartOptions<'bar'>>(
+    () => ({
+      indexAxis: 'y' as const,
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { display: false, grid: { display: false } },
+        y: { grid: { display: false } },
       },
-    },
-  };
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false },
+        datalabels: {
+          anchor: 'center',
+          align: 'center',
+          color: '#333',
+          display: (context: any) => context.dataset.data[context.dataIndex] !== 0,
+          formatter: (value: number) => value,
+        },
+      },
+    }),
+    []
+  );
 
   if (loading) {
     return <Spinner />;
