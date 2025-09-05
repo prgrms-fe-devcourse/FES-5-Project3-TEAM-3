@@ -1,6 +1,6 @@
 import type { Database } from '@/supabase/database.types';
 import supabase from '@/supabase/supabase';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type ReviewRow = Database['public']['Tables']['reviews']['Row'];
 export type WineRow = Database['public']['Tables']['wines']['Row'];
@@ -26,29 +26,39 @@ export function useMyReviews(
   const [data, setData] = useState<ReviewWithWine[]>([]);
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const firstLoadRef = useRef(true);
 
   useEffect(() => {
     let cancelled = false;
 
     async function run() {
-      setLoading(true);
       setError(null);
+      setIsFetching(true);
+
+      if (firstLoadRef.current || (data.length === 0 && count === 0)) {
+        setLoading(true);
+      }
 
       const { data: userData, error: userErr } = await supabase.auth.getUser();
+
+      if (cancelled) return;
+
       if (userErr) {
-        if (!cancelled) setError(userErr.message);
+        setError(userErr.message);
         setLoading(false);
+        setIsFetching(false);
         return;
       }
 
       const userId = userData.user.id;
       if (!userId) {
-        if (!cancelled) {
-          setData([]);
-          setCount(0);
-          setLoading(false);
-        }
+        setData([]);
+        setCount(0);
+        setLoading(false);
+        setIsFetching(false);
         return;
       }
 
@@ -57,9 +67,12 @@ export function useMyReviews(
         .from('reviews')
         .select('review_id', { count: 'exact', head: true })
         .eq('user_id', userId);
+
+      if (cancelled) return;
       if (countErr) {
-        if (!cancelled) setError(countErr.message);
+        setError(countErr.message);
         setLoading(false);
+        setIsFetching(false);
         return;
       }
 
@@ -83,11 +96,12 @@ export function useMyReviews(
       }
 
       if (size <= 0) {
-        if (!cancelled) {
-          setData([]);
-          setCount(totalCount);
-          setLoading(false);
-        }
+        setData([]);
+        setCount(totalCount);
+        setLoading(false);
+        setIsFetching(false);
+        firstLoadRef.current = false;
+
         return;
       }
 
@@ -121,22 +135,23 @@ export function useMyReviews(
           break;
       }
 
+      // tie-breaker
       query = query.order('review_id', { ascending: true });
 
       const { data: rows, error: queryErr } = await query.range(from, to);
 
+      if (cancelled) return;
+
       if (queryErr) {
-        if (!cancelled) {
-          setError(queryErr.message);
-        }
+        setError(queryErr.message);
       } else {
-        if (!cancelled) {
-          setData(rows ?? []);
-          setCount(totalCount);
-        }
+        setData(rows ?? []);
+        setCount(totalCount);
       }
 
-      if (!cancelled) setLoading(false);
+      setLoading(false);
+      setIsFetching(false);
+      firstLoadRef.current = false;
     }
 
     run();
@@ -148,5 +163,5 @@ export function useMyReviews(
 
   const totalPages = Math.max(1, Math.ceil((count + (reserveLastSlot ? 1 : 0)) / pageSize));
 
-  return { data, loading, error, count, totalPages };
+  return { data, loading, isFetching, error, count, totalPages };
 }

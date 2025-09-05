@@ -53,7 +53,7 @@ function WishList() {
   }
 
   return (
-    <div className="flex flex-col gap-12 overflow-scroll">
+    <div className="flex flex-col gap-12 overflow-scroll h-full">
       <h2 className="w-full inline-flex flex-col justify-start items-start text-2xl font-semibold">
         My Wish List
       </h2>

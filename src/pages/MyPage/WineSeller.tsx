@@ -7,7 +7,7 @@ import { useMyReviews, type WineSellerSortKey } from '@/hook/myPage/useMyReviews
 import { useProfile } from '@/hook/profileSetting/useProfileBasic';
 import useToast from '@/hook/useToast';
 import { useAuth } from '@/store/@store';
-import { useState } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 
 function WineSeller() {
   const profileId = useAuth((s) => s.userId);
@@ -18,11 +18,21 @@ function WineSeller() {
   const PAGE_SIZE = 8;
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<WineSellerSortKey>('created_desc');
-  const { data, loading, error, totalPages } = useMyReviews(page, PAGE_SIZE, true, sort);
+  const { data, loading, isFetching, error, totalPages } = useMyReviews(
+    page,
+    PAGE_SIZE,
+    true,
+    sort
+  );
+
+  const [isPending, startTransition] = useTransition();
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSort(e.target.value as WineSellerSortKey);
-    setPage(1);
+    const next = e.target.value as WineSellerSortKey;
+    startTransition(() => {
+      setSort(next);
+      setPage(1);
+    });
   };
 
   const subtitle =
@@ -33,42 +43,30 @@ function WineSeller() {
         : '아직 작성한 리뷰가 없습니다.';
 
   const isLastPage = page === totalPages;
-  const showAddCard = !loading && isLastPage;
+  const prevIsLastRef = useRef(isLastPage);
 
-  // skeleton 처리
-  let cards = (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      {Array.from({ length: 4 }).map((_, idx) => (
-        <WineSellerCardSkeleton key={idx} />
-      ))}
-    </div>
-  );
+  useEffect(() => {
+    if (!isFetching) prevIsLastRef.current = isLastPage;
+  }, [isFetching, isLastPage]);
 
-  if (error) {
-    console.error(error);
-    useToast('error', '데이터를 불러오는 데 실패했습니다.');
-    cards = <p className="text-error-500">데이터를 불러오지 못했습니다.</p>;
-  }
+  const showAddCard = !loading && (isFetching ? prevIsLastRef.current : isLastPage);
 
-  if (!loading && data.length === 0) {
-    cards = (
-      <div>
-        <AddNewCard />
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (error) useToast('error', '데이터를 불러오는 데 실패했습니다.');
+  }, [error]);
 
-  cards = (
-    <>
-      {data.map((row) => (
-        <WineSellerCard key={row.review_id} item={row} />
-      ))}
-      {showAddCard && <AddNewCard />}
-    </>
-  );
+  let items: React.ReactNode[] = data.map((row) => (
+    <WineSellerCard key={row.review_id} item={row} />
+  ));
+
+  if (showAddCard) items.push(<AddNewCard key="add-new" />);
+
+  const showEmptyWithAdd = !loading && data.length === 0;
+
+  <p className="text-error-500">데이터를 불러오지 못했습니다.</p>;
 
   return (
-    <div className="flex flex-col gap-12 overflow-scroll">
+    <div className="flex flex-col gap-12 overflow-scroll h-full">
       <section className="flex flex-col gap-6">
         <h2 className="w-full inline-flex flex-col justify-start items-start text-2xl font-semibold">
           My Wine Seller
@@ -91,12 +89,31 @@ function WineSeller() {
               <option value="created_asc">오래된 순</option>
               <option value="rating_desc">평점 높은 순</option>
               <option value="rating_asc">평점 낮은 순</option>
-              <option value="name_desc">와인 이름 A→Z</option>
-              <option value="name_asc">와인 이름 Z→A</option>
+              {/* <option value="name_desc">와인 이름 A→Z</option> */}
+              {/* <option value="name_asc">와인 이름 Z→A</option> */}
             </select>
           </div>
         </div>
-        <div className="grid px-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{cards}</div>
+
+        <div className="relative">
+          <div
+            className="grid px-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 transition-opacity"
+            style={{ opacity: isFetching || isPending ? 0.8 : 1 }}
+          >
+            {loading ? (
+              Array.from({ length: 4 }).map((_, idx) => <WineSellerCardSkeleton key={idx} />)
+            ) : showEmptyWithAdd ? (
+              <div>
+                <AddNewCard />
+              </div>
+            ) : (
+              items
+            )}
+          </div>
+          {(isFetching || isPending) && (
+            <div className="absolute inset-0 pointer-events-none bg-background-base/20 rounded animate-pulse" />
+          )}
+        </div>
         <Pagination
           page={page}
           onPageChange={setPage}
