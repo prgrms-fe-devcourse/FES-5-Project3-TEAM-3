@@ -70,7 +70,9 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
     getProfile(user_id);
   }, []);
 
-  const toggleLike = async () => {
+  const toggleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!userId) {
       useToast('error', '좋아요를 누르려면 로그인하셔야 합니다');
       return;
@@ -138,50 +140,54 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
 
   return (
     <div
-      className={`w-full min-w-140 flex justify-center items-baseline gap-5 border border-gray-400 rounded-2xl px-5 py-3 relative ${user_id === userId && 'hover:bg-secondary-100/50 hover:shadow-md'}`}
+      className={`w-full md:min-w-160 flex flex-wrap md:wrap-normal justify-center items-baseline gap-5 border border-gray-400 rounded-2xl px-5 py-3 relative ${user_id === userId && 'hover:bg-secondary-100/50 hover:shadow-md'}`}
       onClick={editReview}
     >
       <TastingInfo style="review" tasting={{ sweetness, acidic, tannic, body }} />
-      <div className="flex flex-col flex-1">
-        <div className="flex justify-between items-center gap-5">
-          <div className="flex items-center gap-2">
-            <img
-              src={user?.profile_image_url ? user?.profile_image_url : '/image/defaultProfile.png'}
-              alt="사용자프로필"
-              className="w-8 h-8"
-            />
-            <p className="py-3">
-              {user?.nickname}{' '}
-              <span className="text-gray-500 whitespace-nowrap">{created_at.slice(0, 10)}</span>
-            </p>
+      <>
+        <div className="flex flex-col flex-1">
+          <div className="flex justify-between items-center gap-5">
+            <div className="flex items-center gap-2">
+              <img
+                src={
+                  user?.profile_image_url ? user?.profile_image_url : '/image/defaultProfile.png'
+                }
+                alt="사용자프로필"
+                className="w-8 h-8"
+              />
+              <div className="py-3">
+                <span className="text-nowrap">{user?.nickname} </span>
+                <span className="text-gray-500 whitespace-nowrap">{created_at.slice(0, 10)}</span>
+              </div>
+            </div>
+            <ReviewRatings rating={rating} w="w-6" h="h-6" />
           </div>
-          <ReviewRatings rating={rating} w="w-6" h="h-6" />
+          <p className="max-w-110">{content}</p>
         </div>
-        {content}
-      </div>
-      <div>
-        <button
-          type="button"
-          className={`flex flex-col ${userId && 'cursor-pointer'}`}
-          onClick={toggleLike}
-        >
-          {reviewLiked ? (
-            <img src="/icon/like_true.svg" alt="좋아요" className="w-6 h-6" />
-          ) : (
-            <img src="/icon/like.svg" alt="좋아요" className="w-6 h-6" />
-          )}
-          {likeCount}
-        </button>
-        {user_id && user_id === userId && (
+        <div>
           <button
             type="button"
-            className="absolute bottom-3 right-3 p-2 rounded-full bg-secondary-50"
-            onClick={deleteReview}
+            className={`flex flex-col ${userId && 'cursor-pointer'}`}
+            onClick={toggleLike}
           >
-            <img src="/icon/delete.svg" alt="삭제" className="w-6 h-6" />
+            {reviewLiked ? (
+              <img src="/icon/like_true.svg" alt="좋아요" className="w-6 h-6" />
+            ) : (
+              <img src="/icon/like.svg" alt="좋아요" className="w-6 h-6" />
+            )}
+            {likeCount}
           </button>
-        )}
-      </div>
+          {user_id && user_id === userId && (
+            <button
+              type="button"
+              className="absolute bottom-3 right-3 p-2 rounded-full bg-secondary-50"
+              onClick={deleteReview}
+            >
+              <img src="/icon/delete.svg" alt="삭제" className="w-6 h-6" />
+            </button>
+          )}
+        </div>
+      </>
     </div>
   );
 }

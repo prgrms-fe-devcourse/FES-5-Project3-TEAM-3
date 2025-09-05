@@ -278,7 +278,7 @@ function WineDetails() {
                   >
                     리뷰작성하기
                   </Button>
-                  <div className="w-full flex items-center justify-center flex-wrap gap-10 2xl:gap-20 py-5">
+                  <div className="w-full flex items-start justify-center flex-wrap xl:flex-nowrap gap-10 2xl:gap-20 py-5">
                     <RatingSummary
                       rating={averageRating}
                       reviewerCount={reviewers}
