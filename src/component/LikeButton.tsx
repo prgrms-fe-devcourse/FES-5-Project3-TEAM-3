@@ -85,7 +85,7 @@ export default function LikeButton({
 
       // 본인 작성글/답글 금지 처리 (ownerId가 전달된 경우에만 검사)
       if (ownerId && ownerId === uid) {
-        toast('warn', '본인 게시글에는 좋아요를 누를 수 없습니다.');
+        toast('warn', '본인 작성글 좋아요를 누를 수 없습니다.');
         setBusy(false);
         return;
       }
