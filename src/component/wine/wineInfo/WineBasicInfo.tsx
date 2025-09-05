@@ -117,7 +117,10 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
         )}
       >
         <img
-          src={(country_ko && countryInfo[country_ko].icon) || '/icon/country/others.svg'}
+          src={
+            countryInfo[country_ko ?? '']?.icon ??
+            (country ? `/icon/country/${country}.svg` : '/icon/country/others.svg')
+          }
           alt={country_ko ?? '와인생산국가'}
           className="w-6 h-6"
           draggable="false"
