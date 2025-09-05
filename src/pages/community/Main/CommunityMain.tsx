@@ -6,12 +6,32 @@ import ScrollToTopButton from '@/component/community/ScrollToTopButton';
 import PopularLike from '@/pages/community/Main/PopularLike';
 import { usePosts } from '@/hook/usePosts';
 import { usePopularTags } from '@/hook/useTags';
+import { useState } from 'react';
 
 function CommunityMain() {
   // 분리된 훅 사용
   const { posts, search, setSearch, fetchPosts, placeholders, debounceRef, sortBy, setSortBy } =
     usePosts();
-  const { popular, globalTags, handleTagClick } = usePopularTags();
+  const { popular, globalTags } = usePopularTags();
+
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+
+  const handleTagClickLocal = (tag: string) => {
+    const plain = String(tag).replace(/^#/, '').trim();
+    if (!plain) return;
+    if (activeTag === plain) {
+      clearActiveTag();
+      return;
+    }
+    setActiveTag(plain);
+    fetchPosts(`#${plain}`, sortBy);
+  };
+
+  const clearActiveTag = () => {
+    setActiveTag(null);
+    setSearch('');
+    fetchPosts(undefined, sortBy);
+  };
 
   return (
     <div className="min-h-full">
@@ -73,6 +93,7 @@ function CommunityMain() {
                     }}
                     className="w-full rounded-full border-2 border-gray-600 px-4 py-2 text-sm hover:border-primary-500 focus:border-primary-500 focus:outline-none"
                     placeholder="검색어를 입력하세요 (제목 또는 내용)"
+                    autoComplete="off"
                   />
                 </div>
 
@@ -80,7 +101,6 @@ function CommunityMain() {
                   <h4 className="font-semibold mb-2">인기글</h4>
                   <ul className="text-sm text-gray-600 space-y-2">
                     {popular === null ? (
-                      // 로딩 플레이스홀더
                       Array.from({ length: 3 }).map((_, i) => (
                         <li key={i} className="flex justify-between opacity-50">
                           <span>로딩 중...</span>
@@ -115,6 +135,15 @@ function CommunityMain() {
 
               <div className="bg-white rounded-lg p-4 shadow-sm">
                 <h4 className="font-semibold mb-2">인기 태그</h4>
+                {/* 태그 필터 활성화 표시/초기화 버튼 */}
+                {activeTag && (
+                  <div className="mb-3 text-sm">
+                    현재 태그 필터: <strong>#{activeTag}</strong>
+                    <button className="ml-3 text-xs text-gray-500" onClick={clearActiveTag}>
+                      태그 해제
+                    </button>
+                  </div>
+                )}
                 <div className="flex flex-wrap gap-2">
                   {globalTags === null ? (
                     Array.from({ length: 3 }).map((_, i) => (
@@ -125,16 +154,24 @@ function CommunityMain() {
                   ) : globalTags.length === 0 ? (
                     <div className="text-sm text-gray-500">태그가 없습니다.</div>
                   ) : (
-                    globalTags.map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary-400 text-sm text-primary-400 bg-white shadow-sm cursor-pointer"
-                        onClick={() => handleTagClick(t)}
-                      >
-                        # {t}
-                      </button>
-                    ))
+                    globalTags.map((t) => {
+                      const plain = String(t).replace(/^#/, '').trim();
+                      const isActive = activeTag === plain;
+                      return (
+                        <button
+                          key={t}
+                          type="button"
+                          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm shadow-sm cursor-pointer ${
+                            isActive
+                              ? 'bg-primary-400 text-white border-transparent'
+                              : 'border border-primary-400 text-primary-400 bg-white'
+                          }`}
+                          onClick={() => handleTagClickLocal(String(t))}
+                        >
+                          # {plain}
+                        </button>
+                      );
+                    })
                   )}
                 </div>
               </div>
