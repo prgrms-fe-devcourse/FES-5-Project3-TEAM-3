@@ -60,7 +60,12 @@ export default function useEditPost() {
       let finalImageUrls: (string | null)[] = storeImageUrls.slice();
       let newBody = store.body || '';
 
-      if (files.length > 0 || (storeImageUrls || []).some((u) => typeof u === 'string' && (u as string).startsWith('blob:'))) {
+      if (
+        files.length > 0 ||
+        (storeImageUrls || []).some(
+          (u) => typeof u === 'string' && (u as string).startsWith('blob:')
+        )
+      ) {
         const res = await uploadFilesToBucket(files, BUCKET, storeImageUrls, storeImageNames);
         mapping = res.mapping || {};
         // res.finalImageUrls는 string[]이므로 (string|null)[] 변수에 안전하게 할당

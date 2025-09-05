@@ -24,42 +24,44 @@ function FindEmail() {
     }
   };
 
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  setIsloading(true);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsloading(true);
 
-  try {
-    const digits = phone.replace(/\D/g, ''); // 숫자만
-    if (!digits) {
-      useToast('error', '휴대폰 번호를 입력해주세요'); // 또는 toast('error', ...)
-      return;
+    try {
+      const digits = phone.replace(/\D/g, ''); // 숫자만
+      if (!digits) {
+        useToast('error', '휴대폰 번호를 입력해주세요'); // 또는 toast('error', ...)
+        return;
+      }
+      if (!digits.startsWith('010') || digits.length !== 11) {
+        useToast('error', '휴대전화 형식이 다릅니다');
+        return;
+      }
+
+      // 'https://tejflzndemytckczpazg.supabase.co/functions/v1/findId' 배포용 fetch링크
+      const response = await supabase.functions.invoke(
+        'https://tejflzndemytckczpazg.supabase.co/functions/v1/findId',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: { phone: digits }, // ← 하이픈 제거하고 전송
+        }
+      );
+
+      const result = response.data as { found: boolean; emailMasked?: string };
+      if (!result.found || !result.emailMasked) {
+        useToast('error', '일치하는 계정을 찾지 못했습니다');
+        return;
+      }
+      setFoundEmail(result.emailMasked); // ← 서버 키와 맞춤
+      setMode('result');
+    } catch (err) {
+      useToast('error', '서버 요청 중 오류가 발생했습니다.');
+    } finally {
+      setIsloading(false);
     }
-    if (!digits.startsWith('010') || digits.length !== 11) {
-      useToast('error', '휴대전화 형식이 다릅니다');
-      return;
-    }
-
-    // 'https://tejflzndemytckczpazg.supabase.co/functions/v1/findId' 배포용 fetch링크
-    const response = await supabase.functions.invoke('https://tejflzndemytckczpazg.supabase.co/functions/v1/findId', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: { phone: digits }, // ← 하이픈 제거하고 전송
-    });
-
-    const result = response.data as { found: boolean; emailMasked?: string };
-    if (!result.found || !result.emailMasked) {
-      useToast('error', '일치하는 계정을 찾지 못했습니다');
-      return;
-    }
-    setFoundEmail(result.emailMasked); // ← 서버 키와 맞춤
-    setMode('result');
-
-  } catch (err) {
-    useToast('error', '서버 요청 중 오류가 발생했습니다.');
-  } finally {
-    setIsloading(false);
-  }
-};
+  };
 
   return (
     <>

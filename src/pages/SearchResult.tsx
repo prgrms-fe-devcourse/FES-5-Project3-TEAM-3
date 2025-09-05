@@ -8,17 +8,16 @@ import SkeletonItem from '@/component/search/skeleton/SkeletonItem';
 import { useSearchStore } from '@/store/searchStore';
 import { useSearch } from '@/hook/search/useSearch';
 
-
 function SearchResult() {
-  const {USER_SEARCH,setRecentSearch,parseArray} = useSearch()
-  const {isOpen} = useSearchStore()
+  const { USER_SEARCH, setRecentSearch, parseArray } = useSearch();
+  const { isOpen } = useSearchStore();
 
-useEffect(() => {
-  if (isOpen) {
-    setRecentSearch(parseArray(localStorage.getItem(USER_SEARCH)));
-  }
-}, [USER_SEARCH, isOpen]);
-  
+  useEffect(() => {
+    if (isOpen) {
+      setRecentSearch(parseArray(localStorage.getItem(USER_SEARCH)));
+    }
+  }, [USER_SEARCH, isOpen]);
+
   const [params] = useSearchParams();
   const keyword = params.get('keyword');
   const filterWine = filtered(keyword ?? '');
@@ -31,7 +30,7 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen w-249 mx-auto my-10 mt-8  items-center flex flex-col flex-1">
-      <MainSearchBar/>
+      <MainSearchBar />
       <div className="mt-8 text-xl">"{keyword}"에 대한 검색결과</div>
       <div className="w-300 flex flex-col mt-10">
         <div className="w-full border-b">
@@ -74,4 +73,3 @@ export default SearchResult;
 function setRecentSearch(arg0: any) {
   throw new Error('Function not implemented.');
 }
-

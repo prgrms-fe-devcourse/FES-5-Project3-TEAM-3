@@ -1,5 +1,5 @@
 import { useAuth } from '@/store/@store';
-import { useEffect, useLayoutEffect,  useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router';
 import { useShallow } from 'zustand/shallow';
 import HeaderSearchSection from './search/HeaderSearchSection';
@@ -8,7 +8,6 @@ import ScrollToTop from '@/hook/ScrolToTop';
 import { useSearchStore } from '@/store/searchStore';
 import supabase from '@/supabase/supabase';
 import { useProfile } from '@/hook/profileSetting/useProfileBasic';
-
 
 function Header() {
   const { userId, signOut } = useAuth(
@@ -20,44 +19,41 @@ function Header() {
   const { close, toggle } = useSearchStore(
     useShallow((s) => ({
       close: s.close,
-      toggle:s.toggle
+      toggle: s.toggle,
     }))
-  )
-const navigate=useNavigate()
+  );
+  const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [userImage, setUserImage] = useState('');
-  
 
-  const { data: profile} = useProfile(userId ?? undefined);
+  const { data: profile } = useProfile(userId ?? undefined);
 
   const avatarSrc = profile?.profile_image_url || undefined;
 
+  useEffect(() => {
+    if (!userId) return;
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from('profile')
+        .select('profile_image_url')
+        .eq('profile_id', userId)
+        .maybeSingle();
 
-
- useEffect(() => {
-   if (!userId) return;
-   const fetchData = async () => {
-     const { data, error } = await supabase
-       .from('profile')
-       .select('profile_image_url')
-       .eq('profile_id', userId)
-       .maybeSingle();
-
-     if (error) console.log(error);
-     if (data) setUserImage(data.profile_image_url);
-   };
-   fetchData();
- }, [userId]);
+      if (error) console.log(error);
+      if (data) setUserImage(data.profile_image_url);
+    };
+    fetchData();
+  }, [userId]);
 
   useLayoutEffect(() => {
-    close()
+    close();
   }, [pathname, search]);
 
   useEffect(() => {
-  useSearchStore.getState().reset();
-  useSearchStore.persist.rehydrate();
+    useSearchStore.getState().reset();
+    useSearchStore.persist.rehydrate();
   }, [userId]);
 
   useEffect(() => {
@@ -76,17 +72,17 @@ const navigate=useNavigate()
   }, [pathname]);
 
   const handleSearch = () => {
-    toggle()
+    toggle();
     setOverlay(true);
 
     if (window.scrollY <= 1) {
       setScrolled(!scrolled);
     }
   };
-  
+
   const goToLogin = () => {
-    navigate('/account/login',{state:pathname})
-  }
+    navigate('/account/login', { state: pathname });
+  };
 
   const base = 'h-17.5 w-screen flex items-center justify-center fixed z-99 duration-400 ';
 

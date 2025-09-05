@@ -7,12 +7,10 @@ import supabase from '@/supabase/supabase';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
-type Profile = Pick<Tables<'profile'>,'nickname'> 
-
+type Profile = Pick<Tables<'profile'>, 'nickname'>;
 
 function Register() {
-  
-  const [users, setUsers] = useState<Profile[]>([])
+  const [users, setUsers] = useState<Profile[]>([]);
   const [nickname, setNickName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,17 +18,16 @@ function Register() {
   const [phone, setPhone] = useState('');
   const userNickname = users.some((a) => a.nickname.includes(nickname));
 
-
   const navigate = useNavigate();
   const pwRef = useRef<HTMLInputElement | null>(null);
   const pwConfirmRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     (async () => {
-      const profile = await useProfile()
-      setUsers(profile ?? [])
-    })()
-  }, [])
+      const profile = await useProfile();
+      setUsers(profile ?? []);
+    })();
+  }, []);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,28 +52,28 @@ function Register() {
       useToast('error', '휴대폰번호를 확인해주세요');
       return;
     }
-  if (!(phone.startsWith('010') || phone.startsWith('02'))) {
-    useToast('error', '휴대전화 형식이 다릅니다');
-    return;
-  }
-    
+    if (!(phone.startsWith('010') || phone.startsWith('02'))) {
+      useToast('error', '휴대전화 형식이 다릅니다');
+      return;
+    }
+
     if (password !== confirmPassword) {
       useToast('error', '비밀번호를 다시 확인해주세요');
       return;
     }
     if (userNickname) {
-      useToast('error','이미 사용 중인 닉네임입니다.')
-      return
+      useToast('error', '이미 사용 중인 닉네임입니다.');
+      return;
     }
 
-    const { data:signdata,error } = await supabase.auth.signUp({
-      email:email.trim(),
+    const { data: signdata, error } = await supabase.auth.signUp({
+      email: email.trim(),
       password,
       options: {
-        data: { nickname:nickname.trim(), phone:phone.trim() },
+        data: { nickname: nickname.trim(), phone: phone.trim() },
       },
     });
-  
+
     const userId = signdata.user?.id;
 
     if (error) {
@@ -84,33 +81,32 @@ function Register() {
       useToast('error', '회원가입에 실패하셨습니다');
       return;
     } else {
-        if (error) {
-          useToast('error', '로그인 정보를 다시 확인해주세요');
-        } else {
-      
-              await supabase.from('profile').insert({
-                profile_id: userId,
-                nickname: nickname.trim(),
-                email: email.trim(),
-                phone: phone.trim(),
-              })
-          useToast('success', '회원가입에 성공하셨습니다'); 
-          navigate('/');
-        }
+      if (error) {
+        useToast('error', '로그인 정보를 다시 확인해주세요');
+      } else {
+        await supabase.from('profile').insert({
+          profile_id: userId,
+          nickname: nickname.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+        });
+        useToast('success', '회원가입에 성공하셨습니다');
+        navigate('/');
+      }
     }
   };
 
-const validatePhone = (v: string) => {
-  const digits = v.replace(/\D/g, '');
+  const validatePhone = (v: string) => {
+    const digits = v.replace(/\D/g, '');
 
-  // 02: 02 + 3 + 4 = 총 9자리
-  const isSeoul = /^02\d{7}$/.test(digits);
+    // 02: 02 + 3 + 4 = 총 9자리
+    const isSeoul = /^02\d{7}$/.test(digits);
 
-  // 그 외: 0으로 시작, 02는 제외, 총 10~11자리
-  const isOther = /^0(?!2)\d{9,10}$/.test(digits);
+    // 그 외: 0으로 시작, 02는 제외, 총 10~11자리
+    const isOther = /^0(?!2)\d{9,10}$/.test(digits);
 
-  return isSeoul || isOther;
-};
+    return isSeoul || isOther;
+  };
 
   const formatPhone = (digits: string) => {
     if (digits.startsWith('02')) {
@@ -127,22 +123,18 @@ const validatePhone = (v: string) => {
       );
   };
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, '');
 
-  const digits = e.target.value.replace(/\D/g, '');
-
-  setPhone(formatPhone(digits));
-
+    setPhone(formatPhone(digits));
   };
-  
+
   const handleBlur = () => {
     const digits = phone.replace(/\D/g, '');
     if (!validatePhone(digits)) {
       throw new Error('전화번호 형식을 확인해주세요.');
-    } 
+    }
   };
-
-
 
   return (
     <div className="flex mt-10 my-10 items-center justify-center gap-20">

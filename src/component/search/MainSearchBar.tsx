@@ -1,20 +1,17 @@
-
 import useToast from '@/hook/useToast';
 import { useSearchStore } from '@/store/searchStore';
-import { useRef} from 'react';
+import { useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { useShallow } from 'zustand/shallow';
-
-
 
 function MainSearchBar() {
   const { query, setQuery, addRecent } = useSearchStore(
     useShallow((s) => ({
       query: s.query,
       setQuery: s.setQuery,
-      addRecent:s.addRecent
+      addRecent: s.addRecent,
     }))
-  )
+  );
   const navigate = useNavigate();
   const searchBarRef = useRef<HTMLInputElement | null>(null);
 
@@ -29,9 +26,9 @@ function MainSearchBar() {
       useToast('error', '검색어를 입력하세요');
       return;
     }
-    addRecent(k)
+    addRecent(k);
     navigate(`/search?keyword=${encodeURIComponent(k)}`);
-    setQuery('')
+    setQuery('');
   };
 
   const handleFocus = (e: React.MouseEvent<HTMLFormElement, MouseEvent>) => {

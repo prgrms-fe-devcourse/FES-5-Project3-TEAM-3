@@ -3,7 +3,6 @@ import { create } from 'zustand';
 import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
 import { useAuth } from './@store';
 
-
 const initialSearchState = {
   isOpen: false,
   query: '',
@@ -12,20 +11,17 @@ const initialSearchState = {
 
 type SearchStore = typeof initialSearchState & {
   isOpen: boolean;
-  query: string; 
-  recent: string[]; 
+  query: string;
+  recent: string[];
   open: () => void;
   close: () => void;
-  toggle:() => void
+  toggle: () => void;
   setQuery: (q: string) => void;
   addRecent: (q: string) => void;
   clearRecent: () => void;
-  reset:() => void
+  reset: () => void;
 };
 
-
-
-  
 const userScopedStorage = (): StateStorage => ({
   getItem: (name) => {
     const uid = useAuth.getState().userId ?? 'anon';
