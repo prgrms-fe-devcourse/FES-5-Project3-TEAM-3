@@ -124,7 +124,16 @@ export default function Collection({ collection }: { collection: Collection[] })
               className="absolute inset-0 w-full h-full object-cover -z-10"
             />
 
-            <div className="absolute inset-0 z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 max-w-6xl mx-auto px-6 py-8">
+            <div
+              className="
+                absolute inset-0 z-10
+                grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2
+                gap-6 sm:gap-10 lg:gap-24
+                max-w-[90rem] mx-auto
+                px-4 sm:px-6 md:px-8 lg:px-10
+                py-6 sm:py-8 lg:py-12
+              "
+            >
               <div className="text-white flex flex-col mt-10 lg:mt-30">
                 <h3 className="leading-none">
                   <img src="image/User Collection.png" alt="유저컬렉션" />
@@ -148,7 +157,7 @@ export default function Collection({ collection }: { collection: Collection[] })
                 >
                   {collection &&
                     collection.map((item, index) => (
-                      <SwiperSlide key={item.review_id} className="h-full">
+                      <SwiperSlide key={item.review_id}>
                         <UserCollection
                           id={index}
                           image={item.wines?.image_url ?? []}

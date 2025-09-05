@@ -93,7 +93,16 @@ function MainPage() {
       <Suspense fallback={<SkeletonMainPage />}>
         <Await resolve={Promise.all([nickname, postData, collectionData])}>
           <section className="bg-radial from-background-base from-60% to-secondary-300 to-100% flex justify-center">
-            <div className="max-w-[90rem] mx-auto px-4 lg:px-10 py-10 lg:py-34.75">
+            <div
+              className="
+                grid w-full max-w-[90rem] mx-auto
+                grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
+                lg:grid-rows-3
+                gap-4 lg:gap-5
+                px-4 md:px-8 lg:px-0
+                py-10 md:py-16 lg:py-34.75
+              "
+            >
               {wines &&
                 wines.map(({ id, src, alt, title, text }) => (
                   <WineGrid key={id} src={src} alt={alt} title={title} text={text} />
@@ -101,11 +110,11 @@ function MainPage() {
             </div>
           </section>
 
-          <section className="max-w-[90rem] mx-auto px-4 lg:px-10">
+          <section>
             <Collection collection={collectionData} />
           </section>
 
-          <section className="h-200 mt-35 lg:mt-35 flex flex-col items-center gap-8">
+          <section className="mt-12 lg:mt-35 flex flex-col items-center gap-6 lg:gap-8">
             <h3>
               <img
                 src="image/Trending posts.png"

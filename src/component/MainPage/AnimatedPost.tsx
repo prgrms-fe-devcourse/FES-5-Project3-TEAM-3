@@ -48,7 +48,13 @@ export default function AnimatedPost({ children }: Props) {
   }, [children]);
 
   return (
-    <div ref={wrapRef} className="w-full flex flex-wrap justify-center gap-3 sm:gap-4 lg:mx-90 lg:w-310 lg:h-90">
+    <div
+      ref={wrapRef}
+      className="
+        w-full h-auto flex flex-wrap justify-center gap-3 sm:gap-4
+        lg:mx-90 lg:w-310 lg:h-90 lg:flex-nowrap
+      "
+    >
       {children}
     </div>
   );

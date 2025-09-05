@@ -15,7 +15,7 @@ function UserCollection({ id, image, title, content, icon, flavor }: Props) {
 
   return (
     <div className="min-h-full flex items-center justify-center p-4">
-      <div className="bg-primary-50 backdrop-blur rounded-2xl w-full max-w-[540px] lg:w-121 px-5 py-7 lg:h-158 flex items-center justify-center shadow-xl">
+      <div className="bg-primary-50 backdrop-blur rounded-2xl w-full max-w-[540px] md:max-w-[420px] sm:max-w-[340px] px-5 py-7 lg:h-158 flex items-center justify-center shadow-xl">
         <div className="border-3 border-secondary-300 rounded-2xl p-4 w-full lg:w-110 h-auto lg:h-145">
           <div className="text-sm text-gray-500">{id + 1}</div>
           <div className="flex flex-col items-center text-center gap-2">

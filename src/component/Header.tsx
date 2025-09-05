@@ -78,17 +78,18 @@ function Header() {
       )}
 
       <div className={headerBgClass}>
-        <div className="w-160 lg:w-360 flex justify-between items-center px-10 py-2">
-          <h1 className="w-41.5 h-11.75 flex items-center pt-1">
+        <div className="w-full max-w-[90rem] flex justify-between items-center px-4 md:px-10 py-2">
+          <h1 className="w-32 h-9 md:w-41.5 md:h-11.75 flex items-center pt-1">
             <NavLink to="/" onClick={ScrollToTop}>
               <img src="/image/Logo.png" alt="winepedia" />
             </NavLink>
           </h1>
-          <nav className="flex items-center gap-4">
+          <nav className="flex items-center gap-3 sm:gap-4">
             <button className="cursor-pointer" type="button" onClick={handleSearch}>
               <svg
-                width="25"
-                height="25"
+                width="22"
+                height="22"
+                className="md:w-[25px] md:h-[25px]"
                 viewBox="0 0 25 25"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -99,19 +100,19 @@ function Header() {
                 />
               </svg>
             </button>
-            <NavLink to="wines" className="font-semibold text-secondary-50">
+            <NavLink to="wines" className="font-semibold text-secondary-50 text-sm md:text-base">
               Wine
             </NavLink>
-            <NavLink to="community" className="font-semibold text-secondary-50">
+            <NavLink to="community" className="font-semibold text-secondary-50 text-sm md:text-base">
               Community
             </NavLink>
 
             {userId ? (
-              <div className="flex gap-4 items-center">
+              <div className="flex gap-3 md:gap-4 items-center">
                 <button
                   type="button"
                   onClick={signOut}
-                  className="cursor-pointer text-secondary-50 font-semibold"
+                  className="cursor-pointer text-secondary-50 font-semibold text-sm md:text-base"
                 >
                   Logout
                 </button>
@@ -119,14 +120,14 @@ function Header() {
                   <img
                     src={userImage ? userImage : '/image/defaultProfile.png'}
                     alt="프로필이미지"
-                    className="rounded-full w-10 h-10 cursor-pointer"
+                    className="rounded-full w-8 h-8 md:w-10 md:h-10 cursor-pointer"
                   />
                 </Link>
               </div>
             ) : (
               <NavLink
                 to="account/login"
-                className="flex font-semibold text-secondary-50 items-center gap-2"
+                className="flex font-semibold text-secondary-50 items-center gap-2 text-sm md:text-base"
               >
                 <img src="/icon/fi-rr-glass-cheers.svg" alt="로그인아이콘" />
                 Login
