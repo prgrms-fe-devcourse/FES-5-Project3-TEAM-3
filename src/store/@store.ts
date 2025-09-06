@@ -1,6 +1,8 @@
 import type { ConfirmOptions } from '@/@types/global';
+
 import useToast from '@/hook/useToast';
 import supabase from '@/supabase/supabase';
+import { confirm } from '@/hook/confirmFunction'
 import { create } from 'zustand';
 
 type AuthState = {
@@ -27,6 +29,7 @@ type ConfirmState = {
   afterExit: () => void;
 };
 
+
 export const useAuth = create<AuthState & AuthAction>((set) => ({
   userId: null,
   userEmail: null,
@@ -46,12 +49,17 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
   },
 
   signOut: async () => {
+    const ok = await confirm({
+        title: '로그아웃 하시겠습니까?',
+        confirmText: '로그아웃',
+        cancelText: '취소',
+        tone: 'danger',
+      })
+    if (!ok) return;
     const { error } = await supabase.auth.signOut();
-    const ok = confirm('로그아웃을 하시겠습니까?');
 
-    if (ok && !error) {
-      useToast('success', '로그아웃 하셨습니다');
-    }
+    if (!error) useToast('success','로그아웃 하셨습니다')
+    
     set({ userId: null, userEmail: null, userPhone: null });
   },
 

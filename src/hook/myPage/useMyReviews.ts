@@ -66,7 +66,8 @@ export function useMyReviews(
       const { count: total, error: countErr } = await supabase
         .from('reviews')
         .select('review_id', { count: 'exact', head: true })
-        .eq('user_id', userId);
+        .eq('user_id', userId)
+        .eq('addWineSeller', true);
 
       if (cancelled) return;
       if (countErr) {
