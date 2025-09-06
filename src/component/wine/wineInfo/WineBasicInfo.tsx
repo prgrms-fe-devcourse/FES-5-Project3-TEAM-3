@@ -65,6 +65,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
     if (error) console.error(error);
     if (data) {
       setWished(data[0].bookmark);
+      useToast('success', '위시리스트가 변경되었습니다');
     }
   };
 
@@ -98,7 +99,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
           )}
         </h3>
         {type === 'detail' && (
-          <button type="button" onClick={toggleWish} className="mb-4">
+          <button type="button" onClick={toggleWish} className="mb-4 cursor-pointer">
             {wished ? (
               <img src="/icon/bookmarkFilled.svg" alt="위시리스트삭제" className="w-8 h-8" />
             ) : (

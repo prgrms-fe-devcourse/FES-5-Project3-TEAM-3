@@ -12,7 +12,7 @@ import { useShallow } from 'zustand/shallow';
 type Props = {
   setOverlay: React.Dispatch<React.SetStateAction<boolean>>;
 };
-type HashCount = Tables<'hashtag_counts'>;
+type HashCount = Tables<'wine_tag_counts'>;
 
 function HeaderSearchSection({ setOverlay }: Props) {
   const { isOpen, recent } = useSearchStore(
@@ -108,11 +108,11 @@ function HeaderSearchSection({ setOverlay }: Props) {
               <div className="flex gap-4">
                 {hashTags.map((tags, i) => (
                   <Link
-                    to={`/search?keyword=${encodeURIComponent(tags.tag_text ?? '')}`}
+                    to={`/search?keyword=${encodeURIComponent(tags.tag ?? '')}`}
                     className="bg-secondary-400 rounded-md px-2 py-1 cursor-pointer"
                     key={i}
                   >
-                    <p className="text-secondary-700">{tags.tag_text}</p>
+                    <p className="text-secondary-700">{tags.tag}</p>
                   </Link>
                 ))}
               </div>
