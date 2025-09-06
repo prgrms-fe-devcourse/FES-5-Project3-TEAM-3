@@ -6,6 +6,7 @@ import { useSearchStore } from './store/searchStore';
 
 function App() {
   const { userId } = useAuth();
+
   useEffect(() => {
     const unsub = useAuth.getState().subscribe();
     useAuth.getState().fetch();

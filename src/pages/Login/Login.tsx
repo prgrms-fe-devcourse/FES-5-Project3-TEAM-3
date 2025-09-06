@@ -14,11 +14,12 @@ function Login() {
       signOut: s.signOut,
     }))
   );
-  const { state } = useLocation();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const pwRef = useRef<HTMLInputElement | null>(null);
+  const { state } = useLocation();
 
   useLayoutEffect(() => {
     if (userId) {
@@ -37,7 +38,11 @@ function Login() {
     if (error) {
       useToast('error', '로그인 정보를 다시 확인해주세요');
     } else {
-      navigate(state);
+      if (state == '/account') {
+        navigate('/');
+      } else {
+        navigate(state);
+      }
     }
   };
 

@@ -10,7 +10,7 @@ type ItemsProps =
     }
   | {
       type: 'tags';
-      items: Tables<'hashtag_counts'>[];
+      items: Tables<'wine_tag_counts'>[];
     };
 
 function ItemsContainer({ items, type }: ItemsProps) {
@@ -32,7 +32,7 @@ function ItemsContainer({ items, type }: ItemsProps) {
               <Parings key={`${item.pairing_category}/${item.pairing_name}`} pairing={item} />
             ))
         ) : (
-          items.slice(0, 5).map((item) => <WineTag key={item.tag_text} tag={item} />)
+          items.slice(0, 5).map((item) => <WineTag key={item.tag} tag={item} />)
         )}
       </ul>
     </>
