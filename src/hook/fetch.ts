@@ -16,7 +16,7 @@ export async function useHashCount() {
       .from('hashtag_counts')
       .select('*')
       .limit(5)
-      .order('tag_count', { ascending: true });
+      .order('tag_count', { ascending: false });
     if (error) console.error(error);
     return data;
   } catch {
