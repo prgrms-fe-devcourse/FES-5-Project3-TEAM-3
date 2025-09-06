@@ -218,7 +218,11 @@ function PostComment({
 
   return (
     <li className="flex gap-3">
-      <img src={profileImage} alt="댓글작성자" className="w-9 h-9 rounded-full" />
+      <img
+        src={profileImage || '/image/defaultProfile.png'} // 수정: profileImage가 없을 때 기본 이미지 사용
+        alt="댓글작성자"
+        className="w-9 h-9 rounded-full"
+      />
       <div className="flex-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

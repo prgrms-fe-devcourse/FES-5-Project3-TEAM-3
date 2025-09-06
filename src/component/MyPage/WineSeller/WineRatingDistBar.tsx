@@ -1,11 +1,20 @@
 import Spinner from '@/component/Spinner';
 import ReviewRatings from '@/component/wine/wineDetailInfo/wineReview/ReviewRatings';
 import type { ReviewAgg } from '@/hook/myPage/useMyReviewAgg';
-import { BarElement, CategoryScale, Chart, Legend, LinearScale, Tooltip } from 'chart.js';
+import {
+  BarElement,
+  CategoryScale,
+  Chart,
+  Legend,
+  LinearScale,
+  Tooltip,
+  type ChartOptions,
+} from 'chart.js';
 import { memo, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-Chart.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+Chart.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
 
 interface DistBarProps {
   data: ReviewAgg[];
@@ -40,23 +49,36 @@ function WineRatingDistBar({ data, title = '평균 별점', loading }: DistBarPr
           borderWidth: 0,
           backgroundColor: '#E5C67F',
           borderRadius: 8,
-          barPercentabge: 0.7,
+          barPercentage: 0.7,
           categoryPercentage: 0.8,
         },
       ],
     };
   }, [data]);
 
-  const options = {
-    indexAxis: 'y' as const,
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: { display: false, grid: { display: false } },
-      y: { grid: { display: false } },
-    },
-    plugins: { legend: { display: false }, tooltip: { enabled: false } },
-  };
+  const options = useMemo<ChartOptions<'bar'>>(
+    () => ({
+      indexAxis: 'y' as const,
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { display: false, grid: { display: false } },
+        y: { grid: { display: false } },
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false },
+        datalabels: {
+          anchor: 'center',
+          align: 'center',
+          color: '#333',
+          display: (context: any) => context.dataset.data[context.dataIndex] !== 0,
+          formatter: (value: number) => value,
+        },
+      },
+    }),
+    []
+  );
 
   if (loading) {
     return <Spinner />;
@@ -76,7 +98,7 @@ function WineRatingDistBar({ data, title = '평균 별점', loading }: DistBarPr
               {` (${data.length})`}
             </span>
           </div>
-          <div className="h-56">
+          <div className="min-h-56 w-auto">
             <Bar data={histogram} options={options} />
           </div>
         </div>
