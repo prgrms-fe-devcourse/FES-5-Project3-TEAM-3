@@ -57,7 +57,6 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
 
   subscribe: () => {
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-
       set({
         userId: session?.user.id,
         userEmail: session?.user.email,
@@ -70,9 +69,7 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
   },
 
   resetPassword: async (userEmail) => {
-    const { error } = await supabase.auth.resetPasswordForEmail
-      
-      (userEmail, {
+    const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
       redirectTo: `${window.location.origin}/account/resetpassword`,
     });
     if (error) {

@@ -32,7 +32,7 @@ function Register() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const phoneDegit = phone.replace(/\D/g, "")
+    const phoneDegit = phone.replace(/\D/g, '');
     if (!nickname.trim()) {
       useToast('error', '닉네임을 입력해주세요');
       return;
@@ -89,7 +89,7 @@ function Register() {
           profile_id: userId,
           nickname: nickname.trim(),
           email: email.trim(),
-          phone: phoneDegit
+          phone: phoneDegit,
         });
         useToast('success', '회원가입에 성공하셨습니다');
         navigate('/');
