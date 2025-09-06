@@ -54,7 +54,7 @@ function WineInfo({ wineInfo }: { wineInfo: WineInfoType }) {
           <img
             src={wish ? `/icon/bookmarkFilled.svg` : `/icon/bookmark.svg`}
             alt="위시리스트"
-            className="w-6 h-6 absolute top-4 right-4"
+            className="w-6 h-6 absolute top-4 right-4 cursor-pointer"
           />
         </button>
         <div className="h-full flex justify-between items-center gap-8">

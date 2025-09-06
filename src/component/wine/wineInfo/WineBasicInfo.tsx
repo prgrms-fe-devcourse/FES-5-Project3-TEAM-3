@@ -99,7 +99,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
           )}
         </h3>
         {type === 'detail' && (
-          <button type="button" onClick={toggleWish} className="mb-4">
+          <button type="button" onClick={toggleWish} className="mb-4 cursor-pointer">
             {wished ? (
               <img src="/icon/bookmarkFilled.svg" alt="위시리스트삭제" className="w-8 h-8" />
             ) : (
