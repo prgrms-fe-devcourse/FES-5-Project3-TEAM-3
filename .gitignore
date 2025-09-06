@@ -224,4 +224,10 @@ Temporary Items
 .vscode
 
 .env
+.env.*
 
+supabase/.env*
+supabase/.temp/
+supabase/.branches/
+supabase/.log/
+supabase/.supabase/

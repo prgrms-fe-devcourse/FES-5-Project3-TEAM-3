@@ -28,11 +28,11 @@ export const getWineDetails = async (id: string) => {
 
 export const getWineTag = async (id: string) => {
   const { data, error } = await supabase
-    .from('hashtag_counts')
+    .from('wine_tag_counts')
     .select()
-    .contains('wine_ids', [id])
-    .neq('tag_count', 0)
-    .order('tag_count', { ascending: false });
+    .eq('wine_id', id)
+    .neq('wine_tag_count', 0)
+    .order('wine_tag_count', { ascending: false });
 
   if (error) {
     console.error(error);
@@ -89,7 +89,7 @@ function WineDetails() {
   // 데이터 fetch -> props로 못 받음 : supabase에 올려서 디테일정보 가져오기, 주소도 와인인덱스말고 id로 하기
   const data = useLoaderData() as {
     wines: Promise<WineInfoType[]>;
-    tags: Tables<'hashtag_counts'>[];
+    tags: Tables<'wine_tag_counts'>[];
     pairings: Tables<'wine_pairings_counts'>[];
     reviews: Tables<'reviews'>[];
   };
@@ -278,7 +278,7 @@ function WineDetails() {
                   >
                     리뷰작성하기
                   </Button>
-                  <div className="w-full flex items-center justify-center flex-wrap gap-10 2xl:gap-20 py-5">
+                  <div className="w-full flex items-start justify-center flex-wrap xl:flex-nowrap gap-10 2xl:gap-20 py-5">
                     <RatingSummary
                       rating={averageRating}
                       reviewerCount={reviewers}

@@ -19,9 +19,9 @@ function FilterList({ name, filter, moreInfo }: FilterListProps) {
   };
 
   return (
-    <div className="flex gap-3">
+    <div className={`flex gap-3 `}>
       <span className="py-1 whitespace-nowrap">{name}</span>
-      <div className="flex flex-wrap gap-2 w-11/12 ">
+      <div className="flex flex-wrap gap-2 w-11/12 items-center ">
         {name === '국가' ? (
           <>
             {filter.map((filterName) => (
@@ -78,6 +78,39 @@ function FilterList({ name, filter, moreInfo }: FilterListProps) {
             </Button>
           ))
         )}
+        {name === '당도' && (
+          <div className="group flex items-center gap-2">
+            <img src="/icon/info.svg" alt="당도정보" className="w-6 h-6 shrink-0" />
+            <p className="text-text-secondary hidden group-hover:block px-3 py-1 bg-primary-300/20 rounded-full">
+              와인에서 느껴지는 단맛의 정도 : dry(0) - sweet(5)
+            </p>
+          </div>
+        )}
+        {name === '산미' && (
+          <div className="group flex items-start gap-2 shrink-0">
+            <img src="/icon/info.svg" alt="당도정보" className="w-6 h-6 shrink-0" />
+            <p className="text-text-secondary hidden group-hover:block px-3 py-1 bg-primary-300/20 rounded-full">
+              상큼하고 신선한 느낌을 주는 신맛의 정도 : 산도가 높을수록 상쾌하고 입맛을 돋움
+            </p>
+          </div>
+        )}
+        {name === '탄닌' && (
+          <div className="group flex items-center gap-2">
+            <img src="/icon/info.svg" alt="당도정보" className="w-6 h-6 shrink-0" />
+            <p className="text-text-secondary hidden group-hover:block px-3 py-1 bg-primary-300/20 rounded-full">
+              포도껍질/씨/줄기에서 나오는 성분 : 입안을 살짝 떫고 건조하게 만드는 느낌을 주며 와인의
+              구조감 형성
+            </p>
+          </div>
+        )}
+        {name === '바디' && (
+          <div className="group flex items-center gap-2">
+            <img src="/icon/info.svg" alt="당도정보" className="w-6 h-6 shrink-0" />
+            <p className="text-text-secondary hidden group-hover:block px-3 py-1 bg-primary-300/20 rounded-full ">
+              와인의 무게감과 풍부함 의미 : 라이트바디(0) - 풀바디(5)
+            </p>
+          </div>
+        )}
       </div>
       {moreInfo ? (
         <Button
@@ -88,7 +121,7 @@ function FilterList({ name, filter, moreInfo }: FilterListProps) {
           onClick={toggleCountryOpened}
           hasIcon
         >
-          <img src="icon/add.svg" alt="필터 더보기" className="w-4 h-4" />
+          <img src="icon/add.svg" alt="국가 필터 더보기" className="w-4 h-4" />
           더보기
         </Button>
       ) : null}

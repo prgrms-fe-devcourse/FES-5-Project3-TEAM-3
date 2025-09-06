@@ -65,6 +65,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
     if (error) console.error(error);
     if (data) {
       setWished(data[0].bookmark);
+      useToast('success', '위시리스트가 변경되었습니다');
     }
   };
 
@@ -98,7 +99,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
           )}
         </h3>
         {type === 'detail' && (
-          <button type="button" onClick={toggleWish} className="mb-4">
+          <button type="button" onClick={toggleWish} className="mb-4 cursor-pointer">
             {wished ? (
               <img src="/icon/bookmarkFilled.svg" alt="위시리스트삭제" className="w-8 h-8" />
             ) : (
@@ -117,7 +118,10 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
         )}
       >
         <img
-          src={(country_ko && countryInfo[country_ko].icon) || '/icon/country/others.svg'}
+          src={
+            countryInfo[country_ko ?? '']?.icon ??
+            (country ? `/icon/country/${country}.svg` : '/icon/country/others.svg')
+          }
           alt={country_ko ?? '와인생산국가'}
           className="w-6 h-6"
           draggable="false"

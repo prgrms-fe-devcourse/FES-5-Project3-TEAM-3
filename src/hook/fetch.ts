@@ -13,12 +13,22 @@ export async function usePost() {
 export async function useHashCount() {
   try {
     const { data, error } = await supabase
-      .from('hashtag_counts')
+      .from('wine_tag_counts')
       .select('*')
-      .limit(5)
-      .order('tag_count', { ascending: false });
+      .order('total_tag_count', { ascending: false });
     if (error) console.error(error);
-    return data;
+    if (data) {
+      const seen = new Set<string>();
+      const top5 = data
+        .filter((item) => {
+          if (seen.has(item.tag!)) return false;
+          seen.add(item.tag!);
+          return true;
+        })
+        .slice(0, 5);
+
+      return top5;
+    }
   } catch {
     throw new Error('hashtag_counts를 찾는데 실패했습니다');
   }
