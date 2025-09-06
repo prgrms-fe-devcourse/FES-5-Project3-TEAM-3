@@ -13,6 +13,8 @@ import useToast from '@/hook/useToast';
 import { pairingCategory } from '../../filterSearch/filterInfo';
 import type { Tables } from '@/supabase/database.types';
 
+import { FocusTrap } from 'focus-trap-react';
+
 function ReviewModal({
   wineId,
   wineImage,
@@ -25,14 +27,14 @@ function ReviewModal({
   wineImage: string[];
   wineName: string;
   pairings: Tables<'wine_pairings_counts'>[];
-  tags: Tables<'hashtag_counts'>[];
+  tags: Tables<'wine_tag_counts'>[];
   refresh: () => void;
 }) {
   const user_id = useAuth().userId;
   const pairingText = pairings.map(
     (p) => `${pairingCategory[p.pairing_category ?? '기타']}/${p.pairing_name}`
   );
-  const tagText = tags.map((t) => t.tag_text ?? '');
+  const tagText = tags.map((t) => t.tag ?? '');
 
   const {
     isOpen,
@@ -125,11 +127,11 @@ function ReviewModal({
         useToast('error', '맛 평가를 입력해주세요');
         return;
       }
-      if (!tag) {
+      if (tag.length === 0) {
         useToast('error', '태그를 입력해주세요');
         return;
       }
-      if (!pairing) {
+      if (pairing.length === 0) {
         useToast('error', '페어링을 입력해주세요');
         return;
       }
@@ -181,7 +183,7 @@ function ReviewModal({
           .upsert([{ review_id: data[0].review_id, wine_id: wineId, user_id, tag_text: tag }], {
             onConflict: 'user_id, wine_id, tag_text',
           });
-        if (error_tags) console.error('태그', error);
+        if (error_tags) console.error('태그', error_tags);
         else {
           const pairingObject = pairing.map((p) => {
             const [category, value] = Object.entries(p)[0];
@@ -195,7 +197,7 @@ function ReviewModal({
             };
           });
           const { error: error_pairing } = await supabase.from('pairings').insert(pairingObject);
-          if (error_pairing) console.error(error);
+          if (error_pairing) console.error(error_pairing);
           else {
             console.log(data);
             reset();
@@ -214,81 +216,87 @@ function ReviewModal({
       className="fixed inset-0 flex items-center justify-center bg-black/25 z-100"
       onClick={close}
     >
-      <div
-        className="shadow-2xl bg-background-base rounded-2xl w-180 h-fit p-8 flex flex-col gap-5 align-center"
-        onClick={stopPropagation}
-      >
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl text-text-primary">리뷰작성하기</h2>
-          <button type="button" aria-label="모달닫기" onClick={close}>
-            <img src="/icon/close.svg" alt="close" className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="flex justify-around items-center gap-5">
-          <img
-            src={wineImage.length !== 0 ? (wineImage[1] ?? wineImage[0]) : '/image/wineImage.svg'}
-            alt={wineName}
-          />
-          <div className="flex flex-col justify-center">
-            <h3 className="text-text-primary text-xl mb-5">{wineName}</h3>
-            {onlyReview ? (
-              <TastingInfo
-                type="readonly"
-                tasting={{ sweetness: 0, tannic: 0, acidic: 0, body: 0 }}
-                style="review"
-                className="w-5 h-5 bg-gray-300"
-                gap="gap-3"
-              />
-            ) : editMode ? (
-              <TastingInfo
-                type="select"
-                style="review"
-                className="w-5 h-5"
-                tasting={{ sweetness, tannic, acidic, body }}
-              />
-            ) : (
-              <TastingInfo type="select" style="review" className="w-5 h-5" />
-            )}
+      <FocusTrap>
+        <div
+          className="shadow-2xl bg-background-base rounded-2xl w-180 h-fit p-8 flex flex-col gap-5 align-center"
+          onClick={stopPropagation}
+        >
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl text-text-primary">리뷰작성하기</h2>
+            <button type="button" aria-label="모달닫기" onClick={close}>
+              <img src="/icon/close.svg" alt="close" className="w-6 h-6" />
+            </button>
           </div>
-          <div className="flex flex-col justify-center relative">
-            <ReviewTagInput disabled={onlyReview} tagOptions={tagText} isEditMode={editMode} />
-            <hr className="text-gray-400 p-2" />
-            <ReviewPairingInput
-              disabled={onlyReview}
-              pairingOptions={pairingText}
-              isEditMode={editMode}
+          <div className="flex justify-around items-center gap-5">
+            <img
+              src={wineImage.length !== 0 ? (wineImage[1] ?? wineImage[0]) : '/image/wineImage.svg'}
+              alt={wineName}
             />
+            <div className="flex flex-col justify-center">
+              <h3 className="text-text-primary text-xl mb-5">{wineName}</h3>
+              {onlyReview ? (
+                <TastingInfo
+                  type="readonly"
+                  tasting={{ sweetness: 0, tannic: 0, acidic: 0, body: 0 }}
+                  style="review"
+                  className="w-5 h-5 bg-gray-300"
+                  gap="gap-3"
+                />
+              ) : editMode ? (
+                <TastingInfo
+                  type="select"
+                  style="review"
+                  className="w-5 h-5"
+                  tasting={{ sweetness, tannic, acidic, body }}
+                />
+              ) : (
+                <TastingInfo type="select" style="review" className="w-5 h-5" />
+              )}
+            </div>
+            <div className="flex flex-col justify-center relative">
+              <ReviewTagInput disabled={onlyReview} tagOptions={tagText} isEditMode={editMode} />
+              <hr className="text-gray-400 p-2" />
+              <ReviewPairingInput
+                disabled={onlyReview}
+                pairingOptions={pairingText}
+                isEditMode={editMode}
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <ReviewRatings type="select" w="w-8" h="h-8" rating={rating ?? undefined} />
-          <div className="flex flex-col items-end">
-            <label htmlFor="onlyReview" className="text-text-primary">
-              <input
-                type="checkbox"
-                id="onlyReview"
-                checked={onlyReview ?? false}
-                disabled={editMode}
-                onChange={toggleOnlyReview}
-              />{' '}
-              리뷰만 작성하기
-            </label>
-            <label className="text-text-primary">
-              <input type="checkbox" checked={addWineSeller ?? false} onChange={toggleWineSeller} />{' '}
-              나의 와인셀러에 추가
-            </label>
+          <div className="flex justify-between items-center">
+            <ReviewRatings type="select" w="w-8" h="h-8" rating={rating ?? undefined} />
+            <div className="flex flex-col items-end">
+              <label htmlFor="onlyReview" className="text-text-primary">
+                <input
+                  type="checkbox"
+                  id="onlyReview"
+                  checked={onlyReview ?? false}
+                  disabled={editMode}
+                  onChange={toggleOnlyReview}
+                />{' '}
+                리뷰만 작성하기
+              </label>
+              <label className="text-text-primary">
+                <input
+                  type="checkbox"
+                  checked={addWineSeller ?? false}
+                  onChange={toggleWineSeller}
+                />{' '}
+                나의 와인셀러에 추가
+              </label>
+            </div>
           </div>
+          <form onSubmit={submitReview}>
+            <textarea
+              className="w-full h-20 bg-white rounded-2xl resize-none p-3"
+              onChange={(e) => setContent(e.target.value)}
+              onKeyDown={handleKeyDown}
+              value={content}
+            ></textarea>
+            <Button fullWidth>작성완료</Button>
+          </form>
         </div>
-        <form onSubmit={submitReview}>
-          <textarea
-            className="w-full h-20 bg-white rounded-2xl resize-none p-3"
-            onChange={(e) => setContent(e.target.value)}
-            onKeyDown={handleKeyDown}
-            value={content}
-          ></textarea>
-          <Button fullWidth>작성완료</Button>
-        </form>
-      </div>
+      </FocusTrap>
     </div>,
     document.body
   );
