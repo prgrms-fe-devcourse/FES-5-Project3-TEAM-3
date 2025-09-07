@@ -47,12 +47,10 @@ export const getPairings = async (id: string) => {
     .select()
     .eq('wine_id', id)
     .order('pairing_count', { ascending: false });
-  console.log(data, error);
   if (error) {
     console.error(error);
     return [];
   }
-  console.log(data);
   return data;
 };
 
@@ -180,30 +178,11 @@ function WineDetails() {
     setPairings(pairings ?? []);
   };
 
-  const [wish, setWish] = useState(false);
-
-  useEffect(() => {
-    const isWish = async () => {
-      if (!userId) return;
-      const { data, error } = await supabase
-        .from('wishlists')
-        .select('bookmark')
-        .eq('user_id', userId)
-        .eq('wine_id', wineId);
-      if (error) console.error(error);
-      if (data && data.length !== 0) {
-        setWish(data[0].bookmark);
-      }
-    };
-    isWish();
-  }, [userId, wineId]);
-
   return (
     <>
       <Suspense fallback={<Spinner className="m-auto h-[calc(100vh-12.125rem)]" />}>
         <Await resolve={data.wines}>
           {(wines) => {
-            console.log(wines);
             if (wines.length === 0) {
               return (
                 <div className="w-full h-[calc(100vh-12.125rem)] flex justify-center items-center text-2xl gap-30">
@@ -239,7 +218,7 @@ function WineDetails() {
                       className="w-25"
                       draggable="false"
                     />
-                    <WineBasicInfo wineBasicInfo={w} type="detail" wish={wish} />
+                    <WineBasicInfo wineBasicInfo={w} type="detail" />
                     <div className="w-3/4 md:w-85 flex flex-col justify-center items-center p-5 gap-10">
                       <div className="w-full md:w-80 h-80">
                         <p className="flex justify-end items-center gap-2">
@@ -273,7 +252,7 @@ function WineDetails() {
                   <h3 className="text-xl">이 와인 드셔보셨나요 ? 리뷰를 작성해주세요</h3>
                   <Button
                     type="button"
-                    className="bg-secondary-800 self-center enabled:hover:bg-secondary-700 text-lg mb-5"
+                    className="bg-secondary-800 self-center enabled:hover:bg-secondary-700 text-lg mb-5 focus-visible:ring-secondary-700"
                     onClick={openReviewModal}
                   >
                     리뷰작성하기
