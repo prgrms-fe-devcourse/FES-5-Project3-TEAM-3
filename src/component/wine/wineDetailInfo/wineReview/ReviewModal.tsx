@@ -199,7 +199,6 @@ function ReviewModal({
           const { error: error_pairing } = await supabase.from('pairings').insert(pairingObject);
           if (error_pairing) console.error(error_pairing);
           else {
-            console.log(data);
             reset();
             closeModal();
             refresh();

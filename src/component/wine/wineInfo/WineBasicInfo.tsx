@@ -4,19 +4,18 @@ import clsx from 'clsx';
 import FlavorIcon from './FlavorIcon';
 import { computeTaste } from '@/utils/convertTasteInfo';
 import truncateText from '@/utils/truncateText';
-import { useState } from 'react';
-import supabase from '@/supabase/supabase';
+import React, { useEffect, useState } from 'react';
+import { countryInfo } from '../filterSearch/filterInfo';
 import { useAuth } from '@/store/@store';
 import useToast from '@/hook/useToast';
-import { countryInfo } from '../filterSearch/filterInfo';
+import supabase from '@/supabase/supabase';
 
 interface WineBasicInfoType {
   wineBasicInfo: WineInfoType;
   type?: 'default' | 'detail';
-  wish?: boolean;
 }
 
-function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBasicInfoType) {
+function WineBasicInfo({ wineBasicInfo, type = 'default' }: WineBasicInfoType) {
   const {
     name,
     country,
@@ -48,8 +47,25 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
     dessert: 'bg-secondary-500/60',
   };
 
-  const [wished, setWished] = useState(wish);
   const userId = useAuth().userId;
+
+  const [wish, setWish] = useState(false);
+
+  useEffect(() => {
+    const isWish = async () => {
+      if (!userId) return;
+      const { data, error } = await supabase
+        .from('wishlists')
+        .select('bookmark')
+        .eq('user_id', userId)
+        .eq('wine_id', wine_id);
+      if (error) console.error(error);
+      if (data && data.length !== 0) {
+        setWish(data[0].bookmark);
+      }
+    };
+    isWish();
+  }, [userId, wine_id]);
 
   const toggleWish = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -60,11 +76,11 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
     }
     const { data, error } = await supabase
       .from('wishlists')
-      .upsert({ user_id: userId, wine_id, bookmark: !wished }, { onConflict: 'user_id,wine_id' })
+      .upsert({ user_id: userId, wine_id, bookmark: !wish }, { onConflict: 'user_id,wine_id' })
       .select();
     if (error) console.error(error);
     if (data) {
-      setWished(data[0].bookmark);
+      setWish(data[0].bookmark);
       useToast('success', '위시리스트가 변경되었습니다');
     }
   };
@@ -100,7 +116,7 @@ function WineBasicInfo({ wineBasicInfo, type = 'default', wish = false }: WineBa
         </h3>
         {type === 'detail' && (
           <button type="button" onClick={toggleWish} className="mb-4 cursor-pointer">
-            {wished ? (
+            {wish ? (
               <img src="/icon/bookmarkFilled.svg" alt="위시리스트삭제" className="w-8 h-8" />
             ) : (
               <img src="/icon/bookmark.svg" alt="위시리스트추가" className="w-8 h-8" />

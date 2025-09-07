@@ -2,7 +2,7 @@ import type { ConfirmOptions } from '@/@types/global';
 
 import useToast from '@/hook/useToast';
 import supabase from '@/supabase/supabase';
-import { confirm } from '@/hook/confirmFunction'
+import { confirm } from '@/hook/confirmFunction';
 import { create } from 'zustand';
 import type { Session } from '@supabase/supabase-js';
 
@@ -11,7 +11,7 @@ type AuthState = {
   userEmail: string | null;
   userPhone: string | null;
   isLoading: boolean;
-  session: Session |null
+  session: Session | null;
 };
 
 type AuthAction = {
@@ -19,7 +19,7 @@ type AuthAction = {
   subscribe: () => void;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  silentSignOut : () => Promise<void>
+  silentSignOut: () => Promise<void>;
 };
 
 type ConfirmState = {
@@ -32,13 +32,12 @@ type ConfirmState = {
   afterExit: () => void;
 };
 
-
 export const useAuth = create<AuthState & AuthAction>((set) => ({
   userId: null,
   userEmail: null,
   userPhone: null,
   isLoading: true,
-  session:null,
+  session: null,
 
   fetch: async () => {
     set({ isLoading: true });
