@@ -124,7 +124,6 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
           [pairingCategory[p.pairing_category!]]: p.pairing_name,
         })) ?? [],
     };
-    console.log(formatted);
     openModal(formatted);
   };
 

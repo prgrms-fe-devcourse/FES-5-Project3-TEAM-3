@@ -36,8 +36,6 @@ export const getWines = async (from: number, to: number, appliedFilters?: Json) 
 
   const winesData = data.map((w) => w.wines);
   const totalCount = data?.[0]?.total_count ?? 0;
-  console.log(winesData);
-  console.log(totalCount);
   return { wines: winesData as WineInfoType[], total_count: totalCount as number };
 };
 
@@ -114,7 +112,17 @@ function Wines() {
       const to = Number(searchParams.get('page')) * 9 - 1;
       const w = getWines(from, to, appliedFilters);
       setWinePromise(w);
-      w.then((w) => setTotalPage(Math.ceil(w.total_count / 9)));
+      w.then((w) => {
+        if (w.wines.length === 0) {
+          setSearchParams({ ...Object.fromEntries(searchParams), page: '1' });
+          setPage(1);
+          const from = 0;
+          const to = 8;
+          const w = getWines(from, to, appliedFilters);
+          setWinePromise(w);
+          w.then((w) => setTotalPage(Math.ceil(w.total_count / 9)));
+        } else setTotalPage(Math.ceil(w.total_count / 9));
+      });
     } else {
       // 필터가 바뀌거나 user가 바뀌면 페이지 1로 초기화
       setSearchParams({ ...Object.fromEntries(searchParams), page: '1' });
@@ -126,7 +134,7 @@ function Wines() {
       w.then((w) => setTotalPage(Math.ceil(w.total_count / 9)));
     }
     // 필터 적용해서 새 Promise 가져오기
-  }, [appliedFilters, user, navType]);
+  }, [appliedFilters, user]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -145,7 +153,10 @@ function Wines() {
   const pageChange = (newPage: number) => {
     const from = (newPage - 1) * 9;
     const to = newPage * 9 - 1;
-    setSearchParams({ ...Object.fromEntries(searchParams), page: String(newPage) });
+    setSearchParams(
+      { ...Object.fromEntries(searchParams), page: String(newPage) },
+      { replace: true }
+    );
 
     setPage(newPage);
     setWinePromise(getWines(from, to, appliedFilters));
