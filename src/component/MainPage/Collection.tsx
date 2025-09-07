@@ -47,8 +47,24 @@ export default function Collection({ collection }: { collection: Collection[] })
 
   useEffect(() => {
     const EASE = 0.14;
+    let raf: number | null = null;
     const render = () => {
       const s = swiperRef.current;
+
+      if (!s) {
+        raf = requestAnimationFrame(render);
+        return;
+      }
+
+      const slidesReady = Array.isArray((s as any).slides) && (s as any).slides.length > 0;
+      const snapReady = Array.isArray((s as any).snapGrid) && (s as any).snapGrid.length > 0;
+
+      if (!slidesReady || !snapReady) {
+        s.update();
+        raf = requestAnimationFrame(render);
+        return;
+      }
+
       if (s) {
         current.current += (target.current - current.current) * EASE;
         if (typeof s.setProgress === 'function') {
