@@ -5,21 +5,32 @@ import WineSellerCard from '@/component/MyPage/WineSeller/WineSellerCard';
 import WineSellerCardSkeleton from '@/component/MyPage/WineSeller/WineSellerCardSkeleton';
 import WineWishCard from '@/component/MyPage/WineWishCard';
 import Spinner from '@/component/Spinner';
+import type { ReviewSavedPayload } from '@/component/wine/wineDetailInfo/wineReview/ReviewModal';
+import ReviewModal from '@/component/wine/wineDetailInfo/wineReview/ReviewModal';
 import { useMyBadges } from '@/hook/myPage/useMyBadges';
 import { useMyReviewAgg } from '@/hook/myPage/useMyReviewAgg';
-import { useMyReviews } from '@/hook/myPage/useMyReviews';
+import { useMyReviews, type ReviewWithWine } from '@/hook/myPage/useMyReviews';
 import { useWishList } from '@/hook/myPage/useWishList';
 import useToast from '@/hook/useToast';
+import { useReviewStore } from '@/store/reviewStore';
+import { useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Link } from 'react-router';
 
 const FALLBACK_IMG = '/image/wineImage.svg';
+
+type SelectedWine = {
+  id: string;
+  name: string;
+  image: string[];
+};
 
 function MyHome() {
   const {
     data: wineSellerData,
     loading: wineSellerLoading,
     error: wineSellerErr,
-  } = useMyReviews(1, 4, true, 'created_desc');
+  } = useMyReviews(1, 8, false, 'created_desc');
   const { data: chartData, loading: chartLoading, error: chartErr } = useMyReviewAgg();
   const {
     items: wishListData,
@@ -32,6 +43,43 @@ function MyHome() {
     loading: badgeLoading,
     error: badgeErr,
   } = useMyBadges({ refreshOnMount: true });
+
+  const [selected, setSelected] = useState<SelectedWine | null>(null);
+  const [overrides, setOverrides] = useState<Record<string, Partial<ReviewWithWine> | null>>({});
+  const openModal = useReviewStore((s) => s.openModal);
+
+  const handleEdit = (row: ReviewWithWine) => {
+    flushSync(() => {
+      setSelected({
+        id: row.wine_id,
+        name: row.wines?.name ?? '',
+        image: row.wines?.image_url ?? [],
+      });
+    });
+
+    openModal({ review: row });
+  };
+
+  const handleSaved = (p: ReviewSavedPayload) => {
+    setOverrides((prev) => {
+      if (!p.addWineSeller) {
+        return { ...prev, [p.review_id]: null };
+      }
+
+      return {
+        ...prev,
+        [p.review_id]: {
+          rating: p.rating,
+          content: p.content,
+          sweetness_score: p.sweetness_score ?? null,
+          acidity_score: p.acidity_score ?? null,
+          tannin_score: p.tannin_score ?? null,
+          body_score: p.body_score ?? null,
+          addWineSeller: p.addWineSeller,
+        },
+      };
+    });
+  };
 
   let wineSellerContent = null;
   if (wineSellerLoading) {
@@ -49,10 +97,16 @@ function MyHome() {
   } else if (!wineSellerLoading && wineSellerData.length === 0) {
     wineSellerContent = <p className="text-text-secondary my-8">아직 작성한 리뷰가 없습니다.</p>;
   } else if (!wineSellerLoading && wineSellerData.length > 0) {
+    const merged = wineSellerData
+      .filter((row) => overrides[row.review_id] !== null)
+      .map((row) => ({ ...row, ...(overrides[row.review_id] ?? {}) }));
+
+    const visible = merged.slice(0, 4);
+
     wineSellerContent = (
       <div className="grid gap-4 grid-cols-4">
-        {wineSellerData.slice(0, 4).map((row) => (
-          <WineSellerCard key={row.review_id} item={row} />
+        {visible.map((row) => (
+          <WineSellerCard key={row.review_id} item={row} onEdit={handleEdit} />
         ))}
       </div>
     );
@@ -178,6 +232,14 @@ function MyHome() {
         </div>
         {badgeContent}
       </section>
+
+      <ReviewModal
+        key={selected?.id || 'none'}
+        wineId={selected?.id ?? ''}
+        wineImage={selected?.image}
+        wineName={selected?.name}
+        onSaved={handleSaved}
+      />
     </div>
   );
 }

@@ -86,7 +86,7 @@ function PostComment({
         .eq('parent_id', replyId)
         .order('created_at', { ascending: false });
       if (error) {
-        console.log(error);
+        console.error(error);
         return;
       }
       setChildren(data);
@@ -106,7 +106,7 @@ function PostComment({
       .eq('reply_id', replyId)
       .select('reply_id,content')
       .single();
-    if (error) console.log(error);
+    if (error) console.error(error);
     if (data) {
       setRenderComment(data.content);
       setEdit(false);
@@ -179,7 +179,7 @@ function PostComment({
       return;
     }
     if (!postId) {
-      console.log('postId가 없음');
+      console.error('postId가 없음');
       return;
     }
 
@@ -207,7 +207,7 @@ function PostComment({
       .single();
 
     if (error) {
-      console.log(error);
+      console.error(error);
       return;
     }
     if (data) {

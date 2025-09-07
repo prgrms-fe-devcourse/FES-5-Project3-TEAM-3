@@ -3,11 +3,26 @@ import WineSellerCard from '@/component/MyPage/WineSeller/WineSellerCard';
 import WineSellerCardSkeleton from '@/component/MyPage/WineSeller/WineSellerCardSkeleton';
 import WineTasteAnalysis from '@/component/MyPage/WineSeller/WineTasteAnalysis';
 import Pagination from '@/component/Pagination';
-import { useMyReviews, type WineSellerSortKey } from '@/hook/myPage/useMyReviews';
+import ReviewModal, {
+  type ReviewSavedPayload,
+} from '@/component/wine/wineDetailInfo/wineReview/ReviewModal';
+import {
+  useMyReviews,
+  type ReviewWithWine,
+  type WineSellerSortKey,
+} from '@/hook/myPage/useMyReviews';
 import { useProfile } from '@/hook/profileSetting/useProfileBasic';
 import useToast from '@/hook/useToast';
 import { useAuth } from '@/store/@store';
+import { useReviewStore } from '@/store/reviewStore';
 import { useEffect, useRef, useState, useTransition } from 'react';
+import { flushSync } from 'react-dom';
+
+type SelectedWine = {
+  id: string;
+  name: string;
+  image: string[];
+};
 
 function WineSeller() {
   const profileId = useAuth((s) => s.userId);
@@ -18,7 +33,7 @@ function WineSeller() {
   const PAGE_SIZE = 8;
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<WineSellerSortKey>('created_desc');
-  const { data, loading, isFetching, error, totalPages } = useMyReviews(
+  const { data, loading, isFetching, error, totalPages, patchLocal, removeLocal } = useMyReviews(
     page,
     PAGE_SIZE,
     true,
@@ -27,11 +42,42 @@ function WineSeller() {
 
   const [isPending, startTransition] = useTransition();
 
+  const [selected, setSelected] = useState<SelectedWine | null>(null);
+  const openModal = useReviewStore((s) => s.openModal);
+
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const next = e.target.value as WineSellerSortKey;
     startTransition(() => {
       setSort(next);
       setPage(1);
+    });
+  };
+
+  const handleEdit = (row: ReviewWithWine) => {
+    flushSync(() => {
+      setSelected({
+        id: row.wine_id,
+        name: row.wines?.name ?? '',
+        image: row.wines?.image_url ?? [],
+      });
+    });
+
+    openModal({ review: row });
+  };
+
+  const handleSaved = (p: ReviewSavedPayload) => {
+    if (!p.addWineSeller) {
+      removeLocal(p.review_id);
+      return;
+    }
+
+    patchLocal(p.review_id, {
+      rating: p.rating,
+      content: p.content,
+      sweetness_score: p.sweetness_score ?? null,
+      acidity_score: p.acidity_score ?? null,
+      tannin_score: p.tannin_score ?? null,
+      body_score: p.body_score ?? null,
     });
   };
 
@@ -56,7 +102,7 @@ function WineSeller() {
   }, [error]);
 
   let items: React.ReactNode[] = data.map((row) => (
-    <WineSellerCard key={row.review_id} item={row} />
+    <WineSellerCard key={row.review_id} item={row} onEdit={handleEdit} />
   ));
 
   if (showAddCard) items.push(<AddNewCard key="add-new" />);
@@ -121,6 +167,13 @@ function WineSeller() {
           showFirstLast={false}
           showPrevNext
           size="md"
+        />
+        <ReviewModal
+          key={selected?.id || 'none'}
+          wineId={selected?.id ?? ''}
+          wineImage={selected?.image}
+          wineName={selected?.name}
+          onSaved={handleSaved}
         />
       </section>
       <WineTasteAnalysis />

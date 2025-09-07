@@ -178,6 +178,14 @@ function WineDetails() {
     setPairings(pairings ?? []);
   };
 
+  const tagsForModal: Tables<'hashtag_counts'>[] = (tags ?? []).map((t) => ({
+    tag_text: t.tag ?? '',
+    tag_count: (t.wine_tag_count ?? t.total_tag_count ?? 0) as number,
+    wine_ids: t.wine_id ? [t.wine_id] : null,
+    post_ids: null,
+    updated_at: new Date().toISOString(),
+  }));
+
   return (
     <>
       <Suspense fallback={<Spinner className="m-auto h-[calc(100vh-12.125rem)]" />}>
@@ -272,7 +280,7 @@ function WineDetails() {
                     wineImage={w.image_url}
                     wineName={w.name}
                     pairings={pairings}
-                    tags={tags}
+                    tags={tagsForModal}
                     refresh={refreshReviews}
                   />
                 }

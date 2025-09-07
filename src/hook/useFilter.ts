@@ -20,7 +20,7 @@ export const filtered = (keyword: string) => {
   useEffect(() => {
     const fetchData = async () => {
       const { data, error } = await supabase.from('wines').select('*');
-      if (error) console.log(error);
+      if (error) console.error(error);
       if (data) setWines(data);
     };
     fetchData();
@@ -31,7 +31,7 @@ export const filtered = (keyword: string) => {
       const { data, error } = await supabase
         .from('pairings')
         .select('pairing_category, pairing_name, wines(wine_id,image_url,name,description_ko)');
-      if (error) console.log(error);
+      if (error) console.error(error);
       if (data) setFoods(data);
     };
     fetchData();
@@ -42,7 +42,7 @@ export const filtered = (keyword: string) => {
       const { data, error } = await supabase
         .from('hashtags')
         .select('*,wines(wine_id,image_url,name,description_ko)');
-      if (error) console.log(error);
+      if (error) console.error(error);
       if (data) setHash(data);
     };
     fetchData();

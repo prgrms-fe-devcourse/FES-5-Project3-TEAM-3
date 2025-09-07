@@ -53,9 +53,6 @@ function Wines() {
   // Wines에서는 데이터(와인데이터, 필터데이터)만 관리
   // WineList에서 필터링+렌더링 관리
 
-  // const [winesData] = useState(wines);
-  // console.log(wines);
-
   const filterOptions = {
     국가: Object.keys(countryInfo),
     품종: Object.keys(grapes),
@@ -96,7 +93,7 @@ function Wines() {
         .from('wines')
         .select('*', { count: 'exact', head: true });
       if (error) {
-        console.log(error);
+        console.error(error);
         return null;
       }
       if (count) {

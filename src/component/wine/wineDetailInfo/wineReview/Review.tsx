@@ -110,7 +110,7 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
 
     if (error) {
       useToast('error', '리뷰정보를 가져오는데 실패하였습니다');
-      console.log(error);
+      console.error(error);
       return null;
     }
 
@@ -154,7 +154,7 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
 
   return (
     <div
-      className={`w-full md:min-w-160 flex flex-wrap md:wrap-normal justify-center items-baseline gap-5 border border-gray-400 rounded-2xl px-5 py-3 relative ${user_id === userId && 'hover:bg-secondary-100/50 hover:shadow-md'}`}
+      className={`w-full md:min-w-160 flex flex-wrap md:wrap-normal justify-center items-baseline gap-5 border border-gray-400 rounded-2xl px-5 py-3 relative ${user_id === userId && 'hover:bg-secondary-100/50 hover:shadow-md cursor-pointer'}`}
       onClick={editReview}
     >
       <TastingInfo style="review" tasting={{ sweetness, acidic, tannic, body }} />
@@ -194,7 +194,7 @@ function Review({ review, refresh }: { review: Tables<'reviews'>; refresh: () =>
           {user_id && user_id === userId && (
             <button
               type="button"
-              className="absolute bottom-3 right-3 p-2 rounded-full bg-secondary-50"
+              className="absolute bottom-3 right-3 p-2 rounded-full bg-secondary-50 cursor-pointer"
               onClick={deleteReview}
             >
               <img src="/icon/delete.svg" alt="삭제" className="w-6 h-6" />
