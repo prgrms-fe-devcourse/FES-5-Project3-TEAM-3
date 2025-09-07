@@ -1,6 +1,12 @@
 import type { Tables } from '@/supabase/database.types';
 import { create } from 'zustand';
 
+type OpenModalPayload = {
+  review: Tables<'reviews'> & { [k: string]: any };
+  tags?: string[];
+  pairings?: Record<string, string>[];
+};
+
 interface ReviewStore {
   isOpen: boolean;
   isEditMode: boolean;
@@ -15,11 +21,7 @@ interface ReviewStore {
   tag: string[];
   pairing: Record<string, string>[];
 
-  openModal: (value?: {
-    review: Tables<'reviews'>;
-    tags: string[];
-    pairings: Record<string, string>[];
-  }) => void;
+  openModal: (value?: OpenModalPayload) => void;
   closeModal: () => void;
   setRating: (value: number) => void;
   setSweetnessTaste: (value: number) => void;
@@ -33,6 +35,9 @@ interface ReviewStore {
   addPairing: (value: Record<string, string>) => void;
   deletePairing: (value: Record<string, string>) => void;
   setContent: (value: string) => void;
+  setAddWineSeller: (v: boolean) => void;
+  replaceTags: (tags: string[]) => void;
+  replacePairings: (pairs: Record<string, string>[]) => void;
   reset: () => void;
   log: () => void;
 }
@@ -67,6 +72,21 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
   pairing: [],
   openModal: (value) => {
     if (value) {
+      const r = value.review;
+      const hasTaste = [r.sweetness_score, r.acidity_score, r.tannin_score, r.body_score].some(
+        (v) => typeof v === 'number' && v > 0
+      );
+      const hasTags = Array.isArray(value.tags) && value.tags.length > 0;
+      const hasPairings =
+        Array.isArray(value.pairings) &&
+        value.pairings.some((p) => {
+          if (!p) return false;
+          const entry = Object.entries(p)[0];
+          if (!entry) return false;
+          const [_, val] = entry;
+          return typeof val === 'string' && val.trim().length > 0;
+        });
+
       // 수정 모드
       set({
         isOpen: true,
@@ -76,11 +96,11 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
         tannic: value.review.tannin_score,
         body: value.review.body_score,
         content: value.review.content,
-        pairing: value.pairings,
-        tag: value.tags,
+        pairing: value.pairings ?? [],
+        tag: value.tags ?? [],
         isEditMode: true,
-        onlyReview: true,
-        addWineSeller: value.review.addWineSeller!,
+        onlyReview: !(hasTaste || hasTags || hasPairings),
+        addWineSeller: value.review.addWineSeller ?? true,
       });
     } else {
       // 새 리뷰 작성 모드 (기본값만 유지)
@@ -125,6 +145,9 @@ export const useReviewStore = create<ReviewStore>((set, get) => ({
       }),
     })),
   setContent: (content) => set({ content }),
+  setAddWineSeller: (v) => set((s) => (s.addWineSeller === v ? s : { addWineSeller: v })),
+  replaceTags: (tags) => set({ tag: tags }),
+  replacePairings: (pairs) => set({ pairing: pairs }),
   reset: () => set(initialState),
   log: () => get(),
 }));
