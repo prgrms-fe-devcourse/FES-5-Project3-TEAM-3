@@ -42,9 +42,6 @@ export default function TextEditor({ value, onChange, onInsertImages }: Props) {
     if (!files.length || !onInsertImages) return;
     const urls = await onInsertImages(files);
     urls.forEach((url) => editor?.chain().focus().setImage({ src: url }).run());
-    // e.currentTarget.value = '';
-
-    // console.log(files);
   };
 
   if (!editor) return null;

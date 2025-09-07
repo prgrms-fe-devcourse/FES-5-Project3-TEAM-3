@@ -1,6 +1,6 @@
 import type { Database } from '@/supabase/database.types';
 import supabase from '@/supabase/supabase';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type ReviewRow = Database['public']['Tables']['reviews']['Row'];
 export type WineRow = Database['public']['Tables']['wines']['Row'];
@@ -113,7 +113,8 @@ export function useMyReviews(
           `*,
           wines!wine_id ( name, country, abv, image_url )`
         )
-        .eq('user_id', userId);
+        .eq('user_id', userId)
+        .eq('addWineSeller', true);
 
       switch (sort) {
         case 'created_asc':
@@ -164,5 +165,24 @@ export function useMyReviews(
 
   const totalPages = Math.max(1, Math.ceil((count + (reserveLastSlot ? 1 : 0)) / pageSize));
 
-  return { data, loading, isFetching, error, count, totalPages };
+  const patchLocal = useCallback((review_id: string, patch: Partial<ReviewWithWine>) => {
+    setData((prev) =>
+      prev.map((r) =>
+        r.review_id === review_id
+          ? {
+              ...r,
+              ...patch,
+              wines: patch.wines ? { ...(r.wines ?? null), ...patch.wines } : r.wines,
+            }
+          : r
+      )
+    );
+  }, []);
+
+  const removeLocal = useCallback((review_id: string) => {
+    setData((prev) => prev.filter((r) => r.review_id !== review_id));
+    setCount((prev) => Math.max(0, prev - 1));
+  }, []);
+
+  return { data, loading, isFetching, error, count, totalPages, patchLocal, removeLocal };
 }
