@@ -22,7 +22,8 @@ export default function Collection({ collection }: { collection: Collection[] })
   const target = useRef(0);
   const current = useRef(0);
   const rafId = useRef<number | null>(null);
-
+  const rafRef = useRef<number | null>(null)
+  
   const computeProgress = () => {
     const wrap = wrapperRef.current;
     if (!wrap) return 0;
@@ -47,21 +48,21 @@ export default function Collection({ collection }: { collection: Collection[] })
 
   useEffect(() => {
     const EASE = 0.14;
-    let raf: number | null = null;
+
     const render = () => {
       const s = swiperRef.current;
 
-      if (!s) {
-        raf = requestAnimationFrame(render);
-        return;
-      }
+         if (!s) {
+           rafRef.current = requestAnimationFrame(render);
+           return;
+         }
 
       const slidesReady = Array.isArray((s as any).slides) && (s as any).slides.length > 0;
       const snapReady = Array.isArray((s as any).snapGrid) && (s as any).snapGrid.length > 0;
 
       if (!slidesReady || !snapReady) {
         s.update();
-        raf = requestAnimationFrame(render);
+        rafRef.current = requestAnimationFrame(render);
         return;
       }
 
