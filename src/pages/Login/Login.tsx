@@ -38,13 +38,14 @@ function Login() {
     if (error) {
       useToast('error', '로그인 정보를 다시 확인해주세요');
 
-      return
-    }   const raw = typeof state === 'string' ? state : '/';
+      return;
+    }
+    const raw = typeof state === 'string' ? state : '/';
 
     let pathname = '/';
     try {
       const url = new URL(raw, window.location.origin);
-      pathname = url.pathname; 
+      pathname = url.pathname;
     } catch {
       pathname = raw.startsWith('/') ? raw : '/';
     }
@@ -56,13 +57,13 @@ function Login() {
       '/account/findemail',
     ];
 
-      const isAuthPage = authPaths.some((p) => pathname.startsWith(p));
+    const isAuthPage = authPaths.some((p) => pathname.startsWith(p));
 
-      if (isAuthPage) {
-        navigate('/');
-      } else {
-        navigate(pathname.startsWith('/') ? raw : '/');
-      }
+    if (isAuthPage) {
+      navigate('/');
+    } else {
+      navigate(pathname.startsWith('/') ? raw : '/');
+    }
   };
 
   return (

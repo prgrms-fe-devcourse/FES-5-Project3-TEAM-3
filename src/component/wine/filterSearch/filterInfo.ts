@@ -48,7 +48,6 @@ export const countryInfo: Record<string, LangInfo & { icon: string }> = {
   벨기에: { ko: '벨기에', en: 'Belgium', icon: '/icon/country/Belgium.svg' },
   네덜란드: { ko: '네덜란드', en: 'Netherlands', icon: '/icon/country/Netherlands.svg' },
 
-  
   '보스니아 헤르체고비나': {
     ko: '보스니아 헤르체고비나',
     en: 'Bosnia-and-Herzegovina',
