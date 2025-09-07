@@ -54,7 +54,6 @@ function Login() {
       '/account/register',
       '/account/findpassword',
       '/account/findemail',
-      '/account/resetpassword',
     ];
 
       const isAuthPage = authPaths.some((p) => pathname.startsWith(p));
