@@ -60,7 +60,8 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
       tone: 'danger',
     });
     if (!ok) return;
-    const { error } = await supabase.auth.signOut();
+     const { error } = await supabase.auth.signOut({ scope: 'local' });
+
 
     if (!error) useToast('success', '로그아웃 하셨습니다');
 
