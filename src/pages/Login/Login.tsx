@@ -37,13 +37,33 @@ function Login() {
 
     if (error) {
       useToast('error', '로그인 정보를 다시 확인해주세요');
-    } else {
-      if (state == '/account') {
+
+      return
+    }   const raw = typeof state === 'string' ? state : '/';
+
+    let pathname = '/';
+    try {
+      const url = new URL(raw, window.location.origin);
+      pathname = url.pathname; 
+    } catch {
+      pathname = raw.startsWith('/') ? raw : '/';
+    }
+
+    const authPaths = [
+      '/account/login',
+      '/account/register',
+      '/account/findpassword',
+      '/account/findemail',
+      '/account/resetpassword',
+    ];
+
+      const isAuthPage = authPaths.some((p) => pathname.startsWith(p));
+
+      if (isAuthPage) {
         navigate('/');
       } else {
-        navigate(state);
+        navigate(pathname.startsWith('/') ? raw : '/');
       }
-    }
   };
 
   return (
@@ -87,12 +107,6 @@ function Login() {
               </div>
               <VisibleBtn ref={pwRef} />
             </div>
-            <Link
-              to="../findpassword"
-              className="text-right text-primary-500 text-[12px] font-light"
-            >
-              비밀번호를 잊어버리셨나요?
-            </Link>
             <div className="flex flex-col items-center gap-4">
               <Button type="submit" color="primary">
                 Sign In
