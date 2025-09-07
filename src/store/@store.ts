@@ -4,12 +4,14 @@ import useToast from '@/hook/useToast';
 import supabase from '@/supabase/supabase';
 import { confirm } from '@/hook/confirmFunction'
 import { create } from 'zustand';
+import type { Session } from '@supabase/supabase-js';
 
 type AuthState = {
   userId: string | null;
   userEmail: string | null;
   userPhone: string | null;
   isLoading: boolean;
+  session: Session |null
 };
 
 type AuthAction = {
@@ -17,6 +19,7 @@ type AuthAction = {
   subscribe: () => void;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  silentSignOut : () => Promise<void>
 };
 
 type ConfirmState = {
@@ -35,6 +38,7 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
   userEmail: null,
   userPhone: null,
   isLoading: true,
+  session:null,
 
   fetch: async () => {
     set({ isLoading: true });
@@ -50,19 +54,27 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
 
   signOut: async () => {
     const ok = await confirm({
-        title: '로그아웃 하시겠습니까?',
-        confirmText: '로그아웃',
-        cancelText: '취소',
-        tone: 'danger',
-      })
+      title: '로그아웃 하시겠습니까?',
+      confirmText: '로그아웃',
+      cancelText: '취소',
+      tone: 'danger',
+    });
     if (!ok) return;
     const { error } = await supabase.auth.signOut();
 
-    if (!error) useToast('success','로그아웃 하셨습니다')
-    
+    if (!error) useToast('success', '로그아웃 하셨습니다');
+
     set({ userId: null, userEmail: null, userPhone: null });
   },
-
+  silentSignOut: async () => {
+    await supabase.auth.signOut();
+    set({
+      session: null,
+      userId: null,
+      userEmail: null,
+      userPhone: null,
+    });
+  },
   subscribe: () => {
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       set({
