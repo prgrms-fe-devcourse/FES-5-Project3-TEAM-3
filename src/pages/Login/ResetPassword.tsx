@@ -1,6 +1,7 @@
 import Button from '@/component/Button';
 import VisibleBtn from '@/component/Login/VisibleBtn';
 import useToast from '@/hook/useToast';
+import { useAuth } from '@/store/@store';
 import supabase from '@/supabase/supabase';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -12,6 +13,12 @@ function ResetPassword() {
   const pwConfirmRef = useRef(null);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const silentSignOut = useAuth((s) => s.silentSignOut)
+
+
+  useEffect(() => {
+    (async() => await silentSignOut())()
+  },[])
 
   useEffect(() => {
     const {
@@ -40,6 +47,8 @@ function ResetPassword() {
       console.error(error);
       return;
     }
+
+
     useToast('success', '비밀번호가 변경되었습니다.');
     navigate('../login');
   };
