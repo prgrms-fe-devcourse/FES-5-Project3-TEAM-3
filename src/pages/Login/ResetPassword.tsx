@@ -1,54 +1,71 @@
 import Button from '@/component/Button';
 import VisibleBtn from '@/component/Login/VisibleBtn';
 import useToast from '@/hook/useToast';
-import { useAuth } from '@/store/@store';
 import supabase from '@/supabase/supabase';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 function ResetPassword() {
   const navigate = useNavigate();
-  const silentSignOut = useAuth((s) => s.silentSignOut)
   const pwRef = useRef(null);
   const pwConfirmRef = useRef(null);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+ const [busy, setBusy] = useState(false);
 
+   useEffect(() => {
+     // 해시가 있으면 제거
+     if (window.location.hash) {
+       window.history.replaceState(null, '', window.location.pathname + window.location.search);
+     }
 
-  useEffect(() => {
-    async () => await silentSignOut();
-  },[])
+     // SDK가 자동으로 세운 세션이 실제로 있는지 확인
+     (async () => {
+       const { data } = await supabase.auth.getSession();
+       if (!data.session) {
+         useToast('error', '비밀번호 재설정 링크가 만료되었거나 유효하지 않습니다.');
+         navigate('/account/findpassword'); // 경로는 프로젝트에 맞게
+       }
+     })();
+   }, [navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+   const handleSubmit = async (e: React.FormEvent) => {
+     e.preventDefault();
+     if (busy) return;
 
-    if (password !== confirmPassword) {
-      useToast('error','비밀번호가 일치하지 않습니다.');
-      return;
-    }
-    const { error } = await supabase.auth.updateUser({ password });
+     if (password !== confirmPassword) {
+       useToast('error', '비밀번호가 일치하지 않습니다.');
+       return;
+     }
 
-    if (error) {
-      console.error('비밀번호 변경 실패:', error.message);
+     setBusy(true);
+     const { error } = await supabase.auth.updateUser({ password });
 
-      if (error.message.includes('New password should be different')) {
-        useToast('error','기존 비밀번호와 동일한 비밀번호는 사용할 수 없습니다.');
-      } else if (error.message.includes('JWT expired') || error.message.includes('expired')) {
-        useToast('error','비밀번호 재설정 링크가 만료되었습니다. 다시 비밀번호 찾기를 진행해주세요.');
-      } else {
-        useToast('error','비밀번호 변경에 실패했습니다. 다시 시도해주세요.');
-      }
+     if (error) {
+       console.error('비밀번호 변경 실패:', error.message);
+       if (error.message.includes('New password should be different')) {
+         useToast('error', '기존 비밀번호와 동일한 비밀번호는 사용할 수 없습니다.');
+       } else if (error.message.includes('expired')) {
+         useToast(
+           'error',
+           '비밀번호 재설정 링크가 만료되었습니다. 다시 비밀번호 찾기를 진행해주세요.'
+         );
+       } else {
+         useToast('error', '비밀번호 변경에 실패했습니다. 다시 시도해주세요.');
+       }
+       setBusy(false);
+       return;
+     }
 
-      return;
-    }
+     // 깔끔하게 로컬 로그아웃 (global 금지)
+     await supabase.auth.signOut({ scope: 'local' });
 
-    useToast('success','비밀번호를 변경하였습니다');
-    setPassword('');
-    setConfirmPassword('');
-
-    setTimeout(() => navigate('/account/login'), 2000);
-  };
-
+     useToast('success', '비밀번호를 변경하였습니다');
+     setPassword('');
+     setConfirmPassword('');
+     setBusy(false);
+     navigate('/');
+   };
 
   return (
     <div className="flex mt-10 my-10 items-center justify-center gap-20">

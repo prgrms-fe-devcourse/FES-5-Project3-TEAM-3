@@ -45,6 +45,7 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
     const { data } = await supabase.auth.getSession();
     const session = data.session;
     set({
+      session,
       userId: session?.user.id,
       userEmail: session?.user?.email ?? null,
       userPhone: session?.user.phone ?? null,
@@ -68,7 +69,7 @@ export const useAuth = create<AuthState & AuthAction>((set) => ({
     set({ userId: null, userEmail: null, userPhone: null });
   },
   silentSignOut: async () => {
-    await supabase.auth.signOut();
+      await supabase.auth.signOut({ scope: 'local' });
     set({
       session: null,
       userId: null,
